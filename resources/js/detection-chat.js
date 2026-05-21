@@ -275,7 +275,7 @@ document.addEventListener('alpine:init', () => {
                 return this.standardRisikoKategori(total);
             }
 
-            if (this.config.disease === 'penyakit_ginjal') {
+            if (['penyakit_ginjal', 'stroke'].includes(this.config.disease)) {
                 if (total >= 11) return 'Tinggi';
                 if (total >= 6) return 'Sedang';
 

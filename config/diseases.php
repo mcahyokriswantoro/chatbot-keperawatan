@@ -46,34 +46,10 @@ return [
         'label' => 'Stroke',
         'icon' => '🧠',
         'color' => 'rose',
-        'description' => 'Skrining gejala stroke',
-        'welcome' => 'Halo! Saya akan membantu skrining awal Stroke menggunakan gejala umum (FAST). Jika ada tanda darurat, segera ke IGD. Siap memulai?',
-        'questions' => [
-            [
-                'id' => 'fast',
-                'text' => 'Gejala yang Anda alami saat ini? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'wajah', 'label' => 'Wajah mencong / lemas separuh'],
-                    ['value' => 'lengan', 'label' => 'Lengan lemah/tidak bisa diangkat'],
-                    ['value' => 'bicara', 'label' => 'Bicara pelo/tidak jelas'],
-                    ['value' => 'sakit_kepala', 'label' => 'Sakit kepala hebat mendadak'],
-                    ['value' => 'pandangan', 'label' => 'Pandangan kabur/ganda'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-            [
-                'id' => 'waktu_mulai',
-                'text' => 'Kapan gejala mulai dirasakan?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => '<24jam', 'label' => 'Kurang dari 24 jam'],
-                    ['value' => '1-7hari', 'label' => '1 – 7 hari'],
-                    ['value' => '>7hari', 'label' => 'Lebih dari 7 hari'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak berlaku'],
-                ],
-            ],
-        ],
+        'scoring' => true,
+        'description' => 'Skrining gejala stroke (23 pertanyaan, skor ya/tidak)',
+        'welcome' => 'Halo! Skrining Stroke terdiri dari 23 pertanyaan gejala dan faktor risiko. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor 1. Di akhir akan ditampilkan jumlah skor dan klasifikasi risiko. Jika ada gejala mendadak, segera ke IGD. Siap memulai?',
+        'questions' => [], // diisi dari StrokeScoringService via DetectionController
     ],
 
     'jantung_koroner' => [

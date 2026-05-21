@@ -8,6 +8,7 @@ use App\Models\Wilayah;
 use App\Services\DhfScoringService;
 use App\Services\PenyakitGinjalScoringService;
 use App\Services\PpokScoringService;
+use App\Services\StrokeScoringService;
 use App\Services\TbParuScoringService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -82,7 +83,7 @@ class DetectionController extends Controller
             return $redirect;
         }
 
-        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal'], true)) {
+        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal', 'stroke'], true)) {
             return redirect()->route('detection.chat.session', $disease);
         }
 
@@ -149,6 +150,13 @@ class DetectionController extends Controller
             $scoringItems = config('penyakit_ginjal_skrining.items');
             $questionPrefix = config('penyakit_ginjal_skrining.question_prefix');
             $scoringLegend = config('penyakit_ginjal_skrining.scoring_legend');
+        } elseif ($disease === 'stroke') {
+            $strokeScoring = app(StrokeScoringService::class);
+            $questions = $strokeScoring->questions();
+            $maxScore = $strokeScoring->maxScore();
+            $scoringItems = config('stroke_skrining.items');
+            $questionPrefix = config('stroke_skrining.question_prefix');
+            $scoringLegend = config('stroke_skrining.scoring_legend');
         }
 
         $resultMessages = [
@@ -156,6 +164,7 @@ class DetectionController extends Controller
             'dhf' => 'Terima kasih telah menyelesaikan skrining DHF. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera ke fasilitas kesehatan bila risiko tinggi atau ada tanda peringatan.',
             'ppok' => 'Terima kasih telah menyelesaikan skrining PPOK. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
             'penyakit_ginjal' => 'Terima kasih telah menyelesaikan skrining Penyakit Ginjal. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
+            'stroke' => 'Terima kasih telah menyelesaikan skrining Stroke. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila ada gejala mendadak (FAST), segera hubungi layanan darurat atau kunjungi IGD.',
         ];
 
         $screening = [
