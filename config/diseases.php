@@ -36,35 +36,10 @@ return [
         'label' => 'Penyakit Ginjal',
         'icon' => '🫘',
         'color' => 'violet',
-        'description' => 'Skrining gangguan fungsi ginjal',
-        'welcome' => 'Halo! Mari lakukan skrining awal Penyakit Ginjal. Beberapa pertanyaan singkat akan membantu menilai risiko. Siap memulai?',
-        'questions' => [
-            [
-                'id' => 'gejala_ginjal',
-                'text' => 'Gejala yang Anda rasakan? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'bengkak', 'label' => 'Bengkak kaki/mata'],
-                    ['value' => 'urine', 'label' => 'Perubahan buang air kecil'],
-                    ['value' => 'lelah', 'label' => 'Mudah lelah'],
-                    ['value' => 'gatal', 'label' => 'Gatal-gatal'],
-                    ['value' => 'mual', 'label' => 'Mual/muntah'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-            [
-                'id' => 'faktor_risiko',
-                'text' => 'Apakah Anda memiliki faktor risiko berikut?',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'diabetes', 'label' => 'Diabetes'],
-                    ['value' => 'hipertensi', 'label' => 'Hipertensi'],
-                    ['value' => 'riwayat_keluarga', 'label' => 'Riwayat penyakit ginjal keluarga'],
-                    ['value' => 'obat_nefro', 'label' => 'Penggunaan obat jangka panjang'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-        ],
+        'scoring' => true,
+        'description' => 'Skrining gangguan fungsi ginjal (26 pertanyaan, skor ya/tidak)',
+        'welcome' => 'Halo! Skrining Penyakit Ginjal terdiri dari 26 pertanyaan gejala dan faktor risiko dalam beberapa minggu/bulan terakhir. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor 1. Di akhir akan ditampilkan jumlah skor dan klasifikasi risiko. Siap memulai?',
+        'questions' => [], // diisi dari PenyakitGinjalScoringService via DetectionController
     ],
 
     'stroke' => [

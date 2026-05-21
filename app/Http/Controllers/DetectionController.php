@@ -6,6 +6,7 @@ use App\Http\Requests\StoreScreeningIdentityRequest;
 use App\Models\ScreeningIdentity;
 use App\Models\Wilayah;
 use App\Services\DhfScoringService;
+use App\Services\PenyakitGinjalScoringService;
 use App\Services\PpokScoringService;
 use App\Services\TbParuScoringService;
 use Carbon\Carbon;
@@ -81,7 +82,7 @@ class DetectionController extends Controller
             return $redirect;
         }
 
-        if (in_array($disease, ['tb_paru', 'dhf', 'ppok'], true)) {
+        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal'], true)) {
             return redirect()->route('detection.chat.session', $disease);
         }
 
@@ -141,12 +142,20 @@ class DetectionController extends Controller
             $scoringItems = config('ppok_skrining.items');
             $questionPrefix = config('ppok_skrining.question_prefix');
             $scoringLegend = config('ppok_skrining.scoring_legend');
+        } elseif ($disease === 'penyakit_ginjal') {
+            $ginjalScoring = app(PenyakitGinjalScoringService::class);
+            $questions = $ginjalScoring->questions();
+            $maxScore = $ginjalScoring->maxScore();
+            $scoringItems = config('penyakit_ginjal_skrining.items');
+            $questionPrefix = config('penyakit_ginjal_skrining.question_prefix');
+            $scoringLegend = config('penyakit_ginjal_skrining.scoring_legend');
         }
 
         $resultMessages = [
             'tb_paru' => 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor dan ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila skor tinggi atau ada gejala memberat.',
             'dhf' => 'Terima kasih telah menyelesaikan skrining DHF. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera ke fasilitas kesehatan bila risiko tinggi atau ada tanda peringatan.',
             'ppok' => 'Terima kasih telah menyelesaikan skrining PPOK. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
+            'penyakit_ginjal' => 'Terima kasih telah menyelesaikan skrining Penyakit Ginjal. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
         ];
 
         $screening = [
