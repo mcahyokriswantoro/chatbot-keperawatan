@@ -28,6 +28,24 @@ class TbParuScoringService
         return (int) array_sum(array_column(config('tb_paru_skrining.items'), 'score_ya'));
     }
 
+    public function hasilKategori(int $total): string
+    {
+        return match (true) {
+            $total >= 11 => 'Tinggi',
+            $total >= 6 => 'Sedang',
+            default => 'Rendah',
+        };
+    }
+
+    public function riskLevelFromTotal(int $total): string
+    {
+        return match (true) {
+            $total >= 11 => 'high',
+            $total >= 6 => 'medium',
+            default => 'low',
+        };
+    }
+
     public function scoreForAnswer(string $answer, int $scoreYa): int
     {
         return $answer === 'ya' ? $scoreYa : 0;
@@ -79,10 +97,13 @@ class TbParuScoringService
         $total = $this->calculateTotal($answers);
         $max = $this->maxScore();
 
+        $hasil = $this->hasilKategori($total);
+
         $lines = [
             '📋 Hasil Skrining TB Paru',
             '',
             "⭐ JUMLAH NILAI AKHIR: {$total} / {$max}",
+            "📌 HASIL: {$hasil}",
             '',
             'No | Item | Jawaban | Skor (Ya) | Skor Didapat',
             str_repeat('-', 60),
@@ -121,16 +142,14 @@ class TbParuScoringService
 
         $isEmergency = count($emergencySymptoms) > 0;
 
-        $riskLevel = match (true) {
-            $isEmergency => 'emergency',
-            $total >= 20 => 'high',
-            $total >= 10 => 'medium',
-            default => 'low',
-        };
+        $hasilKategori = $this->hasilKategori($total);
+
+        $riskLevel = $isEmergency ? 'emergency' : $this->riskLevelFromTotal($total);
 
         return [
             'total' => $total,
             'max' => $max,
+            'hasil_kategori' => $hasilKategori,
             'risk_level' => $riskLevel,
             'is_emergency' => $isEmergency,
             'emergency_symptoms' => $emergencySymptoms,

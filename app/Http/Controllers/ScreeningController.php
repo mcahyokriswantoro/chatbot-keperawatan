@@ -47,6 +47,7 @@ class ScreeningController extends Controller
             'emergency_url' => route('emergency'),
             'total_score' => $risk['total_score'] ?? null,
             'max_score' => $risk['max_score'] ?? null,
+            'hasil_kategori' => $risk['hasil_kategori'] ?? null,
         ], fn ($value) => $value !== null));
     }
 }

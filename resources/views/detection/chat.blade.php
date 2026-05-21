@@ -78,11 +78,24 @@
                         <div
                             x-show="config.scoring && totalScore !== null"
                             x-cloak
-                            class="rounded-xl bg-brand-50 border border-brand-200 px-3 py-3 text-center"
+                            class="space-y-2"
                         >
-                            <p class="text-[10px] font-medium uppercase tracking-wide text-brand-600">Jumlah Nilai Akhir</p>
-                            <p class="text-2xl font-bold text-brand-700" x-text="totalScore + ' / ' + maxScore"></p>
-                            <p class="mt-1 text-[10px] text-slate-500">Ya = skor tabel · Tidak = 0</p>
+                            <div class="rounded-xl bg-brand-50 border border-brand-200 px-3 py-3 text-center">
+                                <p class="text-[10px] font-medium uppercase tracking-wide text-brand-600">Jumlah Skor</p>
+                                <p class="text-2xl font-bold text-brand-700" x-text="totalScore + ' / ' + maxScore"></p>
+                            </div>
+                            <div
+                                class="rounded-xl border px-4 py-3 text-center"
+                                :class="{
+                                    'border-rose-200 bg-rose-50 text-rose-800': hasilKategori === 'Tinggi',
+                                    'border-amber-200 bg-amber-50 text-amber-800': hasilKategori === 'Sedang',
+                                    'border-emerald-200 bg-emerald-50 text-emerald-800': hasilKategori === 'Rendah',
+                                }"
+                            >
+                                <p class="text-[10px] font-medium uppercase tracking-wide opacity-80">Hasil Skrining</p>
+                                <p class="text-xl font-bold" x-text="hasilKategori"></p>
+                                <p class="mt-1 text-[10px] opacity-70">≥11 Tinggi · 6–10 Sedang · 0–5 Rendah</p>
+                            </div>
                         </div>
                         <div x-show="config.scoring && scoreRows.length" x-cloak class="overflow-x-auto rounded-xl border border-brand-100">
                             <table class="w-full min-w-[280px] text-left text-[10px]">
@@ -162,15 +175,6 @@
 
                 {{-- Quick reply (single choice) --}}
                 <div x-show="activeOptions.length > 0 && currentStep >= 0 && config.questions[currentStep]?.type !== 'multi'" x-cloak>
-                    <div
-                        x-show="config.scoring"
-                        x-cloak
-                        class="mb-3 rounded-2xl bg-gradient-to-r from-brand-50 to-sky-50 px-3 py-2 text-center"
-                    >
-                        <p class="text-[11px] font-medium text-slate-600">
-                            Pilih <span class="text-emerald-700">Ya</span> (dapat skor) atau <span class="text-slate-700">Tidak</span> (skor 0)
-                        </p>
-                    </div>
                     <div
                         class="flex gap-2 rounded-2xl bg-slate-50/80 p-1.5"
                         :class="config.scoring ? 'grid grid-cols-2' : 'flex-wrap justify-center'"

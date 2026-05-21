@@ -14,6 +14,7 @@ document.addEventListener('alpine:init', () => {
         totalScore: null,
         maxScore: null,
         scoreRows: [],
+        hasilKategori: null,
 
         get totalQuestions() {
             return this.config.questions.length;
@@ -116,10 +117,7 @@ document.addEventListener('alpine:init', () => {
             this.answers[question.id] = option.value;
             this.answers[`${question.id}_score`] = score;
 
-            const label = this.config.scoring
-                ? `${option.label} — skor ${score}`
-                : option.label;
-            this.userSay(label);
+            this.userSay(option.label);
             await this.nextQuestion();
         },
 
@@ -166,13 +164,9 @@ document.addEventListener('alpine:init', () => {
 
         async askQuestion(index) {
             const question = this.config.questions[index];
-            let prompt = question.no
+            const prompt = question.no
                 ? `${question.no}. ${question.text}?`
                 : question.text;
-
-            if (this.config.scoring && question.score_ya) {
-                prompt += `\n\n(Jawab Ya = skor ${question.score_ya}, Tidak = skor 0)`;
-            }
 
             await this.botSay(prompt);
 
@@ -243,6 +237,12 @@ document.addEventListener('alpine:init', () => {
             return { total, max };
         },
 
+        hasilKategoriFromScore(total) {
+            if (total >= 11) return 'Tinggi';
+            if (total >= 6) return 'Sedang';
+            return 'Rendah';
+        },
+
         async showResult() {
             this.finished = true;
             this.activeOptions = [];
@@ -253,8 +253,10 @@ document.addEventListener('alpine:init', () => {
                 this.totalScore = total;
                 this.maxScore = max;
                 this.scoreRows = this.getScoreRows();
+                this.hasilKategori = this.hasilKategoriFromScore(total);
                 this.answers._total_score = total;
                 this.answers._max_score = max;
+                this.answers._hasil_kategori = this.hasilKategori;
             }
 
             const summary = this.buildSummary();
@@ -268,7 +270,7 @@ document.addEventListener('alpine:init', () => {
 
             if (this.config.scoring && this.totalScore !== null) {
                 await this.botSay(
-                    `📊 Jumlah nilai akhir skrining TB Paru Anda: ${this.totalScore} dari ${this.maxScore}.\n\nYa = skor sesuai tabel | Tidak = 0. Lihat tabel lengkap di bawah.`
+                    `📊 Jumlah skor Anda: ${this.totalScore} dari ${this.maxScore}. Hasil skrining: ${this.hasilKategori}.`
                 );
             }
 
@@ -309,6 +311,9 @@ document.addEventListener('alpine:init', () => {
                         this.totalScore = data.total_score;
                         this.maxScore = data.max_score;
                     }
+                    if (data.hasil_kategori) {
+                        this.hasilKategori = data.hasil_kategori;
+                    }
                 }
             } catch {
                 // offline or server error — screening still shown locally
@@ -324,6 +329,7 @@ document.addEventListener('alpine:init', () => {
                     `📋 Hasil Skrining: ${label}`,
                     '',
                     `⭐ JUMLAH NILAI AKHIR: ${this.totalScore} / ${this.maxScore}`,
+                    `📌 HASIL: ${this.hasilKategori}`,
                     '',
                 ];
 

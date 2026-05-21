@@ -19,6 +19,7 @@ class ScreeningRiskEvaluator
                 'emergency_symptoms' => $result['emergency_symptoms'],
                 'total_score' => $result['total'],
                 'max_score' => $result['max'],
+                'hasil_kategori' => $result['hasil_kategori'],
             ];
         }
 
