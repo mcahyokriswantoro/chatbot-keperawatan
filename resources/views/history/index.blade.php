@@ -17,12 +17,11 @@
                 </div>
                 <span @class([
                     'shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase',
-                    'bg-rose-100 text-rose-700' => $session->is_emergency,
-                    'bg-amber-100 text-amber-700' => $session->risk_level === 'high' || $session->risk_level === 'medium',
-                    'bg-emerald-100 text-emerald-700' => $session->risk_level === 'low',
-                    'bg-red-600 text-white' => $session->risk_level === 'emergency',
+                    'bg-rose-100 text-rose-700' => $session->showsEmergencyUi(),
+                    'bg-amber-100 text-amber-800' => in_array($session->displayRiskLevel(), ['high', 'medium'], true),
+                    'bg-emerald-100 text-emerald-700' => $session->displayRiskLevel() === 'low',
                 ])>
-                    {{ $session->risk_level }}
+                    {{ $session->displayRiskLabel() }}
                 </span>
             </div>
         </a>

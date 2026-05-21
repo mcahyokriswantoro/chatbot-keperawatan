@@ -26,6 +26,40 @@ class ScreeningSession extends Model
         return config("diseases.{$this->disease}.label");
     }
 
+    /**
+     * Level risiko untuk tampilan (TB Paru lama bisa tersimpan sebagai emergency → ditampilkan Tinggi).
+     */
+    public function displayRiskLevel(): string
+    {
+        $level = $this->risk_level;
+
+        if ($this->disease === 'tb_paru' && $level === 'emergency') {
+            return 'high';
+        }
+
+        return $level;
+    }
+
+    public function displayRiskLabel(): string
+    {
+        return match ($this->displayRiskLevel()) {
+            'high' => 'Tinggi',
+            'medium' => 'Sedang',
+            'low' => 'Rendah',
+            'emergency' => 'Darurat',
+            default => $this->risk_level,
+        };
+    }
+
+    public function showsEmergencyUi(): bool
+    {
+        if ($this->disease === 'tb_paru') {
+            return false;
+        }
+
+        return $this->is_emergency || $this->risk_level === 'emergency';
+    }
+
     protected function casts(): array
     {
         return [

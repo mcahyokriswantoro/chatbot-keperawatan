@@ -2,18 +2,17 @@
 
 namespace App\Services;
 
-class TbParuScoringService
+class DiabetesMelitusScoringService
 {
-    /** Skor skrining TB Paru: maksimum risk_level adalah high (bukan emergency). */
-    public const MAX_RISK_LEVEL = 'high';
     /**
      * @return list<array{id: string, no: int, text: string, type: string, score_ya: int, options: list<array{value: string, label: string}>}>
      */
     public function questions(): array
     {
-        $options = config('tb_paru_skrining.yes_no_options');
+        $options = config('diabetes_melitus_skrining.yes_no_options');
+        $prefix = config('diabetes_melitus_skrining.question_prefix');
 
-        return array_map(function (array $item) use ($options) {
+        return array_map(function (array $item) use ($options, $prefix) {
             return [
                 'id' => $item['id'],
                 'no' => $item['no'],
@@ -21,29 +20,46 @@ class TbParuScoringService
                 'type' => 'choice',
                 'score_ya' => $item['score_ya'],
                 'options' => $options,
+                'prompt_prefix' => $prefix,
             ];
-        }, config('tb_paru_skrining.items'));
+        }, config('diabetes_melitus_skrining.items'));
     }
 
     public function maxScore(): int
     {
-        return (int) array_sum(array_column(config('tb_paru_skrining.items'), 'score_ya'));
+        return (int) array_sum(array_column(config('diabetes_melitus_skrining.items'), 'score_ya'));
     }
 
     public function hasilKategori(int $total): string
     {
-        return match (true) {
-            $total >= 11 => 'Tinggi',
-            $total >= 6 => 'Sedang',
-            default => 'Rendah',
+        $tinggiMin = (int) config('diabetes_melitus_skrining.tinggi_min', 11);
+        $sedangMin = (int) config('diabetes_melitus_skrining.sedang_min', 6);
+
+        if ($total >= $tinggiMin) {
+            return 'Tinggi';
+        }
+
+        if ($total >= $sedangMin) {
+            return 'Sedang';
+        }
+
+        return 'Rendah';
+    }
+
+    public function risikoLabel(string $hasilKategori): string
+    {
+        return match ($hasilKategori) {
+            'Tinggi' => 'Risiko Tinggi',
+            'Sedang' => 'Risiko Sedang',
+            default => 'Risiko Rendah',
         };
     }
 
     public function riskLevelFromTotal(int $total): string
     {
-        return match (true) {
-            $total >= 11 => 'high',
-            $total >= 6 => 'medium',
+        return match ($this->hasilKategori($total)) {
+            'Tinggi' => 'high',
+            'Sedang' => 'medium',
             default => 'low',
         };
     }
@@ -60,7 +76,7 @@ class TbParuScoringService
     {
         $total = 0;
 
-        foreach (config('tb_paru_skrining.items') as $item) {
+        foreach (config('diabetes_melitus_skrining.items') as $item) {
             $total += $this->scoreForAnswer(
                 (string) ($answers[$item['id']] ?? ''),
                 $item['score_ya'],
@@ -87,7 +103,7 @@ class TbParuScoringService
                 'skor_didapat' => $this->scoreForAnswer($jawaban, $item['score_ya']),
                 'skor_ya' => $item['score_ya'],
             ];
-        }, config('tb_paru_skrining.items'));
+        }, config('diabetes_melitus_skrining.items'));
     }
 
     /**
@@ -98,14 +114,14 @@ class TbParuScoringService
         $rows = $this->scoreRows($answers);
         $total = $this->calculateTotal($answers);
         $max = $this->maxScore();
-
         $hasil = $this->hasilKategori($total);
+        $risiko = $this->risikoLabel($hasil);
 
         $lines = [
-            '📋 Hasil Skrining TB Paru',
+            '📋 Hasil Skrining Diabetes Melitus',
             '',
             "⭐ JUMLAH NILAI AKHIR: {$total} / {$max}",
-            "📌 HASIL: {$hasil}",
+            "📌 KLASIFIKASI: {$risiko}",
             '',
             'No | Item | Jawaban | Skor (Ya) | Skor Didapat',
             str_repeat('-', 60),
@@ -130,32 +146,23 @@ class TbParuScoringService
 
     /**
      * @param  array<string, mixed>  $answers
-     * @return array{total: int, max: int, risk_level: string, is_emergency: bool, emergency_symptoms: list<string>}
+     * @return array{total: int, max: int, hasil_kategori: string, risiko_label: string, risk_level: string, is_emergency: bool, emergency_symptoms: list<string>}
      */
     public function evaluate(array $answers): array
     {
         $total = $this->calculateTotal($answers);
         $max = $this->maxScore();
-
         $hasilKategori = $this->hasilKategori($total);
+        $risikoLabel = $this->risikoLabel($hasilKategori);
 
         return [
             'total' => $total,
             'max' => $max,
             'hasil_kategori' => $hasilKategori,
-            'risiko_label' => $this->risikoLabel($hasilKategori),
+            'risiko_label' => $risikoLabel,
             'risk_level' => $this->riskLevelFromTotal($total),
             'is_emergency' => false,
             'emergency_symptoms' => [],
         ];
-    }
-
-    public function risikoLabel(string $hasilKategori): string
-    {
-        return match ($hasilKategori) {
-            'Tinggi' => 'Risiko Tinggi',
-            'Sedang' => 'Risiko Sedang',
-            default => 'Risiko Rendah',
-        };
     }
 }

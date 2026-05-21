@@ -8,16 +8,21 @@
             <p class="font-bold text-slate-900">{{ $session->diseaseLabel() ?? 'Skrining Kesehatan' }}</p>
             <p class="text-sm text-slate-500">{{ $session->created_at->format('d M Y, H:i') }}</p>
         </div>
-        @if ($session->is_emergency)
-            <span class="rounded-full bg-rose-600 px-3 py-1 text-xs font-bold text-white">DARURAT</span>
-        @endif
+        <span @class([
+            'rounded-full px-3 py-1 text-xs font-bold uppercase',
+            'bg-rose-600 text-white' => $session->showsEmergencyUi(),
+            'bg-amber-100 text-amber-800' => in_array($session->displayRiskLevel(), ['high', 'medium'], true),
+            'bg-emerald-100 text-emerald-700' => $session->displayRiskLevel() === 'low',
+        ])>
+            {{ $session->displayRiskLabel() }}
+        </span>
     </div>
 
     <div class="rounded-2xl bg-white p-4 shadow-card border border-brand-100">
         <pre class="whitespace-pre-wrap font-sans text-sm leading-relaxed text-slate-700">{{ $session->summary }}</pre>
     </div>
 
-    @if ($session->is_emergency)
+    @if ($session->showsEmergencyUi())
         <a href="{{ route('emergency') }}" class="mt-4 flex w-full items-center justify-center rounded-full bg-rose-600 py-3 text-sm font-bold text-white">
             Lihat Peringatan Darurat
         </a>

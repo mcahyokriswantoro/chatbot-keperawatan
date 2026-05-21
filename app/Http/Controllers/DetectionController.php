@@ -6,8 +6,12 @@ use App\Http\Requests\StoreScreeningIdentityRequest;
 use App\Models\ScreeningIdentity;
 use App\Models\Wilayah;
 use App\Services\DhfScoringService;
+use App\Services\DiabetesMelitusScoringService;
+use App\Services\HipertensiScoringService;
+use App\Services\JantungKoronerScoringService;
 use App\Services\PenyakitGinjalScoringService;
 use App\Services\PpokScoringService;
+use App\Services\StrokeScoringService;
 use App\Services\TbParuScoringService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -82,7 +86,7 @@ class DetectionController extends Controller
             return $redirect;
         }
 
-        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal'], true)) {
+        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi'], true)) {
             return redirect()->route('detection.chat.session', $disease);
         }
 
@@ -120,6 +124,8 @@ class DetectionController extends Controller
         $scoringLegend = null;
         $questionPrefix = null;
         $warningSignIds = null;
+        $selfManagement = null;
+        $suppressEmergency = false;
 
         if ($disease === 'tb_paru') {
             $tbScoring = app(TbParuScoringService::class);
@@ -127,6 +133,8 @@ class DetectionController extends Controller
             $maxScore = $tbScoring->maxScore();
             $scoringItems = config('tb_paru_skrining.items');
             $scoringLegend = '≥11 Tinggi · 6–10 Sedang · 0–5 Rendah';
+            $selfManagement = config('tb_paru_self_management');
+            $suppressEmergency = true;
         } elseif ($disease === 'dhf') {
             $dhfScoring = app(DhfScoringService::class);
             $questions = $dhfScoring->questions();
@@ -149,13 +157,45 @@ class DetectionController extends Controller
             $scoringItems = config('penyakit_ginjal_skrining.items');
             $questionPrefix = config('penyakit_ginjal_skrining.question_prefix');
             $scoringLegend = config('penyakit_ginjal_skrining.scoring_legend');
+        } elseif ($disease === 'stroke') {
+            $strokeScoring = app(StrokeScoringService::class);
+            $questions = $strokeScoring->questions();
+            $maxScore = $strokeScoring->maxScore();
+            $scoringItems = config('stroke_skrining.items');
+            $questionPrefix = config('stroke_skrining.question_prefix');
+            $scoringLegend = config('stroke_skrining.scoring_legend');
+        } elseif ($disease === 'jantung_koroner') {
+            $jantungScoring = app(JantungKoronerScoringService::class);
+            $questions = $jantungScoring->questions();
+            $maxScore = $jantungScoring->maxScore();
+            $scoringItems = config('jantung_koroner_skrining.items');
+            $questionPrefix = config('jantung_koroner_skrining.question_prefix');
+            $scoringLegend = config('jantung_koroner_skrining.scoring_legend');
+        } elseif ($disease === 'diabetes_melitus') {
+            $dmScoring = app(DiabetesMelitusScoringService::class);
+            $questions = $dmScoring->questions();
+            $maxScore = $dmScoring->maxScore();
+            $scoringItems = config('diabetes_melitus_skrining.items');
+            $questionPrefix = config('diabetes_melitus_skrining.question_prefix');
+            $scoringLegend = config('diabetes_melitus_skrining.scoring_legend');
+        } elseif ($disease === 'hipertensi') {
+            $htScoring = app(HipertensiScoringService::class);
+            $questions = $htScoring->questions();
+            $maxScore = $htScoring->maxScore();
+            $scoringItems = config('hipertensi_skrining.items');
+            $questionPrefix = config('hipertensi_skrining.question_prefix');
+            $scoringLegend = config('hipertensi_skrining.scoring_legend');
         }
 
         $resultMessages = [
-            'tb_paru' => 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor dan ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila skor tinggi atau ada gejala memberat.',
+            'tb_paru' => 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis.',
             'dhf' => 'Terima kasih telah menyelesaikan skrining DHF. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera ke fasilitas kesehatan bila risiko tinggi atau ada tanda peringatan.',
             'ppok' => 'Terima kasih telah menyelesaikan skrining PPOK. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
             'penyakit_ginjal' => 'Terima kasih telah menyelesaikan skrining Penyakit Ginjal. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
+            'stroke' => 'Terima kasih telah menyelesaikan skrining Stroke. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila ada gejala mendadak (FAST), segera hubungi layanan darurat atau kunjungi IGD.',
+            'jantung_koroner' => 'Terima kasih telah menyelesaikan skrining Jantung Koroner. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila nyeri dada hebat atau tidak membaik, segera ke IGD.',
+            'diabetes_melitus' => 'Terima kasih telah menyelesaikan skrining Diabetes Melitus. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan gula darah.',
+            'hipertensi' => 'Terima kasih telah menyelesaikan skrining Hipertensi. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan tekanan darah.',
         ];
 
         $screening = [
@@ -171,6 +211,11 @@ class DetectionController extends Controller
             'question_prefix' => $questionPrefix,
             'warning_sign_ids' => $warningSignIds,
             'scoring_legend' => $scoringLegend,
+            'self_management' => $selfManagement,
+            'suppress_emergency' => $suppressEmergency,
+            'self_management_url' => auth()->check()
+                ? route('self-management')
+                : route('login'),
             'screening_identity_id' => session('screening_identity_id'),
             'result' => [
                 'title' => 'Skrining '.$diseaseConfig['label'].' Selesai',

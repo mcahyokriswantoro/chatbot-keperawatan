@@ -18,6 +18,14 @@ document.addEventListener('alpine:init', () => {
         risikoLabel: null,
         hasWarningSigns: false,
 
+        get activeSelfManagement() {
+            if (!this.config.self_management || !this.hasilKategori) {
+                return null;
+            }
+
+            return this.config.self_management[this.hasilKategori] ?? null;
+        },
+
         get totalQuestions() {
             return this.config.questions.length;
         },
@@ -275,7 +283,7 @@ document.addEventListener('alpine:init', () => {
                 return this.standardRisikoKategori(total);
             }
 
-            if (this.config.disease === 'penyakit_ginjal') {
+            if (['penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi'].includes(this.config.disease)) {
                 if (total >= 11) return 'Tinggi';
                 if (total >= 6) return 'Sedang';
 
@@ -319,21 +327,31 @@ document.addEventListener('alpine:init', () => {
             const summary = this.buildSummary();
             await this.saveScreening(summary);
 
-            if (this.isEmergency) {
+            if (this.config.suppress_emergency) {
+                this.isEmergency = false;
+            }
+
+            if (this.isEmergency && !this.config.suppress_emergency) {
                 await this.botSay(
                     '⚠️ PERINGATAN DARURAT: Gejala yang Anda laporkan memerlukan penanganan segera. Segera hubungi layanan darurat (119) atau kunjungi IGD terdekat.'
                 );
             }
 
             if (this.config.scoring && this.totalScore !== null) {
-                const label = this.risikoLabel ?? this.hasilKategori;
+                const label = this.risikoLabel ?? this.risikoLabelFromKategori(this.hasilKategori) ?? this.hasilKategori;
                 let scoreMsg = `📊 Jumlah skor Anda: ${this.totalScore} dari ${this.maxScore}. Klasifikasi: ${label}.`;
 
-                if (this.hasWarningSigns) {
+                if (this.hasWarningSigns && !this.config.suppress_emergency) {
                     scoreMsg += ' Terdapat tanda peringatan (warning signs) — segera ke fasilitas kesehatan.';
                 }
 
                 await this.botSay(scoreMsg);
+
+                if (this.activeSelfManagement) {
+                    await this.botSay(
+                        `📋 Berikut panduan self-management untuk ${this.activeSelfManagement.label}. Lihat detail di kartu hasil di bawah.`
+                    );
+                }
             }
 
             await this.botSay(this.config.result.message);
@@ -378,6 +396,9 @@ document.addEventListener('alpine:init', () => {
                     }
                     if (data.risiko_label) {
                         this.risikoLabel = data.risiko_label;
+                    }
+                    if (this.config.suppress_emergency) {
+                        this.isEmergency = false;
                     }
                 }
             } catch {
