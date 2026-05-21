@@ -284,18 +284,19 @@
                 </div>
 
                 {{-- Finished actions --}}
-                <div x-show="finished && !isEmergency" x-cloak class="space-y-2">
+                <div x-show="finished" x-cloak class="space-y-2">
                     <a
                         x-show="config.self_management"
                         x-cloak
                         href="{{ $screening['self_management_url'] ?? route('login') }}"
-                        class="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-brand-500 bg-white py-3.5 text-sm font-semibold text-brand-600 shadow-sm transition hover:bg-brand-50 active:scale-[0.98]"
+                        class="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-brand-500 bg-white py-3.5 text-sm font-semibold text-brand-600 shadow-sm transition hover:bg-brand-50 active:scale-[0.98]"
                     >
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Self-Management
                     </a>
+                    <div x-show="!isEmergency" x-cloak class="space-y-2">
                     <a
                         href="{{ route('detection.chat.session', $screening['disease']) }}"
                         class="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:from-brand-700 hover:to-brand-600 active:scale-[0.98]"
@@ -320,6 +321,7 @@
                                 Riwayat
                             </a>
                         @endauth
+                    </div>
                     </div>
                 </div>
                 <div x-show="finished && isEmergency" x-cloak class="grid grid-cols-2 gap-2">
