@@ -9,6 +9,8 @@ document.addEventListener('alpine:init', () => {
         textInput: '',
         finished: false,
         showInput: false,
+        isEmergency: false,
+        emergencySymptoms: [],
 
         get totalQuestions() {
             return this.config.questions.length;
@@ -187,9 +189,17 @@ document.addEventListener('alpine:init', () => {
             this.activeOptions = [];
             this.showInput = false;
 
+            const summary = this.buildSummary();
+            await this.saveScreening(summary);
+
+            if (this.isEmergency) {
+                await this.botSay(
+                    '⚠️ PERINGATAN DARURAT: Gejala yang Anda laporkan memerlukan penanganan segera. Segera hubungi layanan darurat (119) atau kunjungi IGD terdekat.'
+                );
+            }
+
             await this.botSay(this.config.result.message);
 
-            const summary = this.buildSummary();
             this.messages.push({
                 id: 'result-' + Date.now(),
                 role: 'bot',
@@ -198,6 +208,31 @@ document.addEventListener('alpine:init', () => {
                 isResult: true,
             });
             this.$nextTick(() => this.scrollToBottom());
+        },
+
+        async saveScreening(summary) {
+            const token = document.querySelector('meta[name="csrf-token"]')?.content;
+            try {
+                const res = await fetch('/api/screening', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                    },
+                    body: JSON.stringify({
+                        answers: this.answers,
+                        summary,
+                    }),
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    this.isEmergency = data.is_emergency;
+                    this.emergencySymptoms = data.emergency_symptoms ?? [];
+                }
+            } catch {
+                // offline or server error — screening still shown locally
+            }
         },
 
         buildSummary() {

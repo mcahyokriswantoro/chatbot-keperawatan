@@ -177,6 +177,11 @@
             </button>
         </div>
 
+        {{-- Emergency banner --}}
+        <div x-show="finished && isEmergency" x-cloak class="mb-3 rounded-2xl bg-rose-600 px-4 py-3 text-center text-sm font-semibold text-white">
+            <a href="{{ route('emergency') }}" class="underline">Buka halaman Peringatan Darurat →</a>
+        </div>
+
         {{-- Finished actions --}}
         <div x-show="finished" x-cloak class="flex gap-2">
             <a
@@ -185,6 +190,14 @@
             >
                 Kembali ke Beranda
             </a>
+            @auth
+                <a
+                    href="{{ route('history') }}"
+                    class="flex-1 rounded-full border border-brand-200 py-2.5 text-center text-sm font-semibold text-brand-600 hover:bg-brand-50"
+                >
+                    Riwayat
+                </a>
+            @endauth
             <button
                 type="button"
                 @click="window.location.reload()"
