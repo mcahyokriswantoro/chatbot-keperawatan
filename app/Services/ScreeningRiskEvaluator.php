@@ -20,6 +20,7 @@ class ScreeningRiskEvaluator
                 'total_score' => $result['total'],
                 'max_score' => $result['max'],
                 'hasil_kategori' => $result['hasil_kategori'],
+                'risiko_label' => $result['risiko_label'],
             ];
         }
 

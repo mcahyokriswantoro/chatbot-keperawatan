@@ -135,24 +135,25 @@ class TbParuScoringService
         $total = $this->calculateTotal($answers);
         $max = $this->maxScore();
 
-        $emergencySymptoms = [];
-        if (($answers['q07'] ?? '') === 'ya') {
-            $emergencySymptoms[] = 'Batuk berdarah';
-        }
-
-        $isEmergency = count($emergencySymptoms) > 0;
-
         $hasilKategori = $this->hasilKategori($total);
-
-        $riskLevel = $isEmergency ? 'emergency' : $this->riskLevelFromTotal($total);
 
         return [
             'total' => $total,
             'max' => $max,
             'hasil_kategori' => $hasilKategori,
-            'risk_level' => $riskLevel,
-            'is_emergency' => $isEmergency,
-            'emergency_symptoms' => $emergencySymptoms,
+            'risiko_label' => $this->risikoLabel($hasilKategori),
+            'risk_level' => $this->riskLevelFromTotal($total),
+            'is_emergency' => false,
+            'emergency_symptoms' => [],
         ];
+    }
+
+    public function risikoLabel(string $hasilKategori): string
+    {
+        return match ($hasilKategori) {
+            'Tinggi' => 'Risiko Tinggi',
+            'Sedang' => 'Risiko Sedang',
+            default => 'Risiko Rendah',
+        };
     }
 }

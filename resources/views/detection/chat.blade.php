@@ -93,7 +93,7 @@
                                 }"
                             >
                                 <p class="text-[10px] font-medium uppercase tracking-wide opacity-80">Klasifikasi Risiko</p>
-                                <p class="text-xl font-bold" x-text="risikoLabel ?? hasilKategori"></p>
+                                <p class="text-xl font-bold" x-text="risikoLabel ?? (hasilKategori ? 'Risiko ' + hasilKategori : '')"></p>
                                 <p
                                     x-show="hasWarningSigns"
                                     x-cloak
@@ -142,6 +142,23 @@
                                     </tr>
                                 </tfoot>
                             </table>
+                        </div>
+                        <div
+                            x-show="activeSelfManagement"
+                            x-cloak
+                            class="rounded-xl border border-brand-200 bg-brand-50/80 px-3 py-3 text-left"
+                        >
+                            <p class="text-xs font-bold text-brand-800" x-text="'Panduan Self-Management — ' + (activeSelfManagement?.label ?? '')"></p>
+                            <template x-for="(section, sIdx) in (activeSelfManagement?.sections ?? [])" :key="sIdx">
+                                <div class="mt-3">
+                                    <p class="text-[11px] font-semibold text-slate-800" x-text="section.title"></p>
+                                    <ul class="mt-1 list-inside list-disc space-y-0.5 text-[10px] leading-relaxed text-slate-600">
+                                        <template x-for="(item, iIdx) in section.items" :key="iIdx">
+                                            <li x-text="item"></li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </template>
                         </div>
                         <pre
                             x-show="!config.scoring"
@@ -268,6 +285,17 @@
 
                 {{-- Finished actions --}}
                 <div x-show="finished && !isEmergency" x-cloak class="space-y-2">
+                    <a
+                        x-show="config.self_management"
+                        x-cloak
+                        href="{{ $screening['self_management_url'] ?? route('login') }}"
+                        class="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-brand-500 bg-white py-3.5 text-sm font-semibold text-brand-600 shadow-sm transition hover:bg-brand-50 active:scale-[0.98]"
+                    >
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Self-Management
+                    </a>
                     <a
                         href="{{ route('detection.chat.session', $screening['disease']) }}"
                         class="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:from-brand-700 hover:to-brand-600 active:scale-[0.98]"

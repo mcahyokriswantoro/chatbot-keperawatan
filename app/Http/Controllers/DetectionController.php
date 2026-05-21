@@ -124,6 +124,8 @@ class DetectionController extends Controller
         $scoringLegend = null;
         $questionPrefix = null;
         $warningSignIds = null;
+        $selfManagement = null;
+        $suppressEmergency = false;
 
         if ($disease === 'tb_paru') {
             $tbScoring = app(TbParuScoringService::class);
@@ -131,6 +133,8 @@ class DetectionController extends Controller
             $maxScore = $tbScoring->maxScore();
             $scoringItems = config('tb_paru_skrining.items');
             $scoringLegend = '≥11 Tinggi · 6–10 Sedang · 0–5 Rendah';
+            $selfManagement = config('tb_paru_self_management');
+            $suppressEmergency = true;
         } elseif ($disease === 'dhf') {
             $dhfScoring = app(DhfScoringService::class);
             $questions = $dhfScoring->questions();
@@ -184,7 +188,7 @@ class DetectionController extends Controller
         }
 
         $resultMessages = [
-            'tb_paru' => 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor dan ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila skor tinggi atau ada gejala memberat.',
+            'tb_paru' => 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis.',
             'dhf' => 'Terima kasih telah menyelesaikan skrining DHF. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera ke fasilitas kesehatan bila risiko tinggi atau ada tanda peringatan.',
             'ppok' => 'Terima kasih telah menyelesaikan skrining PPOK. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
             'penyakit_ginjal' => 'Terima kasih telah menyelesaikan skrining Penyakit Ginjal. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
@@ -207,6 +211,11 @@ class DetectionController extends Controller
             'question_prefix' => $questionPrefix,
             'warning_sign_ids' => $warningSignIds,
             'scoring_legend' => $scoringLegend,
+            'self_management' => $selfManagement,
+            'suppress_emergency' => $suppressEmergency,
+            'self_management_url' => auth()->check()
+                ? route('self-management')
+                : route('login'),
             'screening_identity_id' => session('screening_identity_id'),
             'result' => [
                 'title' => 'Skrining '.$diseaseConfig['label'].' Selesai',
