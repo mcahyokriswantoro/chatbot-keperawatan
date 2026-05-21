@@ -26,40 +26,10 @@ return [
         'label' => 'PPOK',
         'icon' => '💨',
         'color' => 'teal',
-        'description' => 'Skrining penyakit paru obstruktif kronik',
-        'welcome' => 'Halo! Saya akan membantu skrining awal PPOK (Penyakit Paru Obstruktif Kronis). Mari mulai dengan beberapa pertanyaan. Siap?',
-        'questions' => [
-            [
-                'id' => 'sesak',
-                'text' => 'Apakah Anda sering sesak napas, terutama saat beraktivitas?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya_berat', 'label' => 'Ya, mengganggu aktivitas'],
-                    ['value' => 'ya_ringan', 'label' => 'Ya, ringan'],
-                    ['value' => 'tidak', 'label' => 'Tidak'],
-                ],
-            ],
-            [
-                'id' => 'batuk_kronis',
-                'text' => 'Apakah batuk berdahak berlangsung lebih dari 3 bulan?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya', 'label' => 'Ya'],
-                    ['value' => 'tidak', 'label' => 'Tidak'],
-                ],
-            ],
-            [
-                'id' => 'faktor_risiko',
-                'text' => 'Faktor risiko yang Anda miliki? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'rokok', 'label' => 'Perokok aktif/passive'],
-                    ['value' => 'polusi', 'label' => 'Paparan polusi/asap'],
-                    ['value' => 'riwayat_paru', 'label' => 'Riwayat penyakit paru'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-        ],
+        'scoring' => true,
+        'description' => 'Skrining penyakit paru obstruktif kronik (19 pertanyaan, skor ya/tidak)',
+        'welcome' => 'Halo! Skrining PPOK terdiri dari 19 pertanyaan gejala dan faktor risiko dalam ≥ 3 bulan terakhir. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor 1. Di akhir akan ditampilkan jumlah skor dan klasifikasi risiko. Siap memulai?',
+        'questions' => [], // diisi dari PpokScoringService via DetectionController
     ],
 
     'penyakit_ginjal' => [

@@ -254,6 +254,13 @@ document.addEventListener('alpine:init', () => {
             return ids.some((id) => this.answers[id] === 'ya');
         },
 
+        standardRisikoKategori(total) {
+            if (total >= 9) return 'Tinggi';
+            if (total >= 5) return 'Sedang';
+
+            return 'Rendah';
+        },
+
         hasilKategoriFromScore(total) {
             if (this.config.disease === 'dhf') {
                 const hasWarning = this.hasWarningSignsFromAnswers();
@@ -262,6 +269,10 @@ document.addEventListener('alpine:init', () => {
                 if (total >= 5) return 'Sedang';
 
                 return 'Rendah';
+            }
+
+            if (this.config.disease === 'ppok') {
+                return this.standardRisikoKategori(total);
             }
 
             if (total >= 11) return 'Tinggi';

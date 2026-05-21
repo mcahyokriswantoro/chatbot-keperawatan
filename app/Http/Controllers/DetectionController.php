@@ -6,6 +6,7 @@ use App\Http\Requests\StoreScreeningIdentityRequest;
 use App\Models\ScreeningIdentity;
 use App\Models\Wilayah;
 use App\Services\DhfScoringService;
+use App\Services\PpokScoringService;
 use App\Services\TbParuScoringService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -80,7 +81,7 @@ class DetectionController extends Controller
             return $redirect;
         }
 
-        if (in_array($disease, ['tb_paru', 'dhf'], true)) {
+        if (in_array($disease, ['tb_paru', 'dhf', 'ppok'], true)) {
             return redirect()->route('detection.chat.session', $disease);
         }
 
@@ -133,11 +134,19 @@ class DetectionController extends Controller
             $questionPrefix = config('dhf_skrining.question_prefix');
             $warningSignIds = config('dhf_skrining.warning_sign_ids');
             $scoringLegend = config('dhf_skrining.scoring_legend');
+        } elseif ($disease === 'ppok') {
+            $ppokScoring = app(PpokScoringService::class);
+            $questions = $ppokScoring->questions();
+            $maxScore = $ppokScoring->maxScore();
+            $scoringItems = config('ppok_skrining.items');
+            $questionPrefix = config('ppok_skrining.question_prefix');
+            $scoringLegend = config('ppok_skrining.scoring_legend');
         }
 
         $resultMessages = [
             'tb_paru' => 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor dan ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila skor tinggi atau ada gejala memberat.',
             'dhf' => 'Terima kasih telah menyelesaikan skrining DHF. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera ke fasilitas kesehatan bila risiko tinggi atau ada tanda peringatan.',
+            'ppok' => 'Terima kasih telah menyelesaikan skrining PPOK. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
         ];
 
         $screening = [
