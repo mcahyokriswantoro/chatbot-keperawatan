@@ -27,10 +27,11 @@ Route::get('/profil', [ProfilePageController::class, 'index'])->name('profile.pa
 Route::view('/bantuan', 'help.index')->name('help');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/deteksi/identitas', [DetectionController::class, 'identityForm'])->name('detection.identity');
+    Route::post('/deteksi/identitas', [DetectionController::class, 'storeIdentity'])->name('detection.identity.store');
     Route::get('/deteksi', [DetectionController::class, 'index'])->name('detection.start');
     Route::get('/deteksi/{disease}/skrining', [DetectionController::class, 'chat'])->name('detection.chat.session');
     Route::get('/deteksi/{disease}', [DetectionController::class, 'show'])->name('detection.chat');
-    Route::post('/deteksi/{disease}/identitas', [DetectionController::class, 'storeIdentity'])->name('detection.identity.store');
     Route::post('/api/screening', [ScreeningController::class, 'store'])->name('screening.store');
     Route::get('/api/wilayah/children', [WilayahController::class, 'children'])->name('wilayah.children');
 

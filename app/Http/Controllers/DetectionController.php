@@ -12,59 +12,20 @@ use Illuminate\View\View;
 
 class DetectionController extends Controller
 {
-    public function index(): View
+    public function identityForm(): View
     {
-        return view('detection.menu', [
-            'diseases' => config('diseases'),
+        return view('detection.identity', [
+            'provinces' => Wilayah::provinsi()->orderBy('nama')->get(['kode', 'nama']),
+            'oldWilayah' => [
+                'province_kode' => old('province_kode'),
+                'regency_kode' => old('regency_kode'),
+                'district_kode' => old('district_kode'),
+            ],
         ]);
     }
 
-    public function show(string $disease): View|RedirectResponse
+    public function storeIdentity(StoreScreeningIdentityRequest $request): RedirectResponse
     {
-        $diseases = config('diseases');
-
-        abort_unless(isset($diseases[$disease]), 404);
-
-        $diseaseConfig = $diseases[$disease];
-
-        if (! empty($diseaseConfig['requires_identity'])) {
-            return view('detection.identity', [
-                'disease' => $disease,
-                'diseaseLabel' => $diseaseConfig['label'],
-                'provinces' => Wilayah::provinsi()->orderBy('nama')->get(['kode', 'nama']),
-                'oldWilayah' => [
-                    'province_kode' => old('province_kode'),
-                    'regency_kode' => old('regency_kode'),
-                    'district_kode' => old('district_kode'),
-                ],
-            ]);
-        }
-
-        return $this->chatView($disease, $diseaseConfig);
-    }
-
-    public function chat(string $disease): View|RedirectResponse
-    {
-        $diseases = config('diseases');
-
-        abort_unless(isset($diseases[$disease]), 404);
-
-        $diseaseConfig = $diseases[$disease];
-
-        if (! empty($diseaseConfig['requires_identity']) && ! session("screening_identity.{$disease}")) {
-            return redirect()->route('detection.chat', $disease);
-        }
-
-        return $this->chatView($disease, $diseaseConfig);
-    }
-
-    public function storeIdentity(StoreScreeningIdentityRequest $request, string $disease): RedirectResponse
-    {
-        $diseases = config('diseases');
-
-        abort_unless(isset($diseases[$disease]), 404);
-        abort_unless(! empty($diseases[$disease]['requires_identity']), 404);
-
         $dateOfBirth = Carbon::parse($request->validated('date_of_birth'));
 
         $province = Wilayah::findOrFail($request->validated('province_kode'));
@@ -73,7 +34,7 @@ class DetectionController extends Controller
 
         $identity = ScreeningIdentity::create([
             'user_id' => $request->user()?->id,
-            'disease' => $disease,
+            'disease' => 'general',
             'name' => $request->validated('name'),
             'gender' => $request->validated('gender'),
             'phone' => $request->validated('phone'),
@@ -92,16 +53,65 @@ class DetectionController extends Controller
             'district_kode' => $district->kode,
         ]);
 
-        session(["screening_identity.{$disease}" => $identity->id]);
+        session(['screening_identity_id' => $identity->id]);
 
-        return redirect()->route('detection.chat.session', $disease);
+        return redirect()->route('detection.start');
+    }
+
+    public function index(): View|RedirectResponse
+    {
+        if ($redirect = $this->redirectIfNoIdentity()) {
+            return $redirect;
+        }
+
+        return view('detection.menu', [
+            'diseases' => config('diseases'),
+        ]);
+    }
+
+    public function show(string $disease): View|RedirectResponse
+    {
+        $diseases = config('diseases');
+
+        abort_unless(isset($diseases[$disease]), 404);
+
+        if ($redirect = $this->redirectIfNoIdentity()) {
+            return $redirect;
+        }
+
+        if ($disease === 'tb_paru') {
+            return redirect()->route('detection.chat.session', $disease);
+        }
+
+        return $this->chatView($disease, $diseases[$disease]);
+    }
+
+    public function chat(string $disease): View|RedirectResponse
+    {
+        $diseases = config('diseases');
+
+        abort_unless(isset($diseases[$disease]), 404);
+
+        if ($redirect = $this->redirectIfNoIdentity()) {
+            return $redirect;
+        }
+
+        return $this->chatView($disease, $diseases[$disease]);
+    }
+
+    private function redirectIfNoIdentity(): ?RedirectResponse
+    {
+        if (! session('screening_identity_id')) {
+            return redirect()->route('detection.identity');
+        }
+
+        return null;
     }
 
     private function chatView(string $disease, array $diseaseConfig): View
     {
         $questions = $diseaseConfig['questions'];
         $maxScore = null;
-
         $scoringItems = null;
 
         if ($disease === 'tb_paru') {
@@ -121,7 +131,7 @@ class DetectionController extends Controller
             'scoring' => $diseaseConfig['scoring'] ?? false,
             'max_score' => $maxScore,
             'scoring_items' => $scoringItems,
-            'screening_identity_id' => session("screening_identity.{$disease}"),
+            'screening_identity_id' => session('screening_identity_id'),
             'result' => [
                 'title' => 'Skrining '.$diseaseConfig['label'].' Selesai',
                 'message' => $disease === 'tb_paru'

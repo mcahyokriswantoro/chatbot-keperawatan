@@ -6,7 +6,6 @@ return [
         'label' => 'TB Paru',
         'icon' => '🫁',
         'color' => 'sky',
-        'requires_identity' => true,
         'scoring' => true,
         'description' => 'Skrining risiko tuberkulosis paru (23 pertanyaan baku)',
         'welcome' => 'Halo! Skrining TB Paru terdiri dari 23 pertanyaan baku. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor sesuai tabel; jika Tidak, skor 0. Di akhir akan ditampilkan jumlah nilai akhir. Siap memulai?',

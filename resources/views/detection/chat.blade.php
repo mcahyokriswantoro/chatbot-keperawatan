@@ -262,7 +262,7 @@
                 {{-- Finished actions --}}
                 <div x-show="finished && !isEmergency" x-cloak class="space-y-2">
                     <a
-                        href="{{ route('detection.chat', $screening['disease']) }}"
+                        href="{{ route('detection.chat.session', $screening['disease']) }}"
                         class="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:from-brand-700 hover:to-brand-600 active:scale-[0.98]"
                     >
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -23,7 +23,7 @@ class ScreeningController extends Controller
         $risk = $evaluator->evaluate($validated['answers'], $validated['disease']);
 
         $identityId = $validated['screening_identity_id']
-            ?? session("screening_identity.{$validated['disease']}");
+            ?? session('screening_identity_id');
 
         $session = ScreeningSession::create([
             'user_id' => $request->user()?->id,
@@ -34,10 +34,6 @@ class ScreeningController extends Controller
             'risk_level' => $risk['risk_level'],
             'is_emergency' => $risk['is_emergency'],
         ]);
-
-        if ($identityId) {
-            session()->forget("screening_identity.{$validated['disease']}");
-        }
 
         return response()->json(array_filter([
             'id' => $session->id,
