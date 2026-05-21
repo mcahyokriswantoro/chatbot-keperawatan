@@ -18,10 +18,8 @@
                 </svg>
             </a>
 
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white shadow-soft">
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V9h2v7zm4 0h-2V9h2v7z"/>
-                </svg>
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-soft ring-2 ring-brand-100">
+                <x-screening-bot-icon class="h-8 w-8" />
             </div>
 
             <div class="min-w-0 flex-1">
@@ -57,10 +55,8 @@
             <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start gap-2'">
                 {{-- Bot avatar --}}
                 <template x-if="msg.role === 'bot'">
-                    <div class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7v1h-2v-1a5 5 0 00-5-5h-1v1.27A2 2 0 0112 4a2 2 0 00-2 2 2 2 0 104 0 2 2 0 00-2-2c0-1.1.9-2 2-2V3.73A2 2 0 0112 2z"/>
-                        </svg>
+                    <div class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-2 ring-brand-100">
+                        <x-screening-bot-icon class="h-6 w-6" />
                     </div>
                 </template>
 
@@ -177,10 +173,8 @@
 
         {{-- Typing indicator --}}
         <div x-show="isTyping" x-cloak class="flex items-start gap-2">
-            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7v1h-2v-1a5 5 0 00-5-5h-1v1.27A2 2 0 0112 4a2 2 0 00-2 2 2 2 0 104 0 2 2 0 00-2-2c0-1.1.9-2 2-2V3.73A2 2 0 0112 2z"/>
-                </svg>
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-2 ring-brand-100">
+                <x-screening-bot-icon class="h-6 w-6" />
             </div>
             <div class="rounded-2xl rounded-tl-sm border border-brand-100 bg-white px-4 py-3 shadow-sm">
                 <div class="flex gap-1">
