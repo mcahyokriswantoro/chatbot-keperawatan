@@ -39,12 +39,14 @@ class ScreeningController extends Controller
             session()->forget("screening_identity.{$validated['disease']}");
         }
 
-        return response()->json([
+        return response()->json(array_filter([
             'id' => $session->id,
             'risk_level' => $risk['risk_level'],
             'is_emergency' => $risk['is_emergency'],
             'emergency_symptoms' => $risk['emergency_symptoms'],
             'emergency_url' => route('emergency'),
-        ]);
+            'total_score' => $risk['total_score'] ?? null,
+            'max_score' => $risk['max_score'] ?? null,
+        ], fn ($value) => $value !== null));
     }
 }

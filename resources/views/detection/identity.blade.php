@@ -159,17 +159,6 @@
             </div>
 
             <div>
-                <label for="address" class="text-xs font-medium text-slate-600">Alamat <span class="text-rose-500">*</span></label>
-                <textarea
-                    id="address"
-                    name="address"
-                    rows="2"
-                    required
-                    class="mt-1 w-full rounded-xl border border-brand-200 bg-white px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
-                >{{ old('address') }}</textarea>
-            </div>
-
-            <div>
                 <label for="province_kode" class="text-xs font-medium text-slate-600">Provinsi <span class="text-rose-500">*</span></label>
                 <select
                     id="province_kode"

@@ -10,6 +10,18 @@ class ScreeningRiskEvaluator
      */
     public function evaluate(array $answers, ?string $disease = null): array
     {
+        if ($disease === 'tb_paru') {
+            $result = app(TbParuScoringService::class)->evaluate($answers);
+
+            return [
+                'risk_level' => $result['risk_level'],
+                'is_emergency' => $result['is_emergency'],
+                'emergency_symptoms' => $result['emergency_symptoms'],
+                'total_score' => $result['total'],
+                'max_score' => $result['max'],
+            ];
+        }
+
         $emergencySymptoms = $this->detectEmergency($answers, $disease);
         $isEmergency = count($emergencySymptoms) > 0;
         $riskLevel = 'low';

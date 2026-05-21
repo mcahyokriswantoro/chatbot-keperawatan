@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreScreeningIdentityRequest;
 use App\Models\ScreeningIdentity;
 use App\Models\Wilayah;
+use App\Services\TbParuScoringService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -82,7 +83,7 @@ class DetectionController extends Controller
             'height_cm' => $request->validated('height_cm'),
             'domicile_address' => $request->validated('domicile_address'),
             'occupation' => $request->validated('occupation'),
-            'address' => $request->validated('address'),
+            'address' => $request->validated('domicile_address'),
             'province' => $province->nama,
             'province_kode' => $province->kode,
             'regency' => $regency->nama,
@@ -98,17 +99,34 @@ class DetectionController extends Controller
 
     private function chatView(string $disease, array $diseaseConfig): View
     {
+        $questions = $diseaseConfig['questions'];
+        $maxScore = null;
+
+        $scoringItems = null;
+
+        if ($disease === 'tb_paru') {
+            $tbScoring = app(TbParuScoringService::class);
+            $questions = $tbScoring->questions();
+            $maxScore = $tbScoring->maxScore();
+            $scoringItems = config('tb_paru_skrining.items');
+        }
+
         $screening = [
             'bot_name' => config('screening.bot_name'),
             'disease' => $disease,
             'disease_label' => $diseaseConfig['label'],
             'welcome' => $diseaseConfig['welcome'],
             'start_options' => config('screening.start_options'),
-            'questions' => $diseaseConfig['questions'],
+            'questions' => $questions,
+            'scoring' => $diseaseConfig['scoring'] ?? false,
+            'max_score' => $maxScore,
+            'scoring_items' => $scoringItems,
             'screening_identity_id' => session("screening_identity.{$disease}"),
             'result' => [
                 'title' => 'Skrining '.$diseaseConfig['label'].' Selesai',
-                'message' => 'Terima kasih telah menyelesaikan skrining '.$diseaseConfig['label'].'. Berikut ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan jika keluhan memberat.',
+                'message' => $disease === 'tb_paru'
+                    ? 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor dan ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila skor tinggi atau ada gejala memberat.'
+                    : 'Terima kasih telah menyelesaikan skrining '.$diseaseConfig['label'].'. Berikut ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan jika keluhan memberat.',
             ],
         ];
 
