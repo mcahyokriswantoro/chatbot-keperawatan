@@ -168,6 +168,7 @@ class DetectionController extends Controller
             $scoringItems = config('stroke_skrining.items');
             $questionPrefix = config('stroke_skrining.question_prefix');
             $scoringLegend = config('stroke_skrining.scoring_legend');
+            $selfManagement = config('stroke_self_management');
         } elseif ($disease === 'jantung_koroner') {
             $jantungScoring = app(JantungKoronerScoringService::class);
             $questions = $jantungScoring->questions();
@@ -196,7 +197,7 @@ class DetectionController extends Controller
             'dhf' => 'Terima kasih telah menyelesaikan skrining DHF. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera ke fasilitas kesehatan bila risiko tinggi atau ada tanda peringatan.',
             'ppok' => 'Terima kasih telah menyelesaikan skrining PPOK. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
             'penyakit_ginjal' => 'Terima kasih telah menyelesaikan skrining Penyakit Ginjal. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi atau gejala memberat.',
-            'stroke' => 'Terima kasih telah menyelesaikan skrining Stroke. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila ada gejala mendadak (FAST), segera hubungi layanan darurat atau kunjungi IGD.',
+            'stroke' => 'Terima kasih telah menyelesaikan skrining Stroke. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila ada gejala mendadak (FAST), segera hubungi layanan darurat atau kunjungi IGD.',
             'jantung_koroner' => 'Terima kasih telah menyelesaikan skrining Jantung Koroner. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila nyeri dada hebat atau tidak membaik, segera ke IGD.',
             'diabetes_melitus' => 'Terima kasih telah menyelesaikan skrining Diabetes Melitus. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan gula darah.',
             'hipertensi' => 'Terima kasih telah menyelesaikan skrining Hipertensi. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan tekanan darah.',
