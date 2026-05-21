@@ -3,8 +3,9 @@
         ['label' => 'Beranda', 'route' => 'home', 'active' => request()->routeIs('home')],
         ['label' => 'Profil', 'route' => 'profile.page', 'active' => request()->routeIs('profile.page')],
         ['label' => 'Riwayat', 'route' => 'history', 'active' => request()->routeIs('history')],
-        ['label' => 'Self Management', 'route' => 'self-management', 'active' => request()->routeIs('self-management')],
-        ['label' => 'Monitoring', 'route' => 'monitoring', 'active' => request()->routeIs('monitoring')],
+        // Sementara disembunyikan:
+        // ['label' => 'Self Management', 'route' => 'self-management', 'active' => request()->routeIs('self-management')],
+        // ['label' => 'Monitoring', 'route' => 'monitoring', 'active' => request()->routeIs('monitoring')],
         ['label' => 'Bantuan', 'route' => 'help', 'active' => request()->routeIs('help')],
     ];
 @endphp
