@@ -1,0 +1,224 @@
+document.addEventListener('alpine:init', () => {
+    Alpine.data('screeningChat', (config) => ({
+        config,
+        messages: [],
+        currentStep: -1,
+        isTyping: false,
+        answers: {},
+        multiSelected: [],
+        textInput: '',
+        finished: false,
+        showInput: false,
+
+        get totalQuestions() {
+            return this.config.questions.length;
+        },
+
+        get progress() {
+            if (this.finished) return 100;
+            if (this.currentStep < 0) return 0;
+            return Math.round(((this.currentStep + 1) / this.totalQuestions) * 100);
+        },
+
+        get progressLabel() {
+            if (this.finished) return 'Selesai';
+            if (this.currentStep < 0) return 'Memulai';
+            return `Pertanyaan ${this.currentStep + 1} dari ${this.totalQuestions}`;
+        },
+
+        init() {
+            this.$nextTick(() => this.scrollToBottom());
+            setTimeout(() => this.showWelcome(), 400);
+        },
+
+        scrollToBottom() {
+            const el = this.$refs.messageList;
+            if (el) {
+                el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+            }
+        },
+
+        async botSay(text, delay = 900) {
+            this.isTyping = true;
+            this.scrollToBottom();
+            await this.wait(delay);
+            this.isTyping = false;
+            this.messages.push({
+                id: Date.now() + Math.random(),
+                role: 'bot',
+                text,
+                time: this.now(),
+            });
+            this.$nextTick(() => this.scrollToBottom());
+        },
+
+        userSay(text) {
+            this.messages.push({
+                id: Date.now() + Math.random(),
+                role: 'user',
+                text,
+                time: this.now(),
+            });
+            this.$nextTick(() => this.scrollToBottom());
+        },
+
+        now() {
+            return new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        },
+
+        wait(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        },
+
+        async showWelcome() {
+            await this.botSay(this.config.welcome);
+            this.showQuickReplies(this.config.start_options);
+        },
+
+        showQuickReplies(options) {
+            this.activeOptions = options;
+            this.showInput = false;
+            this.multiSelected = [];
+        },
+
+        activeOptions: [],
+
+        async selectOption(option) {
+            this.activeOptions = [];
+            this.userSay(option.label);
+
+            if (this.currentStep < 0) {
+                if (option.value === 'later') {
+                    await this.wait(300);
+                    await this.botSay('Baik, kapan saja Anda siap silakan kembali ke halaman ini. Semoga sehat selalu! 🙏');
+                    return;
+                }
+                this.currentStep = 0;
+                await this.askQuestion(0);
+                return;
+            }
+
+            const question = this.config.questions[this.currentStep];
+            this.answers[question.id] = option.value;
+            await this.nextQuestion();
+        },
+
+        toggleMulti(value, label) {
+            if (value === 'tidak_ada') {
+                this.multiSelected = ['tidak_ada'];
+                return;
+            }
+            this.multiSelected = this.multiSelected.filter((v) => v !== 'tidak_ada');
+            const idx = this.multiSelected.indexOf(value);
+            if (idx >= 0) {
+                this.multiSelected.splice(idx, 1);
+            } else {
+                this.multiSelected.push(value);
+            }
+        },
+
+        isMultiSelected(value) {
+            return this.multiSelected.includes(value);
+        },
+
+        async submitMulti() {
+            if (this.multiSelected.length === 0) return;
+            const question = this.config.questions[this.currentStep];
+            const labels = question.options
+                .filter((o) => this.multiSelected.includes(o.value))
+                .map((o) => o.label);
+            this.activeOptions = [];
+            this.userSay(labels.join(', '));
+            this.answers[question.id] = [...this.multiSelected];
+            this.multiSelected = [];
+            await this.nextQuestion();
+        },
+
+        async submitText() {
+            const text = this.textInput.trim();
+            const question = this.config.questions[this.currentStep];
+            this.userSay(text || 'Tidak ada');
+            this.answers[question.id] = text || '-';
+            this.textInput = '';
+            this.showInput = false;
+            await this.nextQuestion();
+        },
+
+        async askQuestion(index) {
+            const question = this.config.questions[index];
+            await this.botSay(question.text);
+
+            if (question.type === 'choice') {
+                this.showQuickReplies(question.options);
+            } else if (question.type === 'multi') {
+                this.activeOptions = question.options;
+                this.showInput = false;
+            } else if (question.type === 'text') {
+                this.activeOptions = [];
+                this.showInput = true;
+                this.$nextTick(() => this.$refs.textInput?.focus());
+            }
+        },
+
+        async nextQuestion() {
+            await this.wait(500);
+            this.currentStep++;
+
+            const symptoms = this.answers.symptoms;
+            const skipDuration = Array.isArray(symptoms) && symptoms.includes('tidak_ada');
+            if (
+                skipDuration
+                && this.config.questions[this.currentStep]?.id === 'duration'
+            ) {
+                this.answers.duration = 'none';
+                this.currentStep++;
+            }
+
+            if (this.currentStep >= this.config.questions.length) {
+                await this.showResult();
+                return;
+            }
+
+            await this.askQuestion(this.currentStep);
+        },
+
+        async showResult() {
+            this.finished = true;
+            this.activeOptions = [];
+            this.showInput = false;
+
+            await this.botSay(this.config.result.message);
+
+            const summary = this.buildSummary();
+            this.messages.push({
+                id: 'result-' + Date.now(),
+                role: 'bot',
+                text: summary,
+                time: this.now(),
+                isResult: true,
+            });
+            this.$nextTick(() => this.scrollToBottom());
+        },
+
+        buildSummary() {
+            const lines = ['📋 Ringkasan Skrining\n'];
+            this.config.questions.forEach((q) => {
+                const answer = this.answers[q.id];
+                let display = '-';
+                if (Array.isArray(answer)) {
+                    display = q.options
+                        .filter((o) => answer.includes(o.value))
+                        .map((o) => o.label)
+                        .join(', ');
+                } else if (q.type === 'choice' || q.type === 'multi') {
+                    const opt = q.options?.find((o) => o.value === answer);
+                    display = opt?.label ?? answer;
+                } else {
+                    display = answer;
+                }
+                lines.push(`• ${q.text.replace(/\?.*$/, '')}: ${display}`);
+            });
+            return lines.join('\n');
+        },
+    }));
+});
