@@ -66,44 +66,10 @@ return [
         'label' => 'Diabetes Melitus',
         'icon' => '🩸',
         'color' => 'orange',
-        'description' => 'Skrining diabetes melitus',
-        'welcome' => 'Halo! Saya akan membantu skrining awal Diabetes Melitus. Mari periksa gejala dan faktor risiko Anda. Siap memulai?',
-        'questions' => [
-            [
-                'id' => 'gejala_dm',
-                'text' => 'Gejala yang Anda alami? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'haus', 'label' => 'Haus berlebihan'],
-                    ['value' => 'banyak_urine', 'label' => 'Sering buang air kecil'],
-                    ['value' => 'bb_turun', 'label' => 'Berat badan turun tanpa sebab'],
-                    ['value' => 'luka_lambat', 'label' => 'Luka sulit sembuh'],
-                    ['value' => 'mudah_lelah', 'label' => 'Mudah lelah'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-            [
-                'id' => 'gula_terukur',
-                'text' => 'Apakah pernah diperiksa gula darah puasa ≥ 126 mg/dL atau HbA1c tinggi?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya', 'label' => 'Ya'],
-                    ['value' => 'tidak', 'label' => 'Tidak / belum pernah'],
-                    ['value' => 'tidak_tahu', 'label' => 'Tidak tahu'],
-                ],
-            ],
-            [
-                'id' => 'faktor_risiko',
-                'text' => 'Faktor risiko yang Anda miliki?',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'keluarga', 'label' => 'Riwayat diabetes keluarga'],
-                    ['value' => 'obesitas', 'label' => 'Obesitas'],
-                    ['value' => 'kurang_aktif', 'label' => 'Kurang aktivitas fisik'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-        ],
+        'scoring' => true,
+        'description' => 'Skrining diabetes melitus (23 pertanyaan, skor ya/tidak)',
+        'welcome' => 'Halo! Skrining Diabetes Melitus terdiri dari 23 pertanyaan gejala dan faktor risiko. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor 1. Di akhir akan ditampilkan jumlah skor dan klasifikasi risiko. Siap memulai?',
+        'questions' => [], // diisi dari DiabetesMelitusScoringService via DetectionController
     ],
 
     'hipertensi' => [

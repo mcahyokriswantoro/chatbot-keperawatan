@@ -93,6 +93,20 @@ class ScreeningRiskEvaluator
             ];
         }
 
+        if ($disease === 'diabetes_melitus') {
+            $result = app(DiabetesMelitusScoringService::class)->evaluate($answers);
+
+            return [
+                'risk_level' => $result['risk_level'],
+                'is_emergency' => $result['is_emergency'],
+                'emergency_symptoms' => $result['emergency_symptoms'],
+                'total_score' => $result['total'],
+                'max_score' => $result['max'],
+                'hasil_kategori' => $result['hasil_kategori'],
+                'risiko_label' => $result['risiko_label'],
+            ];
+        }
+
         $emergencySymptoms = $this->detectEmergency($answers, $disease);
         $isEmergency = count($emergencySymptoms) > 0;
         $riskLevel = 'low';
