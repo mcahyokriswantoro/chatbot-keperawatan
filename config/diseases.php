@@ -6,6 +6,7 @@ return [
         'label' => 'TB Paru',
         'icon' => '🫁',
         'color' => 'sky',
+        'requires_identity' => true,
         'description' => 'Skrining gejala tuberkulosis paru',
         'welcome' => 'Halo! Saya akan membantu skrining awal TB Paru. Saya akan menanyakan beberapa gejala umum. Hasil ini bukan diagnosis — konsultasikan ke fasilitas kesehatan bila perlu. Siap memulai?',
         'questions' => [

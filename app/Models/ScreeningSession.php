@@ -9,6 +9,7 @@ class ScreeningSession extends Model
 {
     protected $fillable = [
         'user_id',
+        'screening_identity_id',
         'disease',
         'answers',
         'summary',
@@ -36,5 +37,10 @@ class ScreeningSession extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function identity(): BelongsTo
+    {
+        return $this->belongsTo(ScreeningIdentity::class, 'screening_identity_id');
     }
 }

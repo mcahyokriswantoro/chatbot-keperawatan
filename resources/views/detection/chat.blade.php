@@ -198,13 +198,12 @@
                     Riwayat
                 </a>
             @endauth
-            <button
-                type="button"
-                @click="window.location.reload()"
-                class="flex-1 rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+            <a
+                href="{{ route('detection.chat', $screening['disease']) }}"
+                class="flex-1 rounded-full bg-brand-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-brand-700"
             >
                 Ulangi Skrining
-            </button>
+            </a>
         </div>
 
         {{-- Idle hint when waiting --}}

@@ -224,6 +224,7 @@ document.addEventListener('alpine:init', () => {
                         disease: this.config.disease,
                         answers: this.answers,
                         summary,
+                        screening_identity_id: this.config.screening_identity_id ?? null,
                     }),
                 });
                 if (res.ok) {
