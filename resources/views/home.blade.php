@@ -17,7 +17,7 @@
 
     {{-- CTA Button --}}
     <a
-        href="{{ route('detection.start') }}"
+        href="{{ route('detection.identity') }}"
         class="mb-8 flex w-full items-center justify-between rounded-full bg-brand-600 py-4 pl-6 pr-2 text-white shadow-soft transition hover:bg-brand-700 active:scale-[0.98]"
     >
         <span class="text-base font-semibold">Mulai Deteksi Kesehatan</span>
@@ -79,7 +79,7 @@
             </div>
 
             {{-- Info card --}}
-            <a href="{{ route('detection.start') }}" class="mx-4 mb-4 block rounded-2xl bg-white px-5 py-4 text-center shadow-soft transition hover:shadow-md active:scale-[0.99]">
+            <a href="{{ route('detection.identity') }}" class="mx-4 mb-4 block rounded-2xl bg-white px-5 py-4 text-center shadow-soft transition hover:shadow-md active:scale-[0.99]">
                 <h3 class="text-base font-bold text-slate-900">Deteksi Kesehatan</h3>
                 <p class="mt-1 text-sm leading-relaxed text-slate-500">
                     Jawab beberapa pertanyaan dan dapatkan hasil deteksi Anda

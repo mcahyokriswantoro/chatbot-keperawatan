@@ -92,9 +92,16 @@
                                     'border-emerald-200 bg-emerald-50 text-emerald-800': hasilKategori === 'Rendah',
                                 }"
                             >
-                                <p class="text-[10px] font-medium uppercase tracking-wide opacity-80">Hasil Skrining</p>
-                                <p class="text-xl font-bold" x-text="hasilKategori"></p>
-                                <p class="mt-1 text-[10px] opacity-70">≥11 Tinggi · 6–10 Sedang · 0–5 Rendah</p>
+                                <p class="text-[10px] font-medium uppercase tracking-wide opacity-80">Klasifikasi Risiko</p>
+                                <p class="text-xl font-bold" x-text="risikoLabel ?? hasilKategori"></p>
+                                <p
+                                    x-show="hasWarningSigns"
+                                    x-cloak
+                                    class="mt-1 text-[10px] font-semibold text-rose-700"
+                                >
+                                    Terdapat tanda peringatan (warning signs)
+                                </p>
+                                <p class="mt-1 text-[10px] opacity-70" x-text="config.scoring_legend ?? '≥11 Tinggi · 6–10 Sedang · 0–5 Rendah'"></p>
                             </div>
                         </div>
                         <div x-show="config.scoring && scoreRows.length" x-cloak class="overflow-x-auto rounded-xl border border-brand-100">
@@ -262,7 +269,7 @@
                 {{-- Finished actions --}}
                 <div x-show="finished && !isEmergency" x-cloak class="space-y-2">
                     <a
-                        href="{{ route('detection.chat', $screening['disease']) }}"
+                        href="{{ route('detection.chat.session', $screening['disease']) }}"
                         class="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:from-brand-700 hover:to-brand-600 active:scale-[0.98]"
                     >
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

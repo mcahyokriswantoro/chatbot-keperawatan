@@ -15,6 +15,8 @@ document.addEventListener('alpine:init', () => {
         maxScore: null,
         scoreRows: [],
         hasilKategori: null,
+        risikoLabel: null,
+        hasWarningSigns: false,
 
         get totalQuestions() {
             return this.config.questions.length;
@@ -164,9 +166,18 @@ document.addEventListener('alpine:init', () => {
 
         async askQuestion(index) {
             const question = this.config.questions[index];
-            const prompt = question.no
-                ? `${question.no}. ${question.text}?`
-                : question.text;
+            const prefix = question.prompt_prefix ?? this.config.question_prefix ?? '';
+            let prompt;
+
+            if (question.no && prefix) {
+                prompt = `${question.no}. ${prefix} ${question.text}?`;
+            } else if (question.no) {
+                prompt = `${question.no}. ${question.text}?`;
+            } else if (prefix) {
+                prompt = `${prefix} ${question.text}?`;
+            } else {
+                prompt = question.text;
+            }
 
             await this.botSay(prompt);
 
@@ -237,10 +248,52 @@ document.addEventListener('alpine:init', () => {
             return { total, max };
         },
 
+        hasWarningSignsFromAnswers() {
+            const ids = this.config.warning_sign_ids ?? [];
+
+            return ids.some((id) => this.answers[id] === 'ya');
+        },
+
+        standardRisikoKategori(total) {
+            if (total >= 9) return 'Tinggi';
+            if (total >= 5) return 'Sedang';
+
+            return 'Rendah';
+        },
+
         hasilKategoriFromScore(total) {
+            if (this.config.disease === 'dhf') {
+                const hasWarning = this.hasWarningSignsFromAnswers();
+
+                if (hasWarning || total >= 9) return 'Tinggi';
+                if (total >= 5) return 'Sedang';
+
+                return 'Rendah';
+            }
+
+            if (this.config.disease === 'ppok') {
+                return this.standardRisikoKategori(total);
+            }
+
+            if (this.config.disease === 'penyakit_ginjal') {
+                if (total >= 11) return 'Tinggi';
+                if (total >= 6) return 'Sedang';
+
+                return 'Rendah';
+            }
+
             if (total >= 11) return 'Tinggi';
             if (total >= 6) return 'Sedang';
+
             return 'Rendah';
+        },
+
+        risikoLabelFromKategori(hasilKategori) {
+            return {
+                Tinggi: 'Risiko Tinggi',
+                Sedang: 'Risiko Sedang',
+                Rendah: 'Risiko Rendah',
+            }[hasilKategori] ?? hasilKategori;
         },
 
         async showResult() {
@@ -253,10 +306,14 @@ document.addEventListener('alpine:init', () => {
                 this.totalScore = total;
                 this.maxScore = max;
                 this.scoreRows = this.getScoreRows();
+                this.hasWarningSigns = this.hasWarningSignsFromAnswers();
                 this.hasilKategori = this.hasilKategoriFromScore(total);
+                this.risikoLabel = this.risikoLabelFromKategori(this.hasilKategori);
                 this.answers._total_score = total;
                 this.answers._max_score = max;
                 this.answers._hasil_kategori = this.hasilKategori;
+                this.answers._risiko_label = this.risikoLabel;
+                this.answers._has_warning_signs = this.hasWarningSigns;
             }
 
             const summary = this.buildSummary();
@@ -269,9 +326,14 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (this.config.scoring && this.totalScore !== null) {
-                await this.botSay(
-                    `📊 Jumlah skor Anda: ${this.totalScore} dari ${this.maxScore}. Hasil skrining: ${this.hasilKategori}.`
-                );
+                const label = this.risikoLabel ?? this.hasilKategori;
+                let scoreMsg = `📊 Jumlah skor Anda: ${this.totalScore} dari ${this.maxScore}. Klasifikasi: ${label}.`;
+
+                if (this.hasWarningSigns) {
+                    scoreMsg += ' Terdapat tanda peringatan (warning signs) — segera ke fasilitas kesehatan.';
+                }
+
+                await this.botSay(scoreMsg);
             }
 
             await this.botSay(this.config.result.message);
@@ -314,6 +376,9 @@ document.addEventListener('alpine:init', () => {
                     if (data.hasil_kategori) {
                         this.hasilKategori = data.hasil_kategori;
                     }
+                    if (data.risiko_label) {
+                        this.risikoLabel = data.risiko_label;
+                    }
                 }
             } catch {
                 // offline or server error — screening still shown locally
@@ -325,13 +390,19 @@ document.addEventListener('alpine:init', () => {
 
             if (this.config.scoring) {
                 const rows = this.getScoreRows();
+                const displayLabel = this.risikoLabel ?? this.hasilKategori;
                 const lines = [
                     `📋 Hasil Skrining: ${label}`,
                     '',
                     `⭐ JUMLAH NILAI AKHIR: ${this.totalScore} / ${this.maxScore}`,
-                    `📌 HASIL: ${this.hasilKategori}`,
-                    '',
+                    `📌 KLASIFIKASI: ${displayLabel}`,
                 ];
+
+                if (this.hasWarningSigns) {
+                    lines.push('⚠️ Terdapat tanda peringatan (warning signs)');
+                }
+
+                lines.push('');
 
                 rows.forEach((row) => {
                     lines.push(

@@ -5,7 +5,7 @@
     <header class="shrink-0 border-b border-brand-100 bg-white/90 backdrop-blur-md px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
         <div class="flex items-center gap-3">
             <a
-                href="{{ route('detection.start') }}"
+                href="{{ route('home') }}"
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-brand-600 transition hover:bg-brand-50"
                 aria-label="Kembali"
             >
@@ -14,8 +14,8 @@
                 </svg>
             </a>
             <div class="min-w-0 flex-1">
-                <h1 class="truncate text-sm font-bold text-slate-900">Identitas Peserta — {{ $diseaseLabel }}</h1>
-                <p class="text-xs text-slate-500">Lengkapi data sebelum memulai skrining</p>
+                <h1 class="truncate text-sm font-bold text-slate-900">Identitas Peserta</h1>
+                <p class="text-xs text-slate-500">Lengkapi data sebelum memilih jenis skrining</p>
             </div>
         </div>
     </header>
@@ -33,7 +33,7 @@
 
         <form
             method="POST"
-            action="{{ route('detection.identity.store', $disease) }}"
+            action="{{ route('detection.identity.store') }}"
             class="space-y-4"
             x-data="screeningIdentityForm(@js(['provinces' => $provinces, 'old' => $oldWilayah]))"
         >
@@ -216,7 +216,7 @@
                 type="submit"
                 class="w-full rounded-full bg-brand-600 py-3 text-sm font-semibold text-white shadow-soft hover:bg-brand-700 active:scale-[0.98]"
             >
-                Lanjut ke Skrining
+                Lanjut ke Menu Deteksi
             </button>
         </form>
     </div>

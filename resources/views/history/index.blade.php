@@ -29,7 +29,7 @@
     @empty
         <div class="rounded-2xl bg-white p-6 text-center shadow-card">
             <p class="text-sm text-slate-500">Belum ada riwayat skrining.</p>
-            <a href="{{ route('detection.start') }}" class="mt-4 inline-block text-sm font-semibold text-brand-600">Mulai skrining →</a>
+            <a href="{{ route('detection.identity') }}" class="mt-4 inline-block text-sm font-semibold text-brand-600">Mulai skrining →</a>
         </div>
     @endforelse
 
