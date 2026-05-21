@@ -11,6 +11,10 @@ document.addEventListener('alpine:init', () => {
         showInput: false,
         isEmergency: false,
         emergencySymptoms: [],
+        totalScore: null,
+        maxScore: null,
+        scoreRows: [],
+        hasilKategori: null,
 
         get totalQuestions() {
             return this.config.questions.length;
@@ -85,11 +89,19 @@ document.addEventListener('alpine:init', () => {
 
         activeOptions: [],
 
+        itemScore(question, answerValue) {
+            if (!this.config.scoring || !question?.score_ya) {
+                return 0;
+            }
+
+            return answerValue === 'ya' ? question.score_ya : 0;
+        },
+
         async selectOption(option) {
             this.activeOptions = [];
-            this.userSay(option.label);
 
             if (this.currentStep < 0) {
+                this.userSay(option.label);
                 if (option.value === 'later') {
                     await this.wait(300);
                     await this.botSay('Baik, kapan saja Anda siap silakan kembali ke halaman ini. Semoga sehat selalu! 🙏');
@@ -101,7 +113,11 @@ document.addEventListener('alpine:init', () => {
             }
 
             const question = this.config.questions[this.currentStep];
+            const score = this.itemScore(question, option.value);
             this.answers[question.id] = option.value;
+            this.answers[`${question.id}_score`] = score;
+
+            this.userSay(option.label);
             await this.nextQuestion();
         },
 
@@ -148,7 +164,11 @@ document.addEventListener('alpine:init', () => {
 
         async askQuestion(index) {
             const question = this.config.questions[index];
-            await this.botSay(question.text);
+            const prompt = question.no
+                ? `${question.no}. ${question.text}?`
+                : question.text;
+
+            await this.botSay(prompt);
 
             if (question.type === 'choice') {
                 this.showQuickReplies(question.options);
@@ -184,10 +204,60 @@ document.addEventListener('alpine:init', () => {
             await this.askQuestion(this.currentStep);
         },
 
+        getScoreRows() {
+            const items = this.config.scoring_items ?? this.config.questions;
+
+            return items.map((item) => {
+                const jawaban = this.answers[item.id] ?? '';
+                const skorDidapat = this.itemScore(
+                    { score_ya: item.score_ya },
+                    jawaban,
+                );
+
+                return {
+                    no: item.no,
+                    text: item.text,
+                    jawaban: jawaban === 'ya' ? 'Ya' : jawaban === 'tidak' ? 'Tidak' : '-',
+                    skor_ya: item.score_ya ?? 0,
+                    skor_didapat: skorDidapat,
+                };
+            });
+        },
+
+        calculateTotalScore() {
+            if (!this.config.scoring) {
+                return { total: 0, max: 0 };
+            }
+
+            const rows = this.getScoreRows();
+            const total = rows.reduce((sum, row) => sum + row.skor_didapat, 0);
+            const max = this.config.max_score
+                ?? rows.reduce((sum, row) => sum + row.skor_ya, 0);
+
+            return { total, max };
+        },
+
+        hasilKategoriFromScore(total) {
+            if (total >= 11) return 'Tinggi';
+            if (total >= 6) return 'Sedang';
+            return 'Rendah';
+        },
+
         async showResult() {
             this.finished = true;
             this.activeOptions = [];
             this.showInput = false;
+
+            if (this.config.scoring) {
+                const { total, max } = this.calculateTotalScore();
+                this.totalScore = total;
+                this.maxScore = max;
+                this.scoreRows = this.getScoreRows();
+                this.hasilKategori = this.hasilKategoriFromScore(total);
+                this.answers._total_score = total;
+                this.answers._max_score = max;
+                this.answers._hasil_kategori = this.hasilKategori;
+            }
 
             const summary = this.buildSummary();
             await this.saveScreening(summary);
@@ -195,6 +265,12 @@ document.addEventListener('alpine:init', () => {
             if (this.isEmergency) {
                 await this.botSay(
                     '⚠️ PERINGATAN DARURAT: Gejala yang Anda laporkan memerlukan penanganan segera. Segera hubungi layanan darurat (119) atau kunjungi IGD terdekat.'
+                );
+            }
+
+            if (this.config.scoring && this.totalScore !== null) {
+                await this.botSay(
+                    `📊 Jumlah skor Anda: ${this.totalScore} dari ${this.maxScore}. Hasil skrining: ${this.hasilKategori}.`
                 );
             }
 
@@ -224,12 +300,20 @@ document.addEventListener('alpine:init', () => {
                         disease: this.config.disease,
                         answers: this.answers,
                         summary,
+                        screening_identity_id: this.config.screening_identity_id ?? null,
                     }),
                 });
                 if (res.ok) {
                     const data = await res.json();
                     this.isEmergency = data.is_emergency;
                     this.emergencySymptoms = data.emergency_symptoms ?? [];
+                    if (data.total_score !== undefined) {
+                        this.totalScore = data.total_score;
+                        this.maxScore = data.max_score;
+                    }
+                    if (data.hasil_kategori) {
+                        this.hasilKategori = data.hasil_kategori;
+                    }
                 }
             } catch {
                 // offline or server error — screening still shown locally
@@ -238,10 +322,32 @@ document.addEventListener('alpine:init', () => {
 
         buildSummary() {
             const label = this.config.disease_label ?? 'Kesehatan';
+
+            if (this.config.scoring) {
+                const rows = this.getScoreRows();
+                const lines = [
+                    `📋 Hasil Skrining: ${label}`,
+                    '',
+                    `⭐ JUMLAH NILAI AKHIR: ${this.totalScore} / ${this.maxScore}`,
+                    `📌 HASIL: ${this.hasilKategori}`,
+                    '',
+                ];
+
+                rows.forEach((row) => {
+                    lines.push(
+                        `${row.no}. ${row.text} | Jawaban: ${row.jawaban} | Skor (Ya): ${row.skor_ya} | Skor didapat: ${row.skor_didapat}`,
+                    );
+                });
+
+                return lines.join('\n');
+            }
+
             const lines = [`📋 Ringkasan Skrining: ${label}\n`];
+
             this.config.questions.forEach((q) => {
                 const answer = this.answers[q.id];
                 let display = '-';
+
                 if (Array.isArray(answer)) {
                     display = q.options
                         .filter((o) => answer.includes(o.value))
@@ -253,8 +359,11 @@ document.addEventListener('alpine:init', () => {
                 } else {
                     display = answer;
                 }
-                lines.push(`• ${q.text.replace(/\?.*$/, '')}: ${display}`);
+
+                const prefix = q.no ? `${q.no}. ` : '• ';
+                lines.push(`${prefix}${q.text}: ${display}`);
             });
+
             return lines.join('\n');
         },
     }));

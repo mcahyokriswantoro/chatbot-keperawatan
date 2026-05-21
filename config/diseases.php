@@ -6,40 +6,11 @@ return [
         'label' => 'TB Paru',
         'icon' => '🫁',
         'color' => 'sky',
-        'description' => 'Skrining gejala tuberkulosis paru',
-        'welcome' => 'Halo! Saya akan membantu skrining awal TB Paru. Saya akan menanyakan beberapa gejala umum. Hasil ini bukan diagnosis — konsultasikan ke fasilitas kesehatan bila perlu. Siap memulai?',
-        'questions' => [
-            [
-                'id' => 'batuk_lama',
-                'text' => 'Apakah Anda batuk selama lebih dari 2 minggu?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya', 'label' => 'Ya'],
-                    ['value' => 'tidak', 'label' => 'Tidak'],
-                ],
-            ],
-            [
-                'id' => 'dahak_darah',
-                'text' => 'Apakah ada dahak berdarah atau batuk berdarah?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya', 'label' => 'Ya'],
-                    ['value' => 'tidak', 'label' => 'Tidak'],
-                ],
-            ],
-            [
-                'id' => 'gejala_tb',
-                'text' => 'Gejala lain yang Anda rasakan? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'demam', 'label' => 'Demam berkepanjangan'],
-                    ['value' => 'bb_turun', 'label' => 'Penurunan berat badan'],
-                    ['value' => 'keringat_malam', 'label' => 'Keringat malam'],
-                    ['value' => 'kontak_tb', 'label' => 'Kontak erat dengan penderita TB'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-        ],
+        'requires_identity' => true,
+        'scoring' => true,
+        'description' => 'Skrining risiko tuberkulosis paru (23 pertanyaan baku)',
+        'welcome' => 'Halo! Skrining TB Paru terdiri dari 23 pertanyaan baku. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor sesuai tabel; jika Tidak, skor 0. Di akhir akan ditampilkan jumlah nilai akhir. Siap memulai?',
+        'questions' => [], // diisi dari TbParuScoringService via DetectionController
     ],
 
     'dhf' => [
