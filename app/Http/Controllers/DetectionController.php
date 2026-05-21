@@ -7,6 +7,7 @@ use App\Models\ScreeningIdentity;
 use App\Models\Wilayah;
 use App\Services\DhfScoringService;
 use App\Services\DiabetesMelitusScoringService;
+use App\Services\HipertensiScoringService;
 use App\Services\JantungKoronerScoringService;
 use App\Services\PenyakitGinjalScoringService;
 use App\Services\PpokScoringService;
@@ -85,7 +86,7 @@ class DetectionController extends Controller
             return $redirect;
         }
 
-        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus'], true)) {
+        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi'], true)) {
             return redirect()->route('detection.chat.session', $disease);
         }
 
@@ -173,6 +174,13 @@ class DetectionController extends Controller
             $scoringItems = config('diabetes_melitus_skrining.items');
             $questionPrefix = config('diabetes_melitus_skrining.question_prefix');
             $scoringLegend = config('diabetes_melitus_skrining.scoring_legend');
+        } elseif ($disease === 'hipertensi') {
+            $htScoring = app(HipertensiScoringService::class);
+            $questions = $htScoring->questions();
+            $maxScore = $htScoring->maxScore();
+            $scoringItems = config('hipertensi_skrining.items');
+            $questionPrefix = config('hipertensi_skrining.question_prefix');
+            $scoringLegend = config('hipertensi_skrining.scoring_legend');
         }
 
         $resultMessages = [
@@ -183,6 +191,7 @@ class DetectionController extends Controller
             'stroke' => 'Terima kasih telah menyelesaikan skrining Stroke. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila ada gejala mendadak (FAST), segera hubungi layanan darurat atau kunjungi IGD.',
             'jantung_koroner' => 'Terima kasih telah menyelesaikan skrining Jantung Koroner. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila nyeri dada hebat atau tidak membaik, segera ke IGD.',
             'diabetes_melitus' => 'Terima kasih telah menyelesaikan skrining Diabetes Melitus. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan gula darah.',
+            'hipertensi' => 'Terima kasih telah menyelesaikan skrining Hipertensi. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan tekanan darah.',
         ];
 
         $screening = [

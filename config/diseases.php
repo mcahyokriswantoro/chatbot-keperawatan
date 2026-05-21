@@ -76,44 +76,10 @@ return [
         'label' => 'Hipertensi',
         'icon' => '📈',
         'color' => 'indigo',
-        'description' => 'Skrining tekanan darah tinggi',
-        'welcome' => 'Halo! Mari lakukan skrining awal Hipertensi (tekanan darah tinggi). Siap menjawab beberapa pertanyaan?',
-        'questions' => [
-            [
-                'id' => 'tekanan_terukur',
-                'text' => 'Apakah pernah diukur tekanan darah ≥ 140/90 mmHg?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya', 'label' => 'Ya'],
-                    ['value' => 'tidak', 'label' => 'Tidak / belum pernah'],
-                    ['value' => 'tidak_tahu', 'label' => 'Tidak tahu'],
-                ],
-            ],
-            [
-                'id' => 'gejala_ht',
-                'text' => 'Gejala yang Anda rasakan? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'sakit_kepala', 'label' => 'Sakit kepala'],
-                    ['value' => 'pusing', 'label' => 'Pusing'],
-                    ['value' => 'pandangan', 'label' => 'Pandangan kabur'],
-                    ['value' => 'sesak', 'label' => 'Sesak napas'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada gejala'],
-                ],
-            ],
-            [
-                'id' => 'faktor_risiko',
-                'text' => 'Faktor risiko yang Anda miliki?',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'keluarga', 'label' => 'Riwayat hipertensi keluarga'],
-                    ['value' => 'garam', 'label' => 'Konsumsi garam tinggi'],
-                    ['value' => 'obesitas', 'label' => 'Obesitas'],
-                    ['value' => 'stres', 'label' => 'Stres berlebihan'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-        ],
+        'scoring' => true,
+        'description' => 'Skrining tekanan darah tinggi (20 pertanyaan, skor ya/tidak)',
+        'welcome' => 'Halo! Skrining Hipertensi terdiri dari 20 pertanyaan gejala dan faktor risiko. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor 1. Di akhir akan ditampilkan jumlah skor dan klasifikasi risiko. Siap memulai?',
+        'questions' => [], // diisi dari HipertensiScoringService via DetectionController
     ],
 
 ];
