@@ -92,9 +92,16 @@
                                     'border-emerald-200 bg-emerald-50 text-emerald-800': hasilKategori === 'Rendah',
                                 }"
                             >
-                                <p class="text-[10px] font-medium uppercase tracking-wide opacity-80">Hasil Skrining</p>
-                                <p class="text-xl font-bold" x-text="hasilKategori"></p>
-                                <p class="mt-1 text-[10px] opacity-70">≥11 Tinggi · 6–10 Sedang · 0–5 Rendah</p>
+                                <p class="text-[10px] font-medium uppercase tracking-wide opacity-80">Klasifikasi Risiko</p>
+                                <p class="text-xl font-bold" x-text="risikoLabel ?? hasilKategori"></p>
+                                <p
+                                    x-show="hasWarningSigns"
+                                    x-cloak
+                                    class="mt-1 text-[10px] font-semibold text-rose-700"
+                                >
+                                    Terdapat tanda peringatan (warning signs)
+                                </p>
+                                <p class="mt-1 text-[10px] opacity-70" x-text="config.scoring_legend ?? '≥11 Tinggi · 6–10 Sedang · 0–5 Rendah'"></p>
                             </div>
                         </div>
                         <div x-show="config.scoring && scoreRows.length" x-cloak class="overflow-x-auto rounded-xl border border-brand-100">

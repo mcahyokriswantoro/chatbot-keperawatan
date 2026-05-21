@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreScreeningIdentityRequest;
 use App\Models\ScreeningIdentity;
 use App\Models\Wilayah;
+use App\Services\DhfScoringService;
 use App\Services\TbParuScoringService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -79,7 +80,7 @@ class DetectionController extends Controller
             return $redirect;
         }
 
-        if ($disease === 'tb_paru') {
+        if (in_array($disease, ['tb_paru', 'dhf'], true)) {
             return redirect()->route('detection.chat.session', $disease);
         }
 
@@ -114,12 +115,30 @@ class DetectionController extends Controller
         $maxScore = null;
         $scoringItems = null;
 
+        $scoringLegend = null;
+        $questionPrefix = null;
+        $warningSignIds = null;
+
         if ($disease === 'tb_paru') {
             $tbScoring = app(TbParuScoringService::class);
             $questions = $tbScoring->questions();
             $maxScore = $tbScoring->maxScore();
             $scoringItems = config('tb_paru_skrining.items');
+            $scoringLegend = '≥11 Tinggi · 6–10 Sedang · 0–5 Rendah';
+        } elseif ($disease === 'dhf') {
+            $dhfScoring = app(DhfScoringService::class);
+            $questions = $dhfScoring->questions();
+            $maxScore = $dhfScoring->maxScore();
+            $scoringItems = config('dhf_skrining.items');
+            $questionPrefix = config('dhf_skrining.question_prefix');
+            $warningSignIds = config('dhf_skrining.warning_sign_ids');
+            $scoringLegend = config('dhf_skrining.scoring_legend');
         }
+
+        $resultMessages = [
+            'tb_paru' => 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor dan ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila skor tinggi atau ada gejala memberat.',
+            'dhf' => 'Terima kasih telah menyelesaikan skrining DHF. Berikut total skor dan klasifikasi risiko Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera ke fasilitas kesehatan bila risiko tinggi atau ada tanda peringatan.',
+        ];
 
         $screening = [
             'bot_name' => config('screening.bot_name'),
@@ -131,12 +150,14 @@ class DetectionController extends Controller
             'scoring' => $diseaseConfig['scoring'] ?? false,
             'max_score' => $maxScore,
             'scoring_items' => $scoringItems,
+            'question_prefix' => $questionPrefix,
+            'warning_sign_ids' => $warningSignIds,
+            'scoring_legend' => $scoringLegend,
             'screening_identity_id' => session('screening_identity_id'),
             'result' => [
                 'title' => 'Skrining '.$diseaseConfig['label'].' Selesai',
-                'message' => $disease === 'tb_paru'
-                    ? 'Terima kasih telah menyelesaikan skrining TB Paru. Berikut total skor dan ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila skor tinggi atau ada gejala memberat.'
-                    : 'Terima kasih telah menyelesaikan skrining '.$diseaseConfig['label'].'. Berikut ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan jika keluhan memberat.',
+                'message' => $resultMessages[$disease]
+                    ?? 'Terima kasih telah menyelesaikan skrining '.$diseaseConfig['label'].'. Berikut ringkasan jawaban Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan jika keluhan memberat.',
             ],
         ];
 

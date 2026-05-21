@@ -16,41 +16,10 @@ return [
         'label' => 'DHF',
         'icon' => '🦟',
         'color' => 'amber',
-        'description' => 'Skrining demam berdarah dengue',
-        'welcome' => 'Halo! Mari kita lakukan skrining awal Demam Berdarah Dengue (DHF). Jawab pertanyaan berikut dengan jujur. Siap memulai?',
-        'questions' => [
-            [
-                'id' => 'demam_mendadak',
-                'text' => 'Apakah Anda demam tinggi mendadak (2–7 hari terakhir)?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya', 'label' => 'Ya'],
-                    ['value' => 'tidak', 'label' => 'Tidak'],
-                ],
-            ],
-            [
-                'id' => 'gejala_dhf',
-                'text' => 'Gejala yang Anda alami? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'sakit_kepala', 'label' => 'Sakit kepala hebat'],
-                    ['value' => 'nyeri_otot', 'label' => 'Nyeri otot/sendi'],
-                    ['value' => 'muntah', 'label' => 'Muntah berulang'],
-                    ['value' => 'ruam', 'label' => 'Ruam kulit'],
-                    ['value' => 'perdarahan', 'label' => 'Bintik merah/perdarahan'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-            [
-                'id' => 'tanda_berat',
-                'text' => 'Apakah ada tanda bahaya (muntah terus, perdarahan, sangat lemas)?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya', 'label' => 'Ya — perlu perhatian segera'],
-                    ['value' => 'tidak', 'label' => 'Tidak'],
-                ],
-            ],
-        ],
+        'scoring' => true,
+        'description' => 'Skrining demam berdarah dengue (24 gejala, skor ya/tidak)',
+        'welcome' => 'Halo! Skrining DHF terdiri dari 24 pertanyaan gejala dalam 2–7 hari terakhir. Untuk setiap gejala, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor 1. Di akhir akan ditampilkan jumlah skor dan klasifikasi risiko. Siap memulai?',
+        'questions' => [], // diisi dari DhfScoringService via DetectionController
     ],
 
     'ppok' => [
