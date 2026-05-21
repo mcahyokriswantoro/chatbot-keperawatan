@@ -27,6 +27,7 @@ Route::view('/bantuan', 'help.index')->name('help');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/deteksi', [DetectionController::class, 'index'])->name('detection.start');
+    Route::get('/deteksi/{disease}', [DetectionController::class, 'show'])->name('detection.chat');
     Route::post('/api/screening', [ScreeningController::class, 'store'])->name('screening.store');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

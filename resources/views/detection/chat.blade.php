@@ -9,7 +9,7 @@
     <header class="shrink-0 border-b border-brand-100 bg-white/90 backdrop-blur-md px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
         <div class="flex items-center gap-3">
             <a
-                href="{{ route('home') }}"
+                href="{{ route('detection.start') }}"
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-brand-600 transition hover:bg-brand-50"
                 aria-label="Kembali"
             >
@@ -25,10 +25,10 @@
             </div>
 
             <div class="min-w-0 flex-1">
-                <h1 class="truncate text-sm font-bold text-slate-900" x-text="config.bot_name"></h1>
+                <h1 class="truncate text-sm font-bold text-slate-900" x-text="config.disease_label ?? config.bot_name"></h1>
                 <p class="flex items-center gap-1.5 text-xs text-emerald-600">
                     <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                    Online · Deteksi Kesehatan
+                    <span x-text="'Online · Skrining ' + (config.disease_label ?? 'Kesehatan')"></span>
                 </p>
             </div>
         </div>

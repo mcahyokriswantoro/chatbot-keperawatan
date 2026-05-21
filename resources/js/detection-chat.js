@@ -221,6 +221,7 @@ document.addEventListener('alpine:init', () => {
                         'X-CSRF-TOKEN': token,
                     },
                     body: JSON.stringify({
+                        disease: this.config.disease,
                         answers: this.answers,
                         summary,
                     }),
@@ -236,7 +237,8 @@ document.addEventListener('alpine:init', () => {
         },
 
         buildSummary() {
-            const lines = ['📋 Ringkasan Skrining\n'];
+            const label = this.config.disease_label ?? 'Kesehatan';
+            const lines = [`📋 Ringkasan Skrining: ${label}\n`];
             this.config.questions.forEach((q) => {
                 const answer = this.answers[q.id];
                 let display = '-';

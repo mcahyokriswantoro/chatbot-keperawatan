@@ -4,7 +4,10 @@
     <x-mobile.page-header title="Detail Skrining" :back="route('history')" />
 
     <div class="mb-4 flex items-center justify-between">
-        <p class="text-sm text-slate-500">{{ $session->created_at->format('d M Y, H:i') }}</p>
+        <div>
+            <p class="font-bold text-slate-900">{{ $session->diseaseLabel() ?? 'Skrining Kesehatan' }}</p>
+            <p class="text-sm text-slate-500">{{ $session->created_at->format('d M Y, H:i') }}</p>
+        </div>
         @if ($session->is_emergency)
             <span class="rounded-full bg-rose-600 px-3 py-1 text-xs font-bold text-white">DARURAT</span>
         @endif

@@ -9,7 +9,10 @@
         <a href="{{ route('history.show', $session->id) }}" class="mb-3 block rounded-2xl bg-white p-4 shadow-card border border-brand-100">
             <div class="flex items-start justify-between gap-2">
                 <div>
-                    <p class="font-semibold text-slate-900">{{ $session->created_at->format('d M Y, H:i') }}</p>
+                    <p class="font-semibold text-slate-900">
+                        {{ $session->diseaseLabel() ?? 'Skrining Kesehatan' }}
+                    </p>
+                    <p class="text-xs text-slate-400">{{ $session->created_at->format('d M Y, H:i') }}</p>
                     <p class="mt-1 text-xs text-slate-500 line-clamp-2">{{ Str::limit($session->summary, 80) }}</p>
                 </div>
                 <span @class([

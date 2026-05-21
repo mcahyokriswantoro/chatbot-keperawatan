@@ -12,14 +12,18 @@ class ScreeningController extends Controller
     public function store(Request $request, ScreeningRiskEvaluator $evaluator): JsonResponse
     {
         $validated = $request->validate([
+            'disease' => ['required', 'string', 'max:50'],
             'answers' => ['required', 'array'],
             'summary' => ['required', 'string', 'max:5000'],
         ]);
 
-        $risk = $evaluator->evaluate($validated['answers']);
+        abort_unless(isset(config('diseases')[$validated['disease']]), 422, 'Jenis skrining tidak valid.');
+
+        $risk = $evaluator->evaluate($validated['answers'], $validated['disease']);
 
         $session = ScreeningSession::create([
             'user_id' => $request->user()?->id,
+            'disease' => $validated['disease'],
             'answers' => $validated['answers'],
             'summary' => $validated['summary'],
             'risk_level' => $risk['risk_level'],
