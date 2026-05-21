@@ -4,6 +4,8 @@ namespace App\Services;
 
 class TbParuScoringService
 {
+    /** Skor skrining TB Paru: maksimum risk_level adalah high (bukan emergency). */
+    public const MAX_RISK_LEVEL = 'high';
     /**
      * @return list<array{id: string, no: int, text: string, type: string, score_ya: int, options: list<array{value: string, label: string}>}>
      */

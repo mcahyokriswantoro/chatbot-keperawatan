@@ -13,10 +13,16 @@ class ScreeningRiskEvaluator
         if ($disease === 'tb_paru') {
             $result = app(TbParuScoringService::class)->evaluate($answers);
 
+            // TB Paru tidak memakai emergency; tertinggi = high (skor ≥ 11 → Tinggi).
+            $riskLevel = match ($result['risk_level']) {
+                'low', 'medium', 'high' => $result['risk_level'],
+                default => TbParuScoringService::MAX_RISK_LEVEL,
+            };
+
             return [
-                'risk_level' => $result['risk_level'],
-                'is_emergency' => $result['is_emergency'],
-                'emergency_symptoms' => $result['emergency_symptoms'],
+                'risk_level' => $riskLevel,
+                'is_emergency' => false,
+                'emergency_symptoms' => [],
                 'total_score' => $result['total'],
                 'max_score' => $result['max'],
                 'hasil_kategori' => $result['hasil_kategori'],
