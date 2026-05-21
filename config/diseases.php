@@ -56,45 +56,10 @@ return [
         'label' => 'Jantung Koroner',
         'icon' => '❤️',
         'color' => 'red',
-        'description' => 'Skrining penyakit jantung koroner',
-        'welcome' => 'Halo! Mari lakukan skrining awal Jantung Koroner. Nyeri dada hebat memerlukan pertolongan segera. Siap memulai?',
-        'questions' => [
-            [
-                'id' => 'nyeri_dada',
-                'text' => 'Apakah Anda merasakan nyeri atau tekanan di dada?',
-                'type' => 'choice',
-                'options' => [
-                    ['value' => 'ya_berat', 'label' => 'Ya, hebat'],
-                    ['value' => 'ya_ringan', 'label' => 'Ya, ringan'],
-                    ['value' => 'tidak', 'label' => 'Tidak'],
-                ],
-            ],
-            [
-                'id' => 'gejala_jantung',
-                'text' => 'Gejala pendamping? (bisa pilih lebih dari satu)',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'sesak', 'label' => 'Sesak napas'],
-                    ['value' => 'keringat', 'label' => 'Keringat dingin'],
-                    ['value' => 'mual', 'label' => 'Mual/muntah'],
-                    ['value' => 'kebas', 'label' => 'Kebas di lengan/rahang'],
-                    ['value' => 'pusing', 'label' => 'Pusing'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-            [
-                'id' => 'faktor_risiko',
-                'text' => 'Faktor risiko yang Anda miliki?',
-                'type' => 'multi',
-                'options' => [
-                    ['value' => 'hipertensi', 'label' => 'Hipertensi'],
-                    ['value' => 'diabetes', 'label' => 'Diabetes'],
-                    ['value' => 'rokok', 'label' => 'Merokok'],
-                    ['value' => 'keluarga', 'label' => 'Riwayat penyakit jantung keluarga'],
-                    ['value' => 'tidak_ada', 'label' => 'Tidak ada'],
-                ],
-            ],
-        ],
+        'scoring' => true,
+        'description' => 'Skrining penyakit jantung koroner (25 pertanyaan, skor ya/tidak)',
+        'welcome' => 'Halo! Skrining Jantung Koroner terdiri dari 25 pertanyaan gejala dan faktor risiko. Untuk setiap pertanyaan, pilih Ya atau Tidak. Jika Ya, Anda mendapat skor 1. Di akhir akan ditampilkan jumlah skor dan klasifikasi risiko. Nyeri dada hebat memerlukan pertolongan segera. Siap memulai?',
+        'questions' => [], // diisi dari JantungKoronerScoringService via DetectionController
     ],
 
     'diabetes_melitus' => [
