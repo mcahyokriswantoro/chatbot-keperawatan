@@ -13,7 +13,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gradient-to-b from-brand-50 via-white to-brand-50 text-slate-800">
+<body class="font-sans antialiased bg-slate-50 text-slate-800">
     <div class="min-h-screen flex flex-col">
         <div class="mx-auto w-full max-w-md flex-1 flex flex-col px-5 pt-6 pb-28">
             @yield('content')
