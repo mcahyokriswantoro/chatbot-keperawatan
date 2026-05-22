@@ -17,7 +17,7 @@ return [
         ['value' => 'tidak', 'label' => 'Tidak'],
     ],
 
-    'scoring_legend' => 'Risiko Rendah 0–5 · Risiko Sedang 6–10 · Risiko Tinggi ≥11',
+    'scoring_legend' => 'Risiko Rendah 0-5 · Risiko Sedang 6-10 · Risiko Tinggi ≥11',
 
     'tinggi_min' => 11,
     'sedang_min' => 6,

@@ -74,17 +74,11 @@
                 </p>
             </div>
             <div class="relative h-20 w-20 shrink-0 animate-[float_3s_ease-in-out_infinite]">
-                <svg class="h-full w-full drop-shadow-md" viewBox="0 0 80 90" fill="none" aria-hidden="true">
-                    <ellipse cx="40" cy="82" rx="28" ry="5" fill="rgba(0,102,255,0.12)"/>
-                    <rect x="18" y="28" width="44" height="48" rx="14" fill="#0066FF"/>
-                    <rect x="24" y="36" width="32" height="24" rx="8" fill="#fff"/>
-                    <circle cx="32" cy="46" r="4" fill="#0066FF"/>
-                    <circle cx="48" cy="46" r="4" fill="#0066FF"/>
-                    <path d="M34 54h12" stroke="#0066FF" stroke-width="2" stroke-linecap="round"/>
-                    <rect x="30" y="14" width="20" height="12" rx="4" fill="#0066FF"/>
-                    <circle cx="40" cy="10" r="6" fill="#0066FF"/>
-                    <path d="M12 40l8-6M68 40l-8-6" stroke="#0066FF" stroke-width="4" stroke-linecap="round"/>
-                </svg>
+                <img
+                    src="{{ asset('images/robot.png') }}"
+                    alt=""
+                    class="h-full w-full object-contain drop-shadow-md"
+                />
             </div>
         </div>
     </header>
@@ -149,17 +143,14 @@
         href="{{ route('education.index') }}"
         class="group relative flex items-center gap-3 overflow-hidden rounded-3xl bg-gradient-to-r from-violet-50 via-purple-50 to-violet-100/80 p-4 shadow-sm ring-1 ring-violet-100 transition hover:shadow-md active:scale-[0.99]"
     >
-        <div class="relative h-20 w-16 shrink-0">
-            <svg class="h-full w-full drop-shadow-sm" viewBox="0 0 80 100" fill="none" aria-hidden="true">
-                <ellipse cx="40" cy="92" rx="28" ry="6" fill="rgba(139,92,246,0.15)"/>
-                <circle cx="40" cy="32" r="18" fill="#f5c6a0"/>
-                <path d="M28 28c2-10 10-16 20-16s18 6 20 16c-6-4-14-6-20-6s-14 2-20 6z" fill="#4a3728"/>
-                <path d="M22 55h36l-4 35H26l-4-35z" fill="#fff"/>
-                <path d="M26 55h28v12c0 6-5 10-10 10h-8c-5 0-10-4-10-10V55z" fill="#7c3aed"/>
-                <rect x="32" y="18" width="16" height="8" rx="2" fill="white"/>
-            </svg>
+        <div class="flex h-16 w-14 shrink-0 items-center justify-center self-center">
+            <img
+                src="{{ asset('images/nurse.png') }}"
+                alt=""
+                class="max-h-16 w-full object-contain object-center drop-shadow-sm"
+            />
         </div>
-        <div class="min-w-0 flex-1">
+        <div class="min-w-0 flex-1 self-center">
             <p class="text-sm font-bold text-slate-900">Jaga kesehatan sejak dini ✨</p>
             <p class="mt-0.5 text-[11px] leading-relaxed text-slate-500">
                 Deteksi dini membantu mencegah komplikasi serius
@@ -169,21 +160,25 @@
                 <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
             </span>
         </div>
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-600">
-            <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.5h10.5a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25H6.75a2.25 2.25 0 01-2.25-2.25v-7.5A2.25 2.25 0 016.75 4.5z"/>
-            </svg>
+        <div class="flex h-16 w-14 shrink-0 items-center justify-center self-center overflow-hidden rounded-2xl">
+            <img
+                src="{{ asset('images/shield.png') }}"
+                alt=""
+                class="max-h-14 w-full object-contain object-center"
+            />
         </div>
     </a>
 
     {{-- Tips hari ini --}}
     <section class="overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 ring-1 ring-emerald-100">
         <div class="flex items-center gap-3 p-4">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-sm">
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m1.5.189V12m0 0a6.01 6.01 0 00-1.5-.189M12 12a6.01 6.01 0 011.5-.189M12 12V6.75"/>
-                </svg>
-            </span>
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center">
+                <img
+                    src="{{ asset('images/idea.png') }}"
+                    alt=""
+                    class="h-full w-full object-contain"
+                />
+            </div>
             <div class="min-w-0 flex-1">
                 <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips Hari Ini</p>
                 <p
@@ -193,10 +188,6 @@
                     x-transition:enter-end="opacity-100 translate-y-0"
                     class="mt-0.5 text-xs leading-relaxed text-slate-700"
                 ></p>
-            </div>
-            <div class="shrink-0 text-right">
-                <span class="text-2xl" aria-hidden="true">💧</span>
-                <p class="text-[10px] font-medium text-slate-400">{{ now()->format('H:i') }}</p>
             </div>
         </div>
         <div class="flex justify-center gap-1.5 pb-3">
