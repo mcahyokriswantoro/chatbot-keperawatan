@@ -9,35 +9,27 @@
     $features = [
         [
             'label' => 'Deteksi Kesehatan',
-            'desc' => 'Skrining gejala interaktif',
+            'desc' => 'Cek kondisi kesehatan Anda',
             'url' => $detectionUrl,
-            'icon_bg' => 'bg-blue-50',
-            'icon_text' => 'text-brand-600',
-            'icon' => 'shield',
+            'icon' => 'images/unggulan_deteksi.png',
         ],
         [
             'label' => 'Riwayat Kesehatan',
-            'desc' => 'Lihat hasil skrining',
+            'desc' => 'Lihat riwayat deteksi Anda',
             'url' => $historyUrl,
-            'icon_bg' => 'bg-teal-50',
-            'icon_text' => 'text-teal-600',
-            'icon' => 'history',
+            'icon' => 'images/unggulan_riwayat.png',
         ],
         [
             'label' => 'Edukasi Kesehatan',
             'desc' => 'Artikel & tips kesehatan',
             'url' => route('education.index'),
-            'icon_bg' => 'bg-violet-50',
-            'icon_text' => 'text-violet-600',
-            'icon' => 'education',
+            'icon' => 'images/unggulan_edukasi.png',
         ],
         [
             'label' => 'Konsultasi Langsung',
-            'desc' => 'Bantuan & layanan darurat',
+            'desc' => 'Tanya langsung ke chatbot',
             'url' => route('help'),
-            'icon_bg' => 'bg-orange-50',
-            'icon_text' => 'text-orange-600',
-            'icon' => 'help',
+            'icon' => 'images/unggulan_konsultasi.png',
         ],
     ];
 
@@ -138,32 +130,15 @@
                     href="{{ $feature['url'] }}"
                     class="group flex flex-col items-center rounded-2xl border border-brand-50 bg-white px-1.5 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md active:scale-95"
                 >
-                    <span @class([
-                        'mb-2 flex h-11 w-11 items-center justify-center rounded-2xl transition group-hover:scale-105',
-                        $feature['icon_bg'],
-                        $feature['icon_text'],
-                    ])>
-                        @if ($feature['icon'] === 'shield')
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.5h10.5a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25H6.75a2.25 2.25 0 01-2.25-2.25v-7.5A2.25 2.25 0 016.75 4.5z"/>
-                            </svg>
-                        @elseif ($feature['icon'] === 'history')
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75l2.25 2.25L15 9.75"/>
-                            </svg>
-                        @elseif ($feature['icon'] === 'education')
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3-9h3.75m-3.75 3h3.75m-3.75 3h3.75M6.75 4.5h10.5a1.5 1.5 0 011.5 1.5v12a1.5 1.5 0 01-1.5 1.5H6.75a1.5 1.5 0 01-1.5-1.5v-12a1.5 1.5 0 011.5-1.5z"/>
-                            </svg>
-                        @else
-                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a3.375 3.375 0 106.75 0 3.375 3.375 0 00-6.75 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75c0-1.243 2.01-3.75 9.75-3.75s9.75 2.507 9.75 3.75"/>
-                            </svg>
-                        @endif
+                    <span class="mb-2 flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl transition group-hover:scale-105">
+                        <img
+                            src="{{ asset($feature['icon']) }}"
+                            alt=""
+                            class="h-full w-full object-contain"
+                        />
                     </span>
                     <span class="text-center text-[8px] font-bold leading-tight text-slate-800">{{ $feature['label'] }}</span>
+                    <span class="mt-0.5 text-center text-[7px] leading-snug text-slate-500">{{ $feature['desc'] }}</span>
                 </a>
             @endforeach
         </div>
