@@ -33,18 +33,6 @@
         ],
     ];
 
-    $healthStatus = [
-        ['label' => 'Kesehatan Umum', 'value' => 'Baik', 'tone' => 'text-emerald-600', 'bg' => 'bg-rose-50', 'icon' => 'heart'],
-        ['label' => 'Kualitas Tidur', 'value' => 'Cukup', 'tone' => 'text-amber-600', 'bg' => 'bg-violet-50', 'icon' => 'moon'],
-        ['label' => 'Aktivitas', 'value' => 'Aktif', 'tone' => 'text-emerald-600', 'bg' => 'bg-emerald-50', 'icon' => 'activity'],
-    ];
-
-    $tips = [
-        'Minum minimal 8 gelas air per hari untuk menjaga hidrasi tubuh.',
-        'Olahraga ringan 30 menit sehari membantu menjaga kesehatan jantung.',
-        'Cek tekanan darah secara berkala, terutama jika berusia di atas 40 tahun.',
-        'Istirahat cukup 7–8 jam per malam untuk pemulihan tubuh yang optimal.',
-    ];
 @endphp
 
 @section('content')
@@ -64,7 +52,7 @@
     <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 px-4 pb-4 pt-4 shadow-soft ring-1 ring-brand-100/60">
         <div class="flex items-start gap-3">
             <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-2 ring-brand-100">
-                <img src="{{ asset('images/medical_report.png') }}" alt="" class="h-8 w-8 object-contain" />
+                <x-app.medical-note-icon class="h-8 w-8" />
             </div>
             <div class="min-w-0 flex-1 pt-0.5">
                 <p class="text-xs font-medium text-slate-500">Hi, Saya Chatbot 👋</p>
@@ -75,7 +63,7 @@
             </div>
             <div class="relative h-20 w-20 shrink-0 animate-[float_3s_ease-in-out_infinite]">
                 <img
-                    src="{{ asset('images/robot.png') }}"
+                    src="{{ asset('images/robot.png') }}?v={{ filemtime(public_path('images/robot.png')) }}"
                     alt=""
                     class="h-full w-full object-contain drop-shadow-md"
                 />
@@ -98,14 +86,6 @@
                 <p class="mt-1 text-xs leading-relaxed text-blue-100">
                     Jawab beberapa pertanyaan singkat dan dapatkan hasil deteksi Anda
                 </p>
-                <div class="mt-3 flex items-center gap-2">
-                    <div class="flex -space-x-2">
-                        @foreach (['bg-brand-300', 'bg-teal-300', 'bg-violet-300'] as $dot)
-                            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full {{ $dot }} ring-2 ring-brand-600 text-[8px] font-bold text-white">👤</span>
-                        @endforeach
-                    </div>
-                    <span class="text-[10px] font-medium text-blue-100">12.458+ pengguna telah mencoba</span>
-                </div>
             </div>
             <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-lg transition group-hover:scale-110">
                 <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
@@ -180,7 +160,8 @@
                 />
             </div>
             <div class="min-w-0 flex-1">
-                <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips Hari Ini</p>
+                <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips Minggu Ini</p>
+                <p class="text-[9px] text-emerald-600/80">Sumber: ayosehat.kemkes.go.id</p>
                 <p
                     x-text="tips[tipIndex]"
                     x-transition:enter="transition ease-out duration-300"
@@ -213,17 +194,17 @@
                 <a href="{{ route('login') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700">Masuk →</a>
             @endauth
         </div>
-        <div class="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 scrollbar-none">
+        <div class="grid grid-cols-3 gap-2">
             @foreach ($healthStatus as $status)
-                <div class="min-w-[120px] shrink-0 rounded-2xl border border-brand-50 bg-white p-3 shadow-sm transition hover:shadow-md">
-                    <span @class(['mb-2 flex h-9 w-9 items-center justify-center rounded-xl', $status['bg']])>
+                <div class="rounded-2xl border border-brand-50 bg-white p-3 text-center shadow-sm transition hover:shadow-md">
+                    <span @class(['mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-xl', $status['bg']])>
                         @if ($status['icon'] === 'heart')
                             <svg class="h-5 w-5 text-rose-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219z"/>
                             </svg>
-                        @elseif ($status['icon'] === 'moon')
-                            <svg class="h-5 w-5 text-violet-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a10.503 10.503 0 016.46 1.698z" clip-rule="evenodd"/>
+                        @elseif ($status['icon'] === 'bp')
+                            <svg class="h-5 w-5 text-violet-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
                             </svg>
                         @else
                             <svg class="h-5 w-5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

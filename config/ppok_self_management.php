@@ -1,153 +1,107 @@
 <?php
 
-/**
- * Panduan self-management PPOK berdasarkan klasifikasi risiko skrining.
- */
 return [
+    'emergency' => [
+        'title' => 'Segera ke rumah sakit jika Anda mengalami:',
+        'items' => [
+            'Sesak napas berat yang tiba-tiba',
+            'Napas sangat cepat dan sulit berbicara',
+            'Bibir atau kuku kebiruan (sianosis)',
+            'Penurunan kesadaran',
+        ],
+    ],
     'Rendah' => [
         'label' => 'Risiko Rendah',
+        'intro' => 'Paru-paru Anda relatif baik, tetapi tetap jaga kebiasaan sehat agar kondisi tidak memburuk.',
         'sections' => [
-            [
-                'title' => 'Berhenti & Hindari Rokok',
-                'items' => [
-                    'Tidak merokok',
-                    'Hindari asap rokok (perokok pasif)',
-                ],
-            ],
-            [
-                'title' => 'Lindungi dari Polusi',
-                'items' => [
-                    'Gunakan masker di lingkungan berdebu/polusi',
-                    'Kurangi paparan asap dapur (biomassa)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik',
-                'items' => [
-                    'Olahraga ringan: jalan kaki 20–30 menit/hari',
-                    'Latihan pernapasan sederhana',
-                ],
-            ],
-            [
-                'title' => 'Beri Nutrisi Seimbang',
-                'items' => [
-                    'Konsumsi makanan tinggi protein & antioksidan',
-                    'Cukup minum air',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring',
-                'items' => [
-                    'Skrining ulang bila muncul batuk kronis / sesak',
-                ],
-            ],
+            ['title' => 'Hindari Rokok dan Asap', 'items' => [
+                'Berhenti merokok jika Anda masih merokok',
+                'Jauhi asap rokok orang lain (perokok pasif)',
+            ]],
+            ['title' => 'Lindungi dari Polusi', 'items' => [
+                'Pakai masker di lingkungan berdebu atau berpolusi',
+                'Kurangi paparan asap dapur dari kayu atau arang',
+            ]],
+            ['title' => 'Gerakkan Tubuh Secara Teratur', 'items' => [
+                'Jalan kaki 20–30 menit setiap hari',
+                'Coba latihan pernapasan sederhana',
+            ]],
+            ['title' => 'Makan Bergizi', 'items' => [
+                'Pilih makanan tinggi protein dan antioksidan',
+                'Minum air putih yang cukup',
+            ]],
+            ['title' => 'Pantau Gejala', 'items' => [
+                'Ulangi skrining jika batuk kronis atau sesak napas muncul',
+            ]],
         ],
     ],
     'Sedang' => [
         'label' => 'Risiko Sedang',
+        'intro' => 'Ada tanda yang perlu diperhatikan. Konsultasikan ke tenaga kesehatan untuk evaluasi lebih lanjut.',
         'sections' => [
-            [
-                'title' => 'Lakukan Konsultasi Medis',
-                'items' => [
-                    'Periksa ke puskesmas/klinik',
-                    'Evaluasi fungsi paru (spirometri jika tersedia)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Latihan Pernapasan',
-                'items' => [
-                    'Pursed-lip breathing (tarik napas hidung, hembuskan perlahan lewat mulut)',
-                    'Diaphragmatic breathing',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik Terukur',
-                'items' => [
-                    'Jalan kaki rutin',
-                    'Hindari aktivitas berat berlebihan',
-                    'Program rehabilitasi paru (jika tersedia)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Manajemen Dahak',
-                'items' => [
-                    'Minum cukup cairan',
-                    'Teknik batuk efektif',
-                ],
-            ],
-            [
-                'title' => 'Hindari Pencetus',
-                'items' => [
-                    'Asap rokok',
-                    'Debu dan polusi',
-                    'Udara dingin ekstrem',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Vaksinasi',
-                'items' => [
-                    'Influenza',
-                    'Pneumonia',
-                ],
-            ],
+            ['title' => 'Periksa ke Fasilitas Kesehatan', 'items' => [
+                'Konsultasi ke puskesmas atau klinik',
+                'Tanyakan kemungkinan pemeriksaan spirometri',
+            ]],
+            ['title' => 'Latihan Pernapasan', 'items' => [
+                'Tarik napas dari hidung, hembuskan perlahan lewat mulut (pursed-lip breathing)',
+                'Latihan pernapasan diafragma sesuai anjuran tenaga kesehatan',
+            ]],
+            ['title' => 'Aktivitas Fisik Terukur', 'items' => [
+                'Jalan kaki rutin sesuai kemampuan',
+                'Hindari aktivitas berat yang melelahkan',
+                'Ikuti program rehabilitasi paru jika tersedia',
+            ]],
+            ['title' => 'Bantu Keluarkan Dahak', 'items' => [
+                'Minum cukup cairan agar dahak tidak kental',
+                'Pelajari teknik batuk yang efektif',
+            ]],
+            ['title' => 'Hindari Pemicu Sesak', 'items' => [
+                'Asap rokok',
+                'Debu dan polusi udara',
+                'Udara dingin ekstrem',
+            ]],
+            ['title' => 'Lindungi Diri dengan Vaksin', 'items' => [
+                'Vaksin influenza',
+                'Vaksin pneumonia sesuai anjuran dokter',
+            ]],
         ],
     ],
     'Tinggi' => [
         'label' => 'Risiko Tinggi',
+        'intro' => 'Kondisi paru perlu penanganan medis rutin. Patuhi terapi dan kontrol ke dokter secara berkala.',
         'sections' => [
-            [
-                'title' => 'Lakukan Tindakan Utama',
-                'items' => [
-                    'Wajib kontrol rutin ke dokter',
-                    'Evaluasi fungsi paru (spirometri)',
-                    'Terapi inhaler sesuai resep',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Kepatuhan Terapi',
-                'items' => [
-                    'Gunakan inhaler secara teratur (bronkodilator/kortikosteroid)',
-                    'Jangan menghentikan obat tanpa konsultasi',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Rehabilitasi Paru',
-                'items' => [
-                    'Latihan napas intensif',
-                    'Latihan fisik terstruktur',
-                    'Edukasi teknik energi konservasi',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Manajemen Aktivitas',
-                'items' => [
-                    'Istirahat cukup',
-                    'Gunakan teknik “hemat energi” saat beraktivitas',
-                ],
-            ],
-            [
-                'title' => 'Beri Nutrisi',
-                'items' => [
-                    'Tinggi protein',
-                    'Cukup kalori',
-                    'Pantau berat badan (hindari malnutrisi)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Pencegahan Infeksi',
-                'items' => [
-                    'Gunakan masker',
-                    'Cuci tangan rutin',
-                    'Hindari kerumunan saat sakit',
-                ],
-            ],
-            [
-                'title' => 'Beri Dukungan Keluarga',
-                'items' => [
-                    'Edukasi keluarga tentang PPOK',
-                    'Bantuan aktivitas harian jika diperlukan',
-                ],
-            ],
+            ['title' => 'Kontrol Rutin ke Dokter', 'items' => [
+                'Jangan melewatkan jadwal kontrol',
+                'Lakukan evaluasi fungsi paru (spirometri)',
+                'Gunakan inhaler sesuai resep dokter',
+            ]],
+            ['title' => 'Minum Obat dengan Disiplin', 'items' => [
+                'Gunakan inhaler secara teratur',
+                'Jangan berhenti obat tanpa berkonsultasi dengan dokter',
+            ]],
+            ['title' => 'Rehabilitasi Paru', 'items' => [
+                'Ikuti latihan napas yang dianjurkan',
+                'Lakukan latihan fisik terstruktur',
+                'Pelajari cara menghemat energi saat beraktivitas',
+            ]],
+            ['title' => 'Atur Aktivitas Harian', 'items' => [
+                'Istirahat cukup',
+                'Bagi aktivitas berat menjadi bagian-bagian kecil',
+            ]],
+            ['title' => 'Nutrisi untuk Pemulihan', 'items' => [
+                'Perbanyak protein dan kalori yang cukup',
+                'Pantau berat badan agar tidak malnutrisi',
+            ]],
+            ['title' => 'Cegah Infeksi', 'items' => [
+                'Pakai masker saat di tempat ramai',
+                'Cuci tangan secara rutin',
+                'Hindari kerumunan saat sedang kurang fit',
+            ]],
+            ['title' => 'Dukungan dari Keluarga', 'items' => [
+                'Ajak keluarga memahami kondisi PPOK',
+                'Minta bantuan untuk aktivitas harian jika diperlukan',
+            ]],
         ],
     ],
 ];

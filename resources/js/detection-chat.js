@@ -426,9 +426,7 @@ document.addEventListener('alpine:init', () => {
                 lines.push('');
 
                 rows.forEach((row) => {
-                    lines.push(
-                        `${row.no}. ${row.text} | Jawaban: ${row.jawaban} | Skor (Ya): ${row.skor_ya} | Skor didapat: ${row.skor_didapat}`,
-                    );
+                    lines.push(`${row.no}. ${row.text} — Jawaban: ${row.jawaban}`);
                 });
 
                 return lines.join('\n');

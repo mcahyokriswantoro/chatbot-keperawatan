@@ -10,6 +10,7 @@ class ScreeningIdentity extends Model
 {
     protected $fillable = [
         'user_id',
+        'screening_target',
         'disease',
         'name',
         'gender',

@@ -1,139 +1,103 @@
 <?php
 
-/**
- * Panduan self-management TB Paru berdasarkan klasifikasi risiko skrining.
- */
 return [
+    'emergency' => [
+        'title' => 'Segera ke rumah sakit jika Anda mengalami:',
+        'items' => [
+            'Batuk yang keluar darah',
+            'Sesak napas yang sangat berat',
+            'Penurunan berat badan yang drastis dalam waktu singkat',
+            'Demam tinggi yang tidak turun-turun',
+        ],
+    ],
     'Rendah' => [
         'label' => 'Risiko Rendah',
+        'intro' => 'Hasil skrining menunjukkan risiko rendah. Tetap jaga kesehatan dan waspadai gejala baru.',
         'sections' => [
-            [
-                'title' => 'Lakukan Perilaku Hidup Sehat',
-                'items' => [
-                    'Konsumsi makanan bergizi (tinggi protein: telur, ikan, tempe)',
-                    'Istirahat cukup (7–8 jam/hari)',
-                    'Olahraga ringan (jalan kaki, senam)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Pencegahan Penularan',
-                'items' => [
-                    'Hindari kontak dekat dengan penderita TB aktif',
-                    'Gunakan masker di lingkungan berisiko',
-                    'Terapkan etika batuk',
-                ],
-            ],
-            [
-                'title' => 'Jaga Lingkungan Sehat',
-                'items' => [
-                    'Pastikan rumah memiliki ventilasi baik',
-                    'Paparan sinar matahari cukup',
-                    'Kurangi kepadatan hunian',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring',
-                'items' => [
-                    'Lakukan skrining ulang jika muncul gejala',
-                    'Edukasi keluarga tentang TB',
-                ],
-            ],
+            ['title' => 'Hidup Sehat Sehari-hari', 'items' => [
+                'Makan makanan bergizi, terutama yang tinggi protein seperti telur, ikan, dan tempe',
+                'Istirahat cukup, sekitar 7–8 jam setiap malam',
+                'Lakukan olahraga ringan seperti jalan kaki atau senam',
+            ]],
+            ['title' => 'Cegah Penularan TB', 'items' => [
+                'Hindari kontak dekat dengan orang yang sedang sakit TB aktif',
+                'Pakai masker jika berada di lingkungan yang berisiko',
+                'Saat batuk atau bersin, tutup mulut dengan tisu atau lengan',
+            ]],
+            ['title' => 'Jaga Lingkungan Rumah', 'items' => [
+                'Pastikan rumah memiliki ventilasi udara yang baik',
+                'Biarkan sinar matahari masuk ke dalam rumah',
+                'Hindari ruangan yang terlalu padat penghuninya',
+            ]],
+            ['title' => 'Pantau Kondisi Anda', 'items' => [
+                'Ulangi skrining jika muncul gejala baru',
+                'Ajak keluarga ikut belajar tentang TB',
+            ]],
         ],
     ],
     'Sedang' => [
         'label' => 'Risiko Sedang',
+        'intro' => 'Ada beberapa tanda yang perlu diwaspadai. Segera periksa ke fasilitas kesehatan agar bisa ditangani lebih awal.',
         'sections' => [
-            [
-                'title' => 'Lakukan Deteksi Dini',
-                'items' => [
-                    'Segera periksa ke puskesmas/klinik',
-                    'Lakukan pemeriksaan dahak jika batuk ≥ 2 minggu',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Perilaku Pencegahan',
-                'items' => [
-                    'Gunakan masker saat batuk',
-                    'Tutup mulut saat batuk/bersin',
-                    'Hindari berbagi alat makan',
-                ],
-            ],
-            [
-                'title' => 'Jaga Nutrisi & Imunitas',
-                'items' => [
-                    'Tingkatkan asupan protein dan vitamin (A, C, D)',
-                    'Minum air cukup',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring Gejala',
-                'items' => [
-                    'Catat durasi batuk',
-                    'Catat penurunan berat badan',
-                    'Catat demam atau keringat malam',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Edukasi Keluarga',
-                'items' => [
-                    'Periksa kontak serumah jika ada gejala',
-                    'Tingkatkan kesadaran TB',
-                ],
-            ],
+            ['title' => 'Deteksi Dini', 'items' => [
+                'Segera periksa ke puskesmas atau klinik terdekat',
+                'Jika batuk sudah 2 minggu atau lebih, minta pemeriksaan dahak',
+            ]],
+            ['title' => 'Lindungi Orang di Sekitar', 'items' => [
+                'Pakai masker saat batuk',
+                'Tutup mulut saat batuk atau bersin',
+                'Jangan berbagi alat makan dengan orang lain',
+            ]],
+            ['title' => 'Perkuat Tubuh dengan Nutrisi', 'items' => [
+                'Perbanyak protein serta vitamin A, C, dan D',
+                'Minum air putih yang cukup setiap hari',
+            ]],
+            ['title' => 'Catat Gejala yang Muncul', 'items' => [
+                'Berapa lama batuk berlangsung',
+                'Apakah berat badan turun',
+                'Apakah ada demam atau keringat malam',
+            ]],
+            ['title' => 'Libatkan Keluarga', 'items' => [
+                'Ajak anggota keluarga serumah untuk diperiksa jika ada gejala serupa',
+                'Bantu keluarga memahami bahaya dan pencegahan TB',
+            ]],
         ],
     ],
     'Tinggi' => [
         'label' => 'Risiko Tinggi',
+        'intro' => 'Hasil skrining menunjukkan risiko tinggi. Periksa ke fasilitas kesehatan sesegera mungkin dan ikuti anjuran pengobatan dari tenaga medis.',
         'sections' => [
-            [
-                'title' => 'Lakukan Tindakan Segera',
-                'items' => [
-                    'Periksa ke fasilitas kesehatan (WAJIB)',
-                    'Pemeriksaan tes dahak (BTA/TCM)',
-                    'Pemeriksaan rontgen dada',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Kepatuhan Pengobatan',
-                'items' => [
-                    'Minum obat TB sesuai program DOTS (6–9 bulan)',
-                    'Jangan menghentikan obat tanpa izin dokter',
-                    'Minum obat pada waktu yang sama setiap hari',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Pencegahan Penularan',
-                'items' => [
-                    'Gunakan masker setiap hari',
-                    'Tidur terpisah sementara',
-                    'Jaga ventilasi rumah tetap terbuka',
-                    'Etika batuk (tutup dengan tisu/siku)',
-                ],
-            ],
-            [
-                'title' => 'Jaga Dukungan Nutrisi',
-                'items' => [
-                    'Tinggi protein (ikan, ayam, telur)',
-                    'Kalori cukup',
-                    'Vitamin & mineral',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Manajemen Keluarga',
-                'items' => [
-                    'Skrining semua anggota keluarga',
-                    'Edukasi TB pada keluarga',
-                    'Hindari kontak dekat dengan anak kecil/lansia',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring Mandiri',
-                'items' => [
-                    'Catat kepatuhan minum obat',
-                    'Catat berat badan',
-                    'Catat gejala (batuk, demam, nafsu makan)',
-                ],
-            ],
+            ['title' => 'Tindakan yang Perlu Segera Dilakukan', 'items' => [
+                'Wajib periksa ke fasilitas kesehatan',
+                'Lakukan tes dahak (BTA/TCM) sesuai anjuran dokter',
+                'Lakukan rontgen dada jika diperlukan',
+            ]],
+            ['title' => 'Minum Obat dengan Teratur', 'items' => [
+                'Ikuti program pengobatan TB (DOTS) selama 6–9 bulan',
+                'Jangan berhenti minum obat tanpa izin dokter',
+                'Usahakan minum obat pada jam yang sama setiap hari',
+            ]],
+            ['title' => 'Cegah Menular ke Orang Lain', 'items' => [
+                'Pakai masker setiap hari',
+                'Tidur terpisah sementara dari anggota keluarga jika memungkinkan',
+                'Buka jendela agar udara segar bisa masuk',
+                'Tutup mulut dengan tisu atau siku saat batuk',
+            ]],
+            ['title' => 'Dukung Pemulihan dengan Makanan', 'items' => [
+                'Perbanyak makanan tinggi protein seperti ikan, ayam, dan telur',
+                'Pastikan asupan kalori cukup',
+                'Perhatikan kebutuhan vitamin dan mineral',
+            ]],
+            ['title' => 'Kelola Kondisi Bersama Keluarga', 'items' => [
+                'Ajak seluruh anggota keluarga untuk skrining TB',
+                'Edukasi keluarga tentang pengobatan dan pencegahan',
+                'Batasi kontak dekat dengan anak kecil dan lansia',
+            ]],
+            ['title' => 'Pantau Kondisi Setiap Hari', 'items' => [
+                'Catat apakah obat sudah diminum tepat waktu',
+                'Timbang berat badan secara berkala',
+                'Perhatikan batuk, demam, dan nafsu makan',
+            ]],
         ],
     ],
 ];

@@ -6,7 +6,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#eef5ff">
 
-    <title>{{ $title ?? config('app.name', 'ChatSimpel') }}</title>
+    @php($faviconVersion = filemtime(public_path('favicon.png')) ?: time())
+
+    <title>{{ $title ?? config('app.name', 'Chatbot Keperawatan') }}</title>
+
+    <link rel="icon" href="{{ asset('favicon.png') }}?v={{ $faviconVersion }}" type="image/png" sizes="any">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ $faviconVersion }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}?v={{ $faviconVersion }}">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">

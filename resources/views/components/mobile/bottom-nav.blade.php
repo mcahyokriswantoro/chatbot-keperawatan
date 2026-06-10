@@ -1,11 +1,11 @@
 @php
     $detectionUrl = auth()->check() ? route('detection.start') : route('login');
-    $historyUrl = auth()->check() ? route('history') : route('login');
+    $selfManagementUrl = auth()->check() ? route('self-management') : route('login');
 
     $items = [
         ['label' => 'Beranda', 'route' => 'home', 'active' => request()->routeIs('home')],
         ['label' => 'Deteksi', 'route' => 'detection-start', 'url' => $detectionUrl, 'active' => request()->routeIs('detection.*')],
-        ['label' => 'Riwayat', 'route' => 'history-nav', 'url' => $historyUrl, 'active' => request()->routeIs('history*')],
+        ['label' => 'Self Management', 'route' => 'self-management', 'url' => $selfManagementUrl, 'active' => request()->routeIs('self-management*')],
         ['label' => 'Edukasi', 'route' => 'education.index', 'active' => request()->routeIs('education.*')],
         ['label' => 'Profil', 'route' => 'profile.page', 'active' => request()->routeIs('profile.*')],
     ];

@@ -4,12 +4,15 @@
     <x-mobile.page-header title="Edit Profil" :back="route('profile.page')" />
 
     <div class="mb-4 flex items-center gap-4 rounded-2xl border border-brand-100 bg-white p-4 shadow-card">
-        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xl font-bold text-white">
-            {{ strtoupper(substr($user->name, 0, 1)) }}
+        <div class="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-brand-50 ring-2 ring-brand-100">
+            <img src="{{ $user->profilePhotoUrl() }}" alt="" class="h-full w-full object-cover" />
         </div>
         <div class="min-w-0 flex-1">
             <p class="truncate font-bold text-slate-900">{{ $user->name }}</p>
             <p class="truncate text-sm text-slate-500">{{ $user->email }}</p>
+            @if ($user->phone)
+                <p class="truncate text-xs text-brand-600">{{ $user->phone }}</p>
+            @endif
         </div>
     </div>
 

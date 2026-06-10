@@ -1,5 +1,5 @@
 <img
-    src="{{ asset('images/medical_report.png') }}"
+    src="{{ asset('images/robot.png') }}"
     alt=""
     aria-hidden="true"
     {{ $attributes->merge(['class' => 'object-contain']) }}

@@ -1,137 +1,96 @@
 <?php
 
-/**
- * Panduan self-management Hipertensi berdasarkan klasifikasi risiko skrining.
- */
 return [
+    'emergency' => [
+        'title' => 'Segera ke rumah sakit jika Anda mengalami:',
+        'items' => [
+            'Tekanan darah 180/120 mmHg atau lebih',
+            'Nyeri dada',
+            'Sesak napas',
+            'Gangguan penglihatan atau bicara',
+        ],
+    ],
     'Rendah' => [
         'label' => 'Risiko Rendah',
+        'intro' => 'Tekanan darah Anda relatif baik. Pertahankan gaya hidup sehat agar tetap terkendali.',
         'sections' => [
-            [
-                'title' => 'Jaga Pola Makan Sehat',
-                'items' => [
-                    'Batasi garam (< 5 gram/hari)',
-                    'Perbanyak buah dan sayur',
-                    'Kurangi makanan olahan/instan',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik',
-                'items' => [
-                    'Olahraga ≥ 150 menit/minggu',
-                    'Jalan cepat, bersepeda, senam',
-                ],
-            ],
-            [
-                'title' => 'Jaga Berat Badan Ideal',
-                'items' => [
-                    'Pertahankan IMT normal',
-                ],
-            ],
-            [
-                'title' => 'Hindari Faktor Risiko',
-                'items' => [
-                    'Tidak merokok',
-                    'Batasi alkohol',
-                    'Kelola stres',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring',
-                'items' => [
-                    'Cek tekanan darah secara berkala',
-                ],
-            ],
+            ['title' => 'Makan Sehat', 'items' => [
+                'Batasi garam kurang dari 5 gram per hari',
+                'Perbanyak buah dan sayur',
+                'Kurangi makanan instan dan olahan',
+            ]],
+            ['title' => 'Aktif Bergerak', 'items' => [
+                'Olahraga minimal 150 menit per minggu',
+                'Jalan cepat, bersepeda, atau senam',
+            ]],
+            ['title' => 'Jaga Berat Badan', 'items' => [
+                'Usahakan berat badan tetap ideal',
+            ]],
+            ['title' => 'Hindari Kebiasaan Berisiko', 'items' => [
+                'Berhenti merokok',
+                'Batasi alkohol',
+                'Kelola stres',
+            ]],
+            ['title' => 'Pantau Tekanan Darah', 'items' => [
+                'Cek tekanan darah secara berkala',
+            ]],
         ],
     ],
     'Sedang' => [
         'label' => 'Risiko Sedang',
+        'intro' => 'Ada faktor risiko hipertensi yang perlu diperbaiki. Mulai dari pola makan dan aktivitas fisik.',
         'sections' => [
-            [
-                'title' => 'Lakukan Diet DASH (Dietary Approaches to Stop Hypertension)',
-                'items' => [
-                    'Rendah garam',
-                    'Tinggi kalium (buah & sayur)',
-                    'Kurangi lemak jenuh',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik Teratur',
-                'items' => [
-                    'Minimal 30 menit/hari',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Penurunan Berat Badan',
-                'items' => [
-                    'Target penurunan 5–10%',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Manajemen Stres',
-                'items' => [
-                    'Relaksasi, meditasi, dzikir',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring Rutin',
-                'items' => [
-                    'Cek tekanan darah minimal 1x/minggu',
-                ],
-            ],
+            ['title' => 'Ikuti Diet DASH', 'items' => [
+                'Rendah garam',
+                'Tinggi kalium dari buah dan sayur',
+                'Kurangi lemak jenuh',
+            ]],
+            ['title' => 'Olahraga Teratur', 'items' => [
+                'Minimal 30 menit setiap hari',
+            ]],
+            ['title' => 'Turunkan Berat Badan', 'items' => [
+                'Targetkan penurunan 5–10% dari berat badan',
+            ]],
+            ['title' => 'Kelola Stres', 'items' => [
+                'Relaksasi, meditasi, atau dzikir',
+                'Istirahat cukup',
+            ]],
+            ['title' => 'Pantau Rutin', 'items' => [
+                'Cek tekanan darah minimal sekali seminggu',
+            ]],
         ],
     ],
     'Tinggi' => [
         'label' => 'Risiko Tinggi / Hipertensi Terdiagnosis',
+        'intro' => 'Anda berisiko tinggi atau sudah terdiagnosis hipertensi. Kontrol rutin dan minum obat sesuai resep sangat penting.',
         'sections' => [
-            [
-                'title' => 'Lakukan Tindakan Utama',
-                'items' => [
-                    'Wajib kontrol rutin ke dokter',
-                    'Evaluasi tekanan darah dan organ target',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Kepatuhan Terapi',
-                'items' => [
-                    'Minum obat antihipertensi sesuai resep',
-                    'Tidak menghentikan obat tanpa konsultasi',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Diet Ketat',
-                'items' => [
-                    'Garam < 5 gram/hari',
-                    'Hindari makanan tinggi natrium',
-                    'Perbanyak serat',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik',
-                'items' => [
-                    'Olahraga rutin (sesuai kondisi)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Manajemen Stres',
-                'items' => [
-                    'Relaksasi, meditasi, dzikir',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring Mandiri',
-                'items' => [
-                    'Cek tekanan darah harian',
-                    'Catat hasil',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Dukungan Keluarga',
-                'items' => [
-                    'Pengawasan obat',
-                    'Dukungan gaya hidup sehat',
-                ],
-            ],
+            ['title' => 'Kontrol Rutin ke Dokter', 'items' => [
+                'Jangan lewatkan jadwal kontrol',
+                'Evaluasi tekanan darah dan organ target',
+            ]],
+            ['title' => 'Minum Obat dengan Teratur', 'items' => [
+                'Minum obat antihipertensi sesuai resep',
+                'Jangan berhenti obat tanpa konsultasi dokter',
+            ]],
+            ['title' => 'Diet Ketat', 'items' => [
+                'Garam kurang dari 5 gram per hari',
+                'Hindari makanan tinggi natrium',
+                'Perbanyak serat',
+            ]],
+            ['title' => 'Tetap Aktif', 'items' => [
+                'Olahraga rutin sesuai kondisi tubuh',
+            ]],
+            ['title' => 'Kelola Stres', 'items' => [
+                'Relaksasi, meditasi, atau dzikir',
+            ]],
+            ['title' => 'Pantau Mandiri', 'items' => [
+                'Cek tekanan darah setiap hari',
+                'Catat hasilnya',
+            ]],
+            ['title' => 'Dukungan Keluarga', 'items' => [
+                'Minta keluarga mengingatkan minum obat',
+                'Ajak keluarga ikut menjalani gaya hidup sehat',
+            ]],
         ],
     ],
 ];

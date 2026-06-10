@@ -145,6 +145,12 @@
                             class="rounded-xl border border-brand-200 bg-brand-50/80 px-3 py-3 text-left"
                         >
                             <p class="text-xs font-bold text-brand-800" x-text="'Panduan Self-Management — ' + (activeSelfManagement?.label ?? '')"></p>
+                            <p
+                                x-show="activeSelfManagement?.intro"
+                                x-cloak
+                                class="mt-2 text-[10px] leading-relaxed text-slate-600"
+                                x-text="activeSelfManagement?.intro"
+                            ></p>
                             <template x-for="(section, sIdx) in (activeSelfManagement?.sections ?? [])" :key="sIdx">
                                 <div class="mt-3">
                                     <p class="text-[11px] font-semibold text-slate-800" x-text="section.title"></p>
@@ -155,6 +161,14 @@
                                     </ul>
                                 </div>
                             </template>
+                            <div x-show="config.self_management?.emergency" x-cloak class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-2 py-2">
+                                <p class="text-[10px] font-bold text-rose-800" x-text="config.self_management?.emergency?.title"></p>
+                                <ul class="mt-1 list-inside list-disc space-y-0.5 text-[10px] text-rose-900">
+                                    <template x-for="(item, eIdx) in (config.self_management?.emergency?.items ?? [])" :key="eIdx">
+                                        <li x-text="item"></li>
+                                    </template>
+                                </ul>
+                            </div>
                         </div>
                         <pre
                             x-show="!config.scoring"

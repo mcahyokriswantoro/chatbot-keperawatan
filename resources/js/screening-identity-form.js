@@ -1,6 +1,9 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('screeningIdentityForm', (config = {}) => ({
         provinces: config.provinces ?? [],
+        userProfile: config.userProfile ?? null,
+        profileComplete: config.profileComplete ?? false,
+        screeningTarget: config.defaultTarget ?? (config.profileComplete ? 'self' : 'other'),
         regencies: [],
         districts: [],
         provinceKode: config.old?.province_kode ?? '',
@@ -9,8 +12,14 @@ document.addEventListener('alpine:init', () => {
         loadingRegencies: false,
         loadingDistricts: false,
 
+        get isSelf() {
+            return this.screeningTarget === 'self';
+        },
+
         init() {
-            this.updateAge();
+            if (! this.profileComplete && this.screeningTarget === 'self') {
+                this.screeningTarget = 'other';
+            }
 
             if (this.provinceKode) {
                 this.loadRegencies(this.provinceKode, true);
@@ -104,6 +113,20 @@ document.addEventListener('alpine:init', () => {
             }
 
             display.value = age >= 0 ? `${age} tahun` : '';
+        },
+
+        formatDate(isoDate) {
+            if (! isoDate) {
+                return '-';
+            }
+
+            const date = new Date(isoDate + 'T00:00:00');
+
+            return date.toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+            });
         },
     }));
 });

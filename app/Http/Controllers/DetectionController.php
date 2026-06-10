@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreScreeningIdentityRequest;
 use App\Models\ScreeningIdentity;
+use App\Models\User;
 use App\Models\Wilayah;
+use App\Support\GenderMapper;
 use App\Services\DhfScoringService;
 use App\Services\DiabetesMelitusScoringService;
 use App\Services\HipertensiScoringService;
@@ -21,6 +23,9 @@ class DetectionController extends Controller
 {
     public function identityForm(): View
     {
+        /** @var User|null $user */
+        $user = auth()->user();
+
         return view('detection.identity', [
             'provinces' => Wilayah::provinsi()->orderBy('nama')->get(['kode', 'nama']),
             'oldWilayah' => [
@@ -28,30 +33,71 @@ class DetectionController extends Controller
                 'regency_kode' => old('regency_kode'),
                 'district_kode' => old('district_kode'),
             ],
+            'userProfile' => $user ? $this->userProfilePayload($user) : null,
+            'profileComplete' => $user ? $this->userProfileComplete($user) : false,
+            'defaultTarget' => old('screening_target', ($user && $this->userProfileComplete($user)) ? 'self' : 'other'),
         ]);
     }
 
     public function storeIdentity(StoreScreeningIdentityRequest $request): RedirectResponse
     {
-        $dateOfBirth = Carbon::parse($request->validated('date_of_birth'));
+        $validated = $request->validated();
+        $isSelf = $validated['screening_target'] === 'self';
 
-        $province = Wilayah::findOrFail($request->validated('province_kode'));
-        $regency = Wilayah::findOrFail($request->validated('regency_kode'));
-        $district = Wilayah::findOrFail($request->validated('district_kode'));
+        if ($isSelf) {
+            $user = $request->user();
+
+            if (! $this->userProfileComplete($user)) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['screening_target' => 'Profil akun Anda belum lengkap. Lengkapi data registrasi atau pilih deteksi orang lain.']);
+            }
+
+            $dateOfBirth = Carbon::parse($user->date_of_birth);
+            $participant = [
+                'name' => $user->name,
+                'gender' => GenderMapper::toScreening($user->gender),
+                'phone' => $user->phone,
+                'date_of_birth' => $dateOfBirth,
+                'age' => (int) $dateOfBirth->age,
+                'weight_kg' => $user->weight,
+                'height_cm' => (int) round((float) $user->height),
+                'domicile_address' => $user->address,
+                'occupation' => $user->occupation,
+            ];
+        } else {
+            $dateOfBirth = Carbon::parse($validated['date_of_birth']);
+            $participant = [
+                'name' => $validated['name'],
+                'gender' => $validated['gender'],
+                'phone' => $validated['phone'],
+                'date_of_birth' => $dateOfBirth,
+                'age' => (int) $dateOfBirth->age,
+                'weight_kg' => $validated['weight_kg'],
+                'height_cm' => $validated['height_cm'],
+                'domicile_address' => $validated['domicile_address'],
+                'occupation' => $validated['occupation'],
+            ];
+        }
+
+        $province = Wilayah::findOrFail($validated['province_kode']);
+        $regency = Wilayah::findOrFail($validated['regency_kode']);
+        $district = Wilayah::findOrFail($validated['district_kode']);
 
         $identity = ScreeningIdentity::create([
             'user_id' => $request->user()?->id,
+            'screening_target' => $validated['screening_target'],
             'disease' => 'general',
-            'name' => $request->validated('name'),
-            'gender' => $request->validated('gender'),
-            'phone' => $request->validated('phone'),
-            'date_of_birth' => $dateOfBirth,
-            'age' => $dateOfBirth->age,
-            'weight_kg' => $request->validated('weight_kg'),
-            'height_cm' => $request->validated('height_cm'),
-            'domicile_address' => $request->validated('domicile_address'),
-            'occupation' => $request->validated('occupation'),
-            'address' => $request->validated('domicile_address'),
+            'name' => $participant['name'],
+            'gender' => $participant['gender'],
+            'phone' => $participant['phone'],
+            'date_of_birth' => $participant['date_of_birth'],
+            'age' => $participant['age'],
+            'weight_kg' => $participant['weight_kg'],
+            'height_cm' => $participant['height_cm'],
+            'domicile_address' => $participant['domicile_address'],
+            'occupation' => $participant['occupation'],
+            'address' => $participant['domicile_address'],
             'province' => $province->nama,
             'province_kode' => $province->kode,
             'regency' => $regency->nama,
@@ -222,7 +268,7 @@ class DetectionController extends Controller
             'self_management' => $selfManagement,
             'suppress_emergency' => $suppressEmergency,
             'self_management_url' => auth()->check()
-                ? route('self-management')
+                ? route('self-management.show', $disease)
                 : route('login'),
             'screening_identity_id' => session('screening_identity_id'),
             'result' => [
@@ -233,5 +279,38 @@ class DetectionController extends Controller
         ];
 
         return view('detection.chat', compact('screening'));
+    }
+
+    private function userProfileComplete(User $user): bool
+    {
+        return filled($user->name)
+            && filled($user->gender)
+            && filled($user->phone)
+            && filled($user->date_of_birth)
+            && filled($user->weight)
+            && filled($user->height)
+            && filled($user->address)
+            && filled($user->occupation);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function userProfilePayload(User $user): array
+    {
+        $dateOfBirth = $user->date_of_birth?->format('Y-m-d') ?? '';
+
+        return [
+            'name' => $user->name,
+            'gender' => GenderMapper::toScreening($user->gender),
+            'gender_label' => GenderMapper::label($user->gender),
+            'phone' => $user->phone,
+            'date_of_birth' => $dateOfBirth,
+            'age' => $user->age ?? ($dateOfBirth ? Carbon::parse($dateOfBirth)->age : null),
+            'weight_kg' => $user->weight,
+            'height_cm' => $user->height,
+            'domicile_address' => $user->address,
+            'occupation' => $user->occupation,
+        ];
     }
 }

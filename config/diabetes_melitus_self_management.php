@@ -1,144 +1,102 @@
 <?php
 
-/**
- * Panduan self-management Diabetes Melitus berdasarkan klasifikasi risiko skrining.
- */
 return [
+    'emergency' => [
+        'title' => 'Segera ke rumah sakit jika Anda mengalami:',
+        'items' => [
+            'Gula darah sangat tinggi (lebih dari 300 mg/dL)',
+            'Penurunan kesadaran atau pingsan',
+            'Luka yang tidak sembuh',
+            'Sesak napas atau mual muntah berat',
+        ],
+    ],
     'Rendah' => [
         'label' => 'Risiko Rendah',
+        'intro' => 'Risiko diabetes Anda relatif rendah. Jaga pola hidup sehat agar tetap terkendali.',
         'sections' => [
-            [
-                'title' => 'Jaga Pola Makan Sehat',
-                'items' => [
-                    'Batasi gula sederhana (minuman manis, kue)',
-                    'Perbanyak serat (sayur, buah, biji-bijian)',
-                    'Pilih karbohidrat kompleks',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik',
-                'items' => [
-                    'Olahraga ≥ 150 menit/minggu',
-                    'Jalan cepat, bersepeda, senam',
-                ],
-            ],
-            [
-                'title' => 'Jaga Berat Badan Ideal',
-                'items' => [
-                    'Pertahankan IMT normal',
-                ],
-            ],
-            [
-                'title' => 'Hindari Faktor Risiko',
-                'items' => [
-                    'Tidak merokok',
-                    'Kelola stres',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring',
-                'items' => [
-                    'Cek gula darah berkala',
-                ],
-            ],
+            ['title' => 'Makan dengan Bijak', 'items' => [
+                'Kurangi minuman manis, kue, dan gula sederhana',
+                'Perbanyak serat dari sayur, buah, dan biji-bijian',
+                'Pilih karbohidrat kompleks seperti nasi merah atau oat',
+            ]],
+            ['title' => 'Aktif Bergerak', 'items' => [
+                'Olahraga minimal 150 menit per minggu',
+                'Jalan cepat, bersepeda, atau senam',
+            ]],
+            ['title' => 'Jaga Berat Badan', 'items' => [
+                'Usahakan berat badan tetap ideal (IMT normal)',
+            ]],
+            ['title' => 'Hindari Kebiasaan Berisiko', 'items' => [
+                'Berhenti merokok',
+                'Kelola stres dengan baik',
+            ]],
+            ['title' => 'Pantau Gula Darah', 'items' => [
+                'Cek gula darah secara berkala',
+            ]],
         ],
     ],
     'Sedang' => [
         'label' => 'Risiko Sedang',
+        'intro' => 'Ada tanda yang perlu diwaspadai. Perbaiki pola makan dan konsultasikan ke tenaga kesehatan.',
         'sections' => [
-            [
-                'title' => 'Lakukan Pengaturan Diet Ketat',
-                'items' => [
-                    'Kurangi karbohidrat sederhana',
-                    'Atur porsi makan (3 utama + 2 snack sehat)',
-                    'Hindari minuman manis',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik Teratur',
-                'items' => [
-                    'Minimal 30 menit/hari',
-                    'Kombinasi aerobik & latihan kekuatan',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Penurunan Berat Badan',
-                'items' => [
-                    'Target turun 5–10% dari berat badan',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring Rutin',
-                'items' => [
-                    'Gula darah puasa',
-                    'HbA1c',
-                    'Tekanan darah',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Edukasi Diri',
-                'items' => [
-                    'Kenali tanda diabetes',
-                    'Konsultasi dengan tenaga kesehatan',
-                ],
-            ],
+            ['title' => 'Atur Pola Makan Ketat', 'items' => [
+                'Kurangi karbohidrat sederhana',
+                'Atur porsi: 3 kali makan utama dan 2 kali snack sehat',
+                'Hindari minuman manis',
+            ]],
+            ['title' => 'Olahraga Teratur', 'items' => [
+                'Minimal 30 menit setiap hari',
+                'Kombinasikan aerobik dan latihan kekuatan ringan',
+            ]],
+            ['title' => 'Turunkan Berat Badan', 'items' => [
+                'Targetkan penurunan 5–10% dari berat badan saat ini',
+            ]],
+            ['title' => 'Periksa Secara Rutin', 'items' => [
+                'Gula darah puasa',
+                'HbA1c',
+                'Tekanan darah',
+            ]],
+            ['title' => 'Kenali Gejala Diabetes', 'items' => [
+                'Pelajari tanda-tanda diabetes',
+                'Konsultasikan ke tenaga kesehatan jika ada keluhan',
+            ]],
         ],
     ],
     'Tinggi' => [
         'label' => 'Risiko Tinggi / Diabetes',
+        'intro' => 'Risiko diabetes tinggi atau Anda sudah terdiagnosis diabetes. Kontrol rutin dan kepatuhan pengobatan sangat penting.',
         'sections' => [
-            [
-                'title' => 'Lakukan Tindakan Utama',
-                'items' => [
-                    'Wajib kontrol rutin ke dokter',
-                    'Pemeriksaan gula darah & HbA1c',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Kepatuhan Terapi',
-                'items' => [
-                    'Minum obat antidiabetes / insulin sesuai resep',
-                    'Jangan menghentikan obat tanpa konsultasi',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Manajemen Diet Diabetes',
-                'items' => [
-                    'Diet rendah gula',
-                    'Karbohidrat terkontrol',
-                    'Tinggi serat',
-                    'Hindari makanan tinggi indeks glikemik',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik',
-                'items' => [
-                    'Olahraga rutin',
-                    'Hindari sedentary lifestyle',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring Mandiri',
-                'items' => [
-                    'Cek gula darah mandiri',
-                    'Catat hasil harian',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Perawatan Kaki Diabetes',
-                'items' => [
-                    'Periksa kaki setiap hari',
-                    'Hindari luka',
-                    'Gunakan alas kaki',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Dukungan Keluarga',
-                'items' => [
-                    'Pengawasan diet',
-                    'Dukungan kepatuhan obat',
-                ],
-            ],
+            ['title' => 'Kontrol Rutin ke Dokter', 'items' => [
+                'Jangan lewatkan jadwal kontrol',
+                'Periksa gula darah dan HbA1c secara berkala',
+            ]],
+            ['title' => 'Minum Obat dengan Teratur', 'items' => [
+                'Minum obat antidiabetes atau insulin sesuai resep',
+                'Jangan berhenti obat tanpa konsultasi dokter',
+            ]],
+            ['title' => 'Diet untuk Diabetes', 'items' => [
+                'Kurangi gula dan makanan manis',
+                'Atur jumlah karbohidrat',
+                'Perbanyak serat',
+                'Hindari makanan dengan indeks glikemik tinggi',
+            ]],
+            ['title' => 'Tetap Aktif', 'items' => [
+                'Olahraga rutin sesuai kemampuan',
+                'Hindari duduk terlalu lama tanpa bergerak',
+            ]],
+            ['title' => 'Pantau Mandiri', 'items' => [
+                'Cek gula darah di rumah jika punya alat',
+                'Catat hasil setiap hari',
+            ]],
+            ['title' => 'Rawat Kaki dengan Baik', 'items' => [
+                'Periksa kaki setiap hari',
+                'Jaga kaki tetap bersih dan hindari luka',
+                'Gunakan alas kaki yang nyaman',
+            ]],
+            ['title' => 'Dukungan Keluarga', 'items' => [
+                'Minta keluarga membantu mengawasi pola makan',
+                'Minta pengingat minum obat',
+            ]],
         ],
     ],
 ];

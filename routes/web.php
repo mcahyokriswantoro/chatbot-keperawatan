@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DetectionController;
 use App\Http\Controllers\EmergencyController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HealthEducationController;
 use App\Http\Controllers\HealthMonitoringController;
 use App\Http\Controllers\ProfileController;
@@ -15,7 +16,9 @@ use App\Http\Controllers\SelfManagementController;
 use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'home')->name('home');
+Route::redirect('/favicon.ico', '/favicon.png', 301);
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/edukasi', [HealthEducationController::class, 'index'])->name('education.index');
 Route::get('/edukasi/{slug}', [HealthEducationController::class, 'show'])->name('education.show');
@@ -41,8 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/riwayat/{id}', [ScreeningHistoryController::class, 'show'])->name('history.show');
 
     Route::get('/self-management', [SelfManagementController::class, 'index'])->name('self-management');
-    Route::post('/self-management', [SelfManagementController::class, 'store'])->name('self-management.store');
-    Route::patch('/self-management/{log}/toggle', [SelfManagementController::class, 'toggle'])->name('self-management.toggle');
+    Route::get('/self-management/{disease}', [SelfManagementController::class, 'show'])->name('self-management.show');
 
     Route::get('/monitoring', [HealthMonitoringController::class, 'index'])->name('monitoring');
     Route::post('/monitoring', [HealthMonitoringController::class, 'store'])->name('monitoring.store');

@@ -10,6 +10,10 @@ class EmergencyController extends Controller
     {
         return view('emergency.index', [
             'hotlines' => config('emergency.hotlines'),
+            'categories' => config('emergency.categories'),
+            'symptoms' => config('emergency.symptoms'),
+            'fast' => config('emergency.fast'),
+            'steps' => config('emergency.steps'),
             'warnings' => config('emergency.warnings'),
         ]);
     }

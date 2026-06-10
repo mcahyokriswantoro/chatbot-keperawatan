@@ -1,134 +1,98 @@
 <?php
 
-/**
- * Panduan self-management Stroke berdasarkan klasifikasi risiko skrining.
- */
 return [
+    'emergency' => [
+        'title' => 'Segera ke rumah sakit (waktu emas < 4,5 jam) jika Anda mengalami:',
+        'items' => [
+            'Wajah tiba-tiba mencong',
+            'Salah satu lengan lemah atau tidak bisa diangkat',
+            'Bicara pelo atau tidak jelas',
+            'Gejala muncul secara mendadak',
+        ],
+    ],
     'Rendah' => [
         'label' => 'Risiko Rendah',
+        'intro' => 'Risiko stroke Anda relatif rendah. Pertahankan gaya hidup sehat untuk mencegah masalah di kemudian hari.',
         'sections' => [
-            [
-                'title' => 'Lakukan Gaya Hidup Sehat',
-                'items' => [
-                    'Pola makan sehat (rendah garam, rendah lemak jenuh)',
-                    'Perbanyak buah & sayur',
-                    'Batasi gula dan makanan olahan',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik',
-                'items' => [
-                    'Olahraga ≥ 150 menit/minggu (jalan cepat, bersepeda)',
-                ],
-            ],
-            [
-                'title' => 'Hindari Faktor Risiko',
-                'items' => [
-                    'Tidak merokok',
-                    'Batasi alkohol',
-                    'Kelola stres',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring',
-                'items' => [
-                    'Cek tekanan darah berkala',
-                    'Skrining ulang secara rutin',
-                ],
-            ],
+            ['title' => 'Makan Sehat', 'items' => [
+                'Kurangi garam dan lemak jenuh',
+                'Perbanyak buah dan sayur',
+                'Batasi gula dan makanan olahan',
+            ]],
+            ['title' => 'Aktif Bergerak', 'items' => [
+                'Olahraga minimal 150 menit per minggu, seperti jalan cepat atau bersepeda',
+            ]],
+            ['title' => 'Hindari Kebiasaan Berisiko', 'items' => [
+                'Berhenti merokok',
+                'Batasi alkohol',
+                'Kelola stres dengan baik',
+            ]],
+            ['title' => 'Pantau Kesehatan', 'items' => [
+                'Cek tekanan darah secara berkala',
+                'Lakukan skrining rutin',
+            ]],
         ],
     ],
     'Sedang' => [
         'label' => 'Risiko Sedang',
+        'intro' => 'Beberapa faktor risiko perlu dikendalikan agar risiko stroke tidak meningkat.',
         'sections' => [
-            [
-                'title' => 'Lakukan Kontrol Faktor Risiko Utama',
-                'items' => [
-                    'Kendalikan Hipertensi',
-                    'Kendalikan Diabetes Mellitus',
-                    'Kelola kolesterol',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Diet Jantung Sehat',
-                'items' => [
-                    'Diet DASH / Mediterania',
-                    'Kurangi garam (< 5 gram/hari)',
-                    'Kurangi lemak jenuh & gorengan',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Aktivitas Fisik Teratur',
-                'items' => [
-                    'Olahraga ringan–sedang (30 menit/hari)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Kepatuhan Pengobatan',
-                'items' => [
-                    'Minum obat sesuai resep (jika sudah ada terapi)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Monitoring',
-                'items' => [
-                    'Tekanan darah',
-                    'Gula darah',
-                    'Kolesterol',
-                ],
-            ],
+            ['title' => 'Kendalikan Faktor Risiko Utama', 'items' => [
+                'Jaga tekanan darah tetap normal',
+                'Kendalikan gula darah jika punya diabetes',
+                'Turunkan kolesterol jika tinggi',
+            ]],
+            ['title' => 'Diet Sehat untuk Jantung dan Otak', 'items' => [
+                'Ikuti pola makan DASH atau Mediterania',
+                'Batasi garam kurang dari 5 gram per hari',
+                'Kurangi makanan gorengan dan lemak jenuh',
+            ]],
+            ['title' => 'Olahraga Teratur', 'items' => [
+                'Olahraga ringan sampai sedang 30 menit setiap hari',
+            ]],
+            ['title' => 'Minum Obat Sesuai Resep', 'items' => [
+                'Jika sudah ada obat dari dokter, minum secara teratur',
+            ]],
+            ['title' => 'Pantau Secara Berkala', 'items' => [
+                'Tekanan darah',
+                'Gula darah',
+                'Kolesterol',
+            ]],
         ],
     ],
     'Tinggi' => [
         'label' => 'Risiko Tinggi',
+        'intro' => 'Risiko stroke tinggi. Kontrol rutin ke dokter dan patuhi terapi sangat penting.',
         'sections' => [
-            [
-                'title' => 'Lakukan Tindakan Utama',
-                'items' => [
-                    'Wajib kontrol rutin ke dokter',
-                    'Evaluasi menyeluruh (jantung, pembuluh darah, otak)',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Kepatuhan Terapi',
-                'items' => [
-                    'Obat antihipertensi',
-                    'Obat antiplatelet / pengencer darah',
-                    'Obat diabetes / kolesterol',
-                    'Tidak boleh berhenti minum obat tanpa konsultasi dokter',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Rehabilitasi & Latihan',
-                'items' => [
-                    'Latihan fisik sesuai kemampuan',
-                    'Latihan bicara (jika terganggu)',
-                    'Latihan keseimbangan',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Manajemen Aktivitas',
-                'items' => [
-                    'Istirahat cukup',
-                    'Hindari kelelahan berlebihan',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Pemberian Nutrisi',
-                'items' => [
-                    'Diet rendah garam',
-                    'Tinggi serat',
-                    'Batasi lemak jenuh',
-                ],
-            ],
-            [
-                'title' => 'Lakukan Dukungan Keluarga',
-                'items' => [
-                    'Pendampingan aktivitas',
-                    'Pengawasan obat',
-                    'Edukasi tanda bahaya stroke',
-                ],
-            ],
+            ['title' => 'Kontrol Medis Rutin', 'items' => [
+                'Jangan lewatkan jadwal kontrol ke dokter',
+                'Lakukan evaluasi jantung, pembuluh darah, dan otak sesuai anjuran',
+            ]],
+            ['title' => 'Patuhi Pengobatan', 'items' => [
+                'Minum obat antihipertensi jika diresepkan',
+                'Minum obat pengencer darah/antiplatelet sesuai resep',
+                'Minum obat diabetes atau kolesterol jika diperlukan',
+                'Jangan berhenti obat tanpa berkonsultasi dengan dokter',
+            ]],
+            ['title' => 'Rehabilitasi dan Latihan', 'items' => [
+                'Lakukan latihan fisik sesuai kemampuan',
+                'Latihan bicara jika ada gangguan bicara',
+                'Latihan keseimbangan untuk mencegah jatuh',
+            ]],
+            ['title' => 'Atur Aktivitas', 'items' => [
+                'Istirahat cukup',
+                'Hindari kelelahan berlebihan',
+            ]],
+            ['title' => 'Nutrisi yang Mendukung', 'items' => [
+                'Diet rendah garam',
+                'Tinggi serat',
+                'Kurangi lemak jenuh',
+            ]],
+            ['title' => 'Dukungan Keluarga', 'items' => [
+                'Minta pendamping saat beraktivitas',
+                'Ajak keluarga mengingatkan minum obat',
+                'Pelajari bersama tanda bahaya stroke',
+            ]],
         ],
     ],
 ];
