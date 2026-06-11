@@ -1,3 +1,3 @@
-<svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 11v9a1 1 0 001 1h5a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h5a1 1 0 001-1v-9a1 1 0 00-.293-.707l-7-7z"/>
+<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/>
 </svg>

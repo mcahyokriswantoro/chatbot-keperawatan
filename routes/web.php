@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAccessController;
 use App\Http\Controllers\Admin\AdminArticleController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminMonitoringController;
+use App\Http\Controllers\Admin\AdminScreeningController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DetectionController;
 use App\Http\Controllers\EmergencyController;
@@ -56,6 +60,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/access', [AdminAccessController::class, 'index'])->name('access.index');
+    Route::post('/access', [AdminAccessController::class, 'store'])->name('access.store');
+    Route::delete('/access/{user}', [AdminAccessController::class, 'destroy'])->name('access.destroy');
+    Route::get('/screenings', [AdminScreeningController::class, 'index'])->name('screenings.index');
+    Route::get('/screenings/{screeningSession}', [AdminScreeningController::class, 'show'])->name('screenings.show');
+    Route::get('/monitoring', [AdminMonitoringController::class, 'index'])->name('monitoring.index');
+    Route::get('/monitoring/{monitoring}', [AdminMonitoringController::class, 'show'])->name('monitoring.show');
     Route::get('/articles', [AdminArticleController::class, 'index'])->name('articles.index');
     Route::get('/articles/create', [AdminArticleController::class, 'create'])->name('articles.create');
     Route::post('/articles', [AdminArticleController::class, 'store'])->name('articles.store');

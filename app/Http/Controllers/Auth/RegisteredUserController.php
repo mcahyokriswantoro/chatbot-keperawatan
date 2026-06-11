@@ -70,6 +70,7 @@ class RegisteredUserController extends Controller
             'address' => $validated['address'],
             'occupation' => $validated['occupation'],
             'password' => Hash::make($validated['password']),
+            'email_verified_at' => now(),
         ]);
 
         event(new Registered($user));
