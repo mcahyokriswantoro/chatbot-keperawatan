@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <x-app.production-assets />
 </head>
 <body class="font-sans antialiased bg-brand-50 text-slate-800 overflow-hidden">
     <div class="mx-auto flex h-[100dvh] max-w-md flex-col">

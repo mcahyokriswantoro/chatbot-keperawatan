@@ -49,25 +49,27 @@
     class="space-y-6"
 >
     {{-- Hero header --}}
-    <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 px-4 pb-4 pt-4 shadow-soft ring-1 ring-brand-100/60">
+    <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 px-4 pb-4 pt-4 pr-16 shadow-soft ring-1 ring-brand-100/60">
         <div class="flex items-start gap-3">
             <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-2 ring-brand-100">
                 <x-app.medical-note-icon class="h-8 w-8" />
             </div>
             <div class="min-w-0 flex-1 pt-0.5">
                 <p class="text-xs font-medium text-slate-500">Hi, Saya Chatbot 👋</p>
-                <h1 class="text-xl font-bold leading-tight text-slate-900">Keperawatan Pintar</h1>
+                <h1 class="text-lg font-bold leading-tight text-slate-900 sm:text-xl">Keperawatan Pintar</h1>
                 <p class="mt-1 text-xs leading-relaxed text-slate-500">
                     Saya siap membantu deteksi kesehatan Anda hari ini 💙
                 </p>
             </div>
-            <div class="relative h-20 w-20 shrink-0 animate-[float_3s_ease-in-out_infinite]">
-                <img
-                    src="{{ asset('images/robot.png') }}?v={{ filemtime(public_path('images/robot.png')) }}"
-                    alt=""
-                    class="h-full w-full object-contain drop-shadow-md"
-                />
-            </div>
+        </div>
+        <div class="pointer-events-none absolute right-2 top-2 h-16 w-16 animate-[float_3s_ease-in-out_infinite] sm:h-20 sm:w-20">
+            <img
+                src="{{ asset('images/robot.png') }}?v={{ filemtime(public_path('images/robot.png')) }}"
+                alt=""
+                width="80"
+                height="80"
+                class="h-full w-full object-contain drop-shadow-md"
+            />
         </div>
     </header>
 
@@ -98,21 +100,21 @@
     {{-- Fitur Unggulan --}}
     <section>
         <h2 class="mb-3 text-base font-bold text-slate-900">Fitur Unggulan</h2>
-        <div class="grid grid-cols-4 gap-2">
+        <div class="grid grid-cols-2 gap-3">
             @foreach ($features as $feature)
                 <a
                     href="{{ $feature['url'] }}"
-                    class="group flex flex-col items-center rounded-2xl border border-brand-50 bg-white px-1.5 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md active:scale-95"
+                    class="group flex min-h-[7.5rem] flex-col items-center rounded-2xl border border-brand-50 bg-white px-2 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md active:scale-95"
                 >
-                    <span class="mb-2 flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl transition group-hover:scale-105">
+                    <span class="mb-2 flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl transition group-hover:scale-105">
                         <img
                             src="{{ asset($feature['icon']) }}"
                             alt=""
                             class="h-full w-full object-contain"
                         />
                     </span>
-                    <span class="text-center text-[8px] font-bold leading-tight text-slate-800">{{ $feature['label'] }}</span>
-                    <span class="mt-0.5 text-center text-[7px] leading-snug text-slate-500">{{ $feature['desc'] }}</span>
+                    <span class="text-center text-xs font-bold leading-snug text-slate-800">{{ $feature['label'] }}</span>
+                    <span class="mt-1 text-center text-[11px] leading-snug text-slate-500">{{ $feature['desc'] }}</span>
                 </a>
             @endforeach
         </div>
@@ -121,30 +123,32 @@
     {{-- Promo banner --}}
     <a
         href="{{ route('education.index') }}"
-        class="group relative flex items-center gap-3 overflow-hidden rounded-3xl bg-gradient-to-r from-violet-50 via-purple-50 to-violet-100/80 p-4 shadow-sm ring-1 ring-violet-100 transition hover:shadow-md active:scale-[0.99]"
+        class="group relative flex flex-col gap-3 overflow-hidden rounded-3xl bg-gradient-to-r from-violet-50 via-purple-50 to-violet-100/80 p-4 shadow-sm ring-1 ring-violet-100 transition hover:shadow-md active:scale-[0.99] sm:flex-row sm:items-center"
     >
-        <div class="flex h-16 w-14 shrink-0 items-center justify-center self-center">
-            <img
-                src="{{ asset('images/nurse.png') }}"
-                alt=""
-                class="max-h-16 w-full object-contain object-center drop-shadow-sm"
-            />
+        <div class="flex items-center gap-3 sm:min-w-0 sm:flex-1">
+            <div class="flex h-14 w-12 shrink-0 items-center justify-center">
+                <img
+                    src="{{ asset('images/nurse.png') }}"
+                    alt=""
+                    class="max-h-14 w-full object-contain object-center drop-shadow-sm"
+                />
+            </div>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-bold text-slate-900">Jaga kesehatan sejak dini ✨</p>
+                <p class="mt-0.5 text-xs leading-relaxed text-slate-500">
+                    Deteksi dini membantu mencegah komplikasi serius
+                </p>
+                <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-violet-700 shadow-sm transition group-hover:bg-violet-600 group-hover:text-white">
+                    Pelajari Lebih Lanjut
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                </span>
+            </div>
         </div>
-        <div class="min-w-0 flex-1 self-center">
-            <p class="text-sm font-bold text-slate-900">Jaga kesehatan sejak dini ✨</p>
-            <p class="mt-0.5 text-[11px] leading-relaxed text-slate-500">
-                Deteksi dini membantu mencegah komplikasi serius
-            </p>
-            <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-violet-700 shadow-sm transition group-hover:bg-violet-600 group-hover:text-white">
-                Pelajari Lebih Lanjut
-                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-            </span>
-        </div>
-        <div class="flex h-16 w-14 shrink-0 items-center justify-center self-center overflow-hidden rounded-2xl">
+        <div class="hidden h-14 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl sm:flex">
             <img
                 src="{{ asset('images/shield.png') }}"
                 alt=""
-                class="max-h-14 w-full object-contain object-center"
+                class="max-h-12 w-full object-contain object-center"
             />
         </div>
     </a>
@@ -161,7 +165,7 @@
             </div>
             <div class="min-w-0 flex-1">
                 <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips Minggu Ini</p>
-                <p class="text-[9px] text-emerald-600/80">Sumber: ayosehat.kemkes.go.id</p>
+                <p class="text-[10px] text-emerald-600/80">Sumber: ayosehat.kemkes.go.id</p>
                 <p
                     x-text="tips[tipIndex]"
                     x-transition:enter="transition ease-out duration-300"
@@ -194,9 +198,9 @@
                 <a href="{{ route('login') }}" class="text-xs font-semibold text-brand-600 hover:text-brand-700">Masuk →</a>
             @endauth
         </div>
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
             @foreach ($healthStatus as $status)
-                <div class="rounded-2xl border border-brand-50 bg-white p-3 text-center shadow-sm transition hover:shadow-md">
+                <div class="rounded-2xl border border-brand-50 bg-white p-2.5 text-center shadow-sm sm:p-3">
                     <span @class(['mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-xl', $status['bg']])>
                         @if ($status['icon'] === 'heart')
                             <svg class="h-5 w-5 text-rose-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -212,8 +216,8 @@
                             </svg>
                         @endif
                     </span>
-                    <p class="text-[10px] font-medium text-slate-500">{{ $status['label'] }}</p>
-                    <p @class(['mt-0.5 text-sm font-bold', $status['tone']])>{{ $status['value'] }}</p>
+                    <p class="text-xs font-medium leading-tight text-slate-500">{{ $status['label'] }}</p>
+                    <p @class(['mt-0.5 text-xs font-bold sm:text-sm', $status['tone']])>{{ $status['value'] }}</p>
                 </div>
             @endforeach
         </div>

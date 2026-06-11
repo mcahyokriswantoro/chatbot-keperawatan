@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}?v={{ $faviconVersion }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <x-app.production-assets />
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800">
     <div class="min-h-screen flex flex-col">
