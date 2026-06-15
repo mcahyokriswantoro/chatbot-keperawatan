@@ -182,6 +182,26 @@ class ScreeningSession extends Model
         return $key ? ($guide[$key] ?? null) : null;
     }
 
+    /**
+     * @return array{title: string, items: list<string>}|null
+     */
+    public function selfManagementEmergencyBlock(): ?array
+    {
+        if (! $this->hasSelfManagement()) {
+            return null;
+        }
+
+        $registry = config('self_management_diseases.list');
+        $guide = config($registry[$this->disease]['config']);
+
+        return $guide['emergency'] ?? null;
+    }
+
+    public function showsSelfManagementEmergencyGuide(): bool
+    {
+        return $this->selfManagementRiskKey() === 'Tinggi';
+    }
+
     public function nextStepMessage(): string
     {
         if ($this->showsEmergencyUi()) {
@@ -199,6 +219,49 @@ class ScreeningSession extends Model
             'high' => 'Konsultasi ke tenaga kesehatan dan ikuti panduan perawatan mandiri.',
             default => 'Ikuti panduan self management sesuai tingkat risiko skrining Anda.',
         };
+    }
+
+    /**
+     * Teks untuk Text-to-Speech: panduan self-management sesuai risiko (bukan ulasan skrining).
+     */
+    public function speechText(): string
+    {
+        $parts = [
+            'Panduan self management '.($this->diseaseLabel() ?? 'kesehatan'),
+            'Tingkat risiko Anda '.$this->displayRiskLabel(),
+        ];
+
+        $block = $this->selfManagementGuideBlock();
+        if ($block) {
+            if (! empty($block['intro'])) {
+                $parts[] = $block['intro'];
+            }
+
+            foreach ($block['sections'] ?? [] as $section) {
+                $parts[] = $section['title'];
+                foreach ($section['items'] as $item) {
+                    $parts[] = $item;
+                }
+            }
+        } else {
+            $parts[] = $this->nextStepMessage();
+        }
+
+        if ($this->showsSelfManagementEmergencyGuide()) {
+            $emergency = $this->selfManagementEmergencyBlock();
+            if ($emergency) {
+                $parts[] = $emergency['title'];
+                foreach ($emergency['items'] as $item) {
+                    $parts[] = $item;
+                }
+            }
+        }
+
+        if ($this->showsEmergencyUi()) {
+            $parts[] = 'Segera ke fasilitas kesehatan atau IGD terdekat.';
+        }
+
+        return implode('. ', array_filter($parts));
     }
 
     public function screeningConfigKey(): ?string

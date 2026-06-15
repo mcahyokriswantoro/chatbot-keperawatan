@@ -7,6 +7,7 @@
         $theme = $session->riskTheme();
         $score = $session->scoreData();
         $identity = $session->identity;
+        $ttsGender = $session->user?->gender ?? $identity?->gender;
     @endphp
 
     <x-admin.page-banner
@@ -42,6 +43,14 @@
         </div>
     </div>
 
+    <section class="mb-5 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
+        <h2 class="text-sm font-bold text-slate-900">Panduan Self-Management (Audio)</h2>
+        <p class="mt-1 text-xs text-slate-500">Dengarkan rekomendasi sesuai tingkat risiko skrining ini.</p>
+        <div class="mt-3">
+            <x-screening.tts-button :text="$session->speechText()" :gender="$ttsGender" class="w-full" />
+        </div>
+    </section>
+
     @if ($session->user || $identity)
         <section class="mb-5 space-y-3">
             @if ($session->user)
@@ -68,7 +77,3 @@
 
     @include('history.partials.answer-breakdown', ['session' => $session])
 @endsection
-
-@push('scripts')
-    @stack('scripts')
-@endpush

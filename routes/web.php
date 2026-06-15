@@ -17,6 +17,7 @@ use App\Http\Controllers\ProfilePageController;
 use App\Http\Controllers\ScreeningController;
 use App\Http\Controllers\ScreeningHistoryController;
 use App\Http\Controllers\SelfManagementController;
+use App\Http\Controllers\SelfManagementLogController;
 use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,8 +51,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/self-management', [SelfManagementController::class, 'index'])->name('self-management');
     Route::get('/self-management/{disease}', [SelfManagementController::class, 'show'])->name('self-management.show');
 
-    Route::get('/monitoring', [HealthMonitoringController::class, 'index'])->name('monitoring');
-    Route::post('/monitoring', [HealthMonitoringController::class, 'store'])->name('monitoring.store');
+    Route::middleware('screening.completed')->group(function () {
+        Route::post('/self-management/activities', [SelfManagementLogController::class, 'store'])->name('self-management.activities.store');
+        Route::patch('/self-management/activities/{log}/toggle', [SelfManagementLogController::class, 'toggle'])->name('self-management.activities.toggle');
+
+        Route::get('/monitoring', [HealthMonitoringController::class, 'index'])->name('monitoring');
+        Route::post('/monitoring', [HealthMonitoringController::class, 'store'])->name('monitoring.store');
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

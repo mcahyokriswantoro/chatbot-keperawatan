@@ -161,7 +161,7 @@
                                     </ul>
                                 </div>
                             </template>
-                            <div x-show="config.self_management?.emergency" x-cloak class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-2 py-2">
+                            <div x-show="config.self_management?.emergency && hasilKategori === 'Tinggi'" x-cloak class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-2 py-2">
                                 <p class="text-[10px] font-bold text-rose-800" x-text="config.self_management?.emergency?.title"></p>
                                 <ul class="mt-1 list-inside list-disc space-y-0.5 text-[10px] text-rose-900">
                                     <template x-for="(item, eIdx) in (config.self_management?.emergency?.items ?? [])" :key="eIdx">
@@ -175,6 +175,43 @@
                             class="whitespace-pre-wrap font-sans text-xs leading-relaxed text-slate-600"
                             x-text="msg.text"
                         ></pre>
+                        <div class="flex flex-wrap justify-center gap-2 pt-1">
+                            <button
+                                type="button"
+                                @click="listenToResult()"
+                                :disabled="ttsActive"
+                                class="inline-flex items-center gap-2 rounded-2xl border border-brand-200 bg-white px-3 py-2 text-xs font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25h4.875c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125H6.75a.75.75 0 01-.75-.75v-4.125a.75.75 0 00-.75-.75H4.5a.75.75 0 010-1.5h1.125a.75.75 0 00.75-.75V9.375c0-.621.504-1.125 1.125-1.125z"/>
+                                </svg>
+                                Dengarkan Panduan
+                            </button>
+                            <button
+                                type="button"
+                                @click="pauseTts()"
+                                :disabled="ttsState !== 'speaking'"
+                                class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                                Jeda
+                            </button>
+                            <button
+                                type="button"
+                                @click="resumeTts()"
+                                :disabled="ttsState !== 'paused'"
+                                class="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                                Lanjutkan
+                            </button>
+                            <button
+                                type="button"
+                                @click="stopTts()"
+                                :disabled="!ttsActive"
+                                class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                                Stop
+                            </button>
+                        </div>
                     </div>
                     <p
                         class="mt-1 text-[10px] opacity-60"

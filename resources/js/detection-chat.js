@@ -1,3 +1,11 @@
+import {
+    getTtsState,
+    pauseScreeningResult,
+    resumeScreeningResult,
+    speakScreeningResult,
+    stopScreeningResult,
+} from './screening-tts';
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('screeningChat', (config) => ({
         config,
@@ -17,6 +25,7 @@ document.addEventListener('alpine:init', () => {
         hasilKategori: null,
         risikoLabel: null,
         hasWarningSigns: false,
+        ttsState: 'idle',
 
         get activeSelfManagement() {
             if (!this.config.self_management || !this.hasilKategori) {
@@ -45,6 +54,14 @@ document.addEventListener('alpine:init', () => {
         init() {
             this.$nextTick(() => this.scrollToBottom());
             setTimeout(() => this.showWelcome(), 400);
+
+            document.addEventListener('screening-tts:state', (event) => {
+                this.ttsState = event.detail ?? getTtsState();
+            });
+        },
+
+        get ttsActive() {
+            return this.ttsState === 'speaking' || this.ttsState === 'paused';
         },
 
         scrollToBottom() {
@@ -455,6 +472,58 @@ document.addEventListener('alpine:init', () => {
             });
 
             return lines.join('\n');
+        },
+
+        buildSpeechText() {
+            const parts = [];
+            const label = this.config.disease_label ?? 'kesehatan';
+            const riskLabel = this.risikoLabel ?? this.hasilKategori ?? '';
+
+            parts.push(`Panduan self management ${label}`);
+
+            if (riskLabel) {
+                parts.push(`Tingkat risiko Anda ${String(riskLabel).replace(/^Risiko\s+/i, '')}`);
+            }
+
+            const guide = this.activeSelfManagement;
+            if (guide) {
+                if (guide.intro) {
+                    parts.push(guide.intro);
+                }
+
+                (guide.sections ?? []).forEach((section) => {
+                    parts.push(section.title);
+                    (section.items ?? []).forEach((item) => parts.push(item));
+                });
+            }
+
+            const emergency = this.config.self_management?.emergency;
+            if (emergency && this.hasilKategori === 'Tinggi') {
+                parts.push(emergency.title);
+                (emergency.items ?? []).forEach((item) => parts.push(item));
+            }
+
+            if (this.isEmergency && !this.config.suppress_emergency) {
+                parts.push('Segera ke fasilitas kesehatan atau IGD terdekat.');
+            }
+
+            return parts.filter(Boolean).join('. ');
+        },
+
+        listenToResult() {
+            speakScreeningResult(this.buildSpeechText(), this.config.user_gender);
+        },
+
+        pauseTts() {
+            pauseScreeningResult();
+        },
+
+        resumeTts() {
+            resumeScreeningResult();
+        },
+
+        stopTts() {
+            stopScreeningResult();
         },
     }));
 });

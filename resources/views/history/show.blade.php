@@ -60,6 +60,10 @@
         </div>
     </div>
 
+    <div class="mb-5">
+        <x-screening.tts-button :text="$session->speechText()" :gender="auth()->user()->gender" class="w-full" />
+    </div>
+
     {{-- Langkah selanjutnya --}}
     <section class="mb-5 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
         <h2 class="text-sm font-bold text-slate-900">Apa yang harus dilakukan?</h2>

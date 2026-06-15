@@ -3,9 +3,41 @@
 @section('content')
     <x-mobile.page-header title="Self Management" />
 
+    <x-mobile.alert />
+
+    @if (session('error'))
+        <div class="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <p class="mb-5 text-sm leading-relaxed text-slate-600">
-        Pilih jenis penyakit untuk melihat panduan perawatan mandiri sesuai tingkat risiko. Panduan ini membantu Anda memahami langkah-langkah yang bisa dilakukan di rumah.
+        Daftar kondisi kesehatan di bawah sebagai edukasi. Untuk pemantauan personal, pengingat obat, dan rekomendasi yang disesuaikan, Anda perlu menyelesaikan skrining terlebih dahulu.
     </p>
+
+    @if (! $hasScreening)
+        <a
+            href="{{ route('detection.start') }}"
+            class="mb-5 block rounded-2xl bg-brand-600 px-4 py-4 text-center text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700 active:scale-[0.99]"
+        >
+            Mulai Skrining Kesehatan →
+        </a>
+    @else
+        @if ($latestScreening)
+            <div class="mb-5 rounded-2xl border border-brand-100 bg-brand-50/80 p-4">
+                <p class="text-xs font-semibold text-brand-800">Skrining terakhir</p>
+                <p class="mt-1 text-sm font-bold text-slate-900">
+                    {{ $latestScreening->diseaseLabel() }} · {{ $latestScreening->displayRiskLabel() }}
+                </p>
+                <p class="mt-1 text-xs text-slate-500">{{ $latestScreening->created_at->translatedFormat('d F Y') }}</p>
+                <div class="mt-3">
+                    <x-screening.tts-button :text="$latestScreening->speechText()" :gender="auth()->user()->gender" class="w-full" />
+                </div>
+            </div>
+        @endif
+    @endif
+
+    <h2 class="mb-3 text-sm font-bold text-slate-900">Informasi Kondisi Kesehatan</h2>
 
     <div class="space-y-3">
         @foreach ($diseases as $item)
@@ -39,10 +71,16 @@
         @endforeach
     </div>
 
-    <a
-        href="{{ route('monitoring') }}"
-        class="mt-6 block rounded-2xl border border-dashed border-brand-200 bg-brand-50 px-4 py-3 text-center text-sm font-semibold text-brand-700"
-    >
-        Catat monitoring harian →
-    </a>
+    @if ($hasScreening)
+        <a
+            href="{{ route('monitoring') }}"
+            class="mt-6 block rounded-2xl border border-dashed border-brand-200 bg-brand-50 px-4 py-3 text-center text-sm font-semibold text-brand-700"
+        >
+            Catat monitoring harian →
+        </a>
+    @else
+        <p class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs text-slate-500">
+            Pemantauan kesehatan dan rekomendasi personal terbuka setelah skrining selesai.
+        </p>
+    @endif
 @endsection

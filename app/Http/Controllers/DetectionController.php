@@ -271,6 +271,7 @@ class DetectionController extends Controller
                 ? route('self-management.show', $disease)
                 : route('login'),
             'screening_identity_id' => session('screening_identity_id'),
+            'user_gender' => auth()->user()?->gender,
             'result' => [
                 'title' => 'Skrining '.$diseaseConfig['label'].' Selesai',
                 'message' => $resultMessages[$disease]
