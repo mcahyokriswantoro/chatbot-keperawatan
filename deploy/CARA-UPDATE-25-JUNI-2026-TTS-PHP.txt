@@ -1,0 +1,20 @@
+UPDATE TTS PHP — chatbot-keperawatan.damgocompany.com
+Tanggal: 25 Juni 2026
+Ukuran ZIP: ~30 MB (vendor + afaya/edge-tts)
+
+Isi: Suara neural GadisNeural via PHP (tanpa Node.js) untuk hosting shared.
+
+=== LANGKAH ===
+
+1. BACKUP .env
+2. Upload chatbot-keperawatan-update-25juni2026-tts-php.zip ke ROOT (tempat artisan)
+3. Extract → Overwrite
+4. Buka: https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+5. Tes TTS: upload deploy/tts-check.php → public_html/, buka ?key=ck2026fix
+   Harus: SINTESIS: OK
+6. Hapus tts-check.php dan clear-cache.php
+7. Cek version.txt → 2026-06-25-v14-php-tts
+8. Skrining → Dengarkan Panduan (tanpa alert cadangan)
+
+Opsional di .env:
+TTS_DRIVER=php

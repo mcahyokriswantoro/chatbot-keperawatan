@@ -35,7 +35,7 @@
                 <div class="mt-2 flex items-start justify-between gap-3">
                     <div>
                         <p class="text-lg font-bold text-slate-900">{{ $latestScreening->scoreLabel() }}</p>
-                        <p class="mt-0.5 text-xs text-slate-600">{{ $latestScreening->created_at->translatedFormat('d F Y, H:i') }}</p>
+                        <p class="mt-0.5 text-xs text-slate-600">{{ $latestScreening->formattedDateTime('d F Y, H:i') }}</p>
                     </div>
                     <span @class(['shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ring-1', $theme['bg'], $theme['text'], $theme['ring']])>
                         {{ $latestScreening->displayRiskLabel() }}

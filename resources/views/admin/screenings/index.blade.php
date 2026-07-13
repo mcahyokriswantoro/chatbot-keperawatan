@@ -36,6 +36,8 @@
         </div>
     </form>
 
+    @include('admin.partials.screening-charts')
+
     <div class="space-y-3">
         @forelse ($screenings as $s)
             @include('admin.partials.screening-list-card', [

@@ -1,12 +1,7 @@
 @extends('layouts.mobile')
 
 @php
-    $tips = [
-        'Profil lengkap membantu chatbot memberikan rekomendasi yang lebih tepat.',
-        'Catat monitoring kesehatan rutin untuk pantau perkembangan kondisi Anda.',
-        'Lakukan skrining berkala sesuai risiko kesehatan yang Anda miliki.',
-        'Self management harian mendukung pengobatan dan pencegahan komplikasi.',
-    ];
+    $tips = config('health.chatbot_tips');
 @endphp
 
 @section('content')
@@ -148,7 +143,7 @@
                     <div class="min-w-0 flex-1">
                         <p class="text-[10px] font-semibold uppercase tracking-wide text-brand-600">Skrining Terakhir</p>
                         <p class="truncate text-sm font-bold text-slate-900">{{ $latest->diseaseLabel() ?? 'Deteksi Kesehatan' }}</p>
-                        <p class="text-[11px] text-slate-500">{{ $latest->created_at->translatedFormat('d M Y') }} · Risiko {{ $latest->displayRiskLabel() }}</p>
+                        <p class="text-[11px] text-slate-500">{{ $latest->formattedDateTime('d M Y') }} · Risiko {{ $latest->displayRiskLabel() }}</p>
                     </div>
                     <svg class="h-4 w-4 shrink-0 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                 </a>

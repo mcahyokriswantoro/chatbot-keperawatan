@@ -26,6 +26,49 @@ class ScreeningSession extends Model
         return config("diseases.{$this->disease}.label");
     }
 
+    public function formattedDateTime(string $format = 'd M Y, H:i'): string
+    {
+        $raw = $this->getRawOriginal('created_at') ?? $this->created_at;
+
+        return \Carbon\Carbon::parse($raw, 'UTC')
+            ->timezone('Asia/Jakarta')
+            ->locale(app()->getLocale())
+            ->translatedFormat($format);
+    }
+
+    public function isInitialScreening(): bool
+    {
+        return $this->disease === 'skrining_awal';
+    }
+
+    /**
+     * @return list<array{slug: string, label: string, icon: string, description: string, url: string, triggers: list<string>}>
+     */
+    public function recommendedFollowUpDiseases(): array
+    {
+        if (! $this->isInitialScreening()) {
+            return [];
+        }
+
+        return app(\App\Services\InitialScreeningService::class)
+            ->recommendedDiseases($this->answers ?? []);
+    }
+
+    public function historyBadgeLabel(): string
+    {
+        if ($this->showsEmergencyUi()) {
+            return 'Darurat';
+        }
+
+        if ($this->isInitialScreening()) {
+            $count = count($this->recommendedFollowUpDiseases());
+
+            return $count > 0 ? "{$count} Penyakit" : 'Selesai';
+        }
+
+        return $this->displayRiskLabel();
+    }
+
     /**
      * Level risiko untuk tampilan (TB Paru lama bisa tersimpan sebagai emergency → ditampilkan Tinggi).
      */
@@ -97,6 +140,16 @@ class ScreeningSession extends Model
 
     public function scoreLabel(): string
     {
+        if ($this->isInitialScreening()) {
+            $recommended = $this->recommendedFollowUpDiseases();
+
+            if ($recommended === []) {
+                return 'Tidak ada skrining lanjut spesifik';
+            }
+
+            return count($recommended).' penyakit perlu ditindaklanjuti';
+        }
+
         $score = $this->scoreData();
 
         if ($score['risiko_label']) {
@@ -205,7 +258,17 @@ class ScreeningSession extends Model
     public function nextStepMessage(): string
     {
         if ($this->showsEmergencyUi()) {
-            return 'Segera ke fasilitas kesehatan atau IGD terdekat. Setelah kondisi stabil, lanjutkan dengan panduan self management.';
+            return 'Segera ke fasilitas kesehatan atau IGD terdekat. Setelah kondisi stabil, lanjutkan skrining lanjut yang direkomendasikan.';
+        }
+
+        if ($this->isInitialScreening()) {
+            $recommended = $this->recommendedFollowUpDiseases();
+
+            if ($recommended === []) {
+                return 'Skrining awal selesai. Tetap waspada gejala baru dan konsultasikan ke tenaga kesehatan bila perlu.';
+            }
+
+            return 'Lanjutkan skrining lanjut pada penyakit yang direkomendasikan berdasarkan jawaban ya Anda.';
         }
 
         $block = $this->selfManagementGuideBlock();
@@ -226,6 +289,23 @@ class ScreeningSession extends Model
      */
     public function speechText(): string
     {
+        if ($this->isInitialScreening()) {
+            $parts = [
+                'Hasil skrining awal',
+                $this->scoreLabel(),
+            ];
+
+            foreach ($this->recommendedFollowUpDiseases() as $item) {
+                $parts[] = 'Skrining lanjut '.$item['label'];
+            }
+
+            if ($this->showsEmergencyUi()) {
+                $parts[] = 'Segera ke fasilitas kesehatan atau IGD terdekat.';
+            }
+
+            return implode('. ', array_filter($parts));
+        }
+
         $parts = [
             'Panduan self management '.($this->diseaseLabel() ?? 'kesehatan'),
             'Tingkat risiko Anda '.$this->displayRiskLabel(),
@@ -270,6 +350,10 @@ class ScreeningSession extends Model
             return null;
         }
 
+        if ($this->disease === 'skrining_awal' && config()->has('skrining_awal')) {
+            return 'skrining_awal';
+        }
+
         $key = "{$this->disease}_skrining";
 
         return config()->has($key) ? $key : null;
@@ -300,7 +384,7 @@ class ScreeningSession extends Model
             $isPositive = $raw === 'ya' && $scoreYa > 0;
 
             $rows[] = [
-                'no' => (int) $item['no'],
+                'no' => is_numeric($item['no']) ? (int) $item['no'] : $item['no'],
                 'text' => $item['text'],
                 'answer' => $raw,
                 'answer_label' => $labelMap[$raw] ?? ($raw !== '-' ? ucfirst($raw) : '-'),
@@ -340,6 +424,26 @@ class ScreeningSession extends Model
                 'text' => 'text-rose-800',
                 'ring' => 'ring-rose-200',
                 'accent' => 'bg-rose-500',
+            ];
+        }
+
+        if ($this->isInitialScreening()) {
+            if (count($this->recommendedFollowUpDiseases()) > 0) {
+                return [
+                    'border' => 'border-brand-200',
+                    'bg' => 'bg-brand-50',
+                    'text' => 'text-brand-800',
+                    'ring' => 'ring-brand-100',
+                    'accent' => 'bg-brand-500',
+                ];
+            }
+
+            return [
+                'border' => 'border-emerald-200',
+                'bg' => 'bg-emerald-50',
+                'text' => 'text-emerald-800',
+                'ring' => 'ring-emerald-100',
+                'accent' => 'bg-emerald-500',
             ];
         }
 

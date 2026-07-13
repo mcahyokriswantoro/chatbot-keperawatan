@@ -25,7 +25,19 @@ document.addEventListener('alpine:init', () => {
         hasilKategori: null,
         risikoLabel: null,
         hasWarningSigns: false,
+        recommendedDiseases: [],
+        currentChoiceOptions: [],
         ttsState: 'idle',
+
+        get isInitialMode() {
+            return this.config.mode === 'initial' || this.config.disease === 'skrining_awal';
+        },
+
+        get isYesNoChoice() {
+            const question = this.config.questions[this.currentStep];
+
+            return question?.type === 'choice' && this.isYesNoOptions(question.options);
+        },
 
         get activeSelfManagement() {
             if (!this.config.self_management || !this.hasilKategori) {
@@ -56,7 +68,10 @@ document.addEventListener('alpine:init', () => {
             setTimeout(() => this.showWelcome(), 400);
 
             document.addEventListener('screening-tts:state', (event) => {
-                this.ttsState = event.detail ?? getTtsState();
+                const detail = event.detail;
+                this.ttsState = typeof detail === 'string'
+                    ? detail
+                    : detail?.state ?? getTtsState();
             });
         },
 
@@ -71,7 +86,7 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        async botSay(text, delay = 900) {
+        async botSay(text, delay = 900, extras = {}) {
             this.isTyping = true;
             this.scrollToBottom();
             await this.wait(delay);
@@ -81,6 +96,7 @@ document.addEventListener('alpine:init', () => {
                 role: 'bot',
                 text,
                 time: this.now(),
+                ...extras,
             });
             this.$nextTick(() => this.scrollToBottom());
         },
@@ -114,6 +130,24 @@ document.addEventListener('alpine:init', () => {
             this.multiSelected = [];
         },
 
+        isYesNoOptions(options) {
+            if (!Array.isArray(options) || options.length !== 2) {
+                return false;
+            }
+
+            const values = options.map((option) => option.value).sort();
+
+            return values[0] === 'tidak' && values[1] === 'ya';
+        },
+
+        clearMessageOptions() {
+            this.messages = this.messages.map((message) => {
+                const { options, questionIndex, ...rest } = message;
+
+                return rest;
+            });
+        },
+
         activeOptions: [],
 
         itemScore(question, answerValue) {
@@ -125,13 +159,20 @@ document.addEventListener('alpine:init', () => {
         },
 
         async selectOption(option) {
+            this.clearMessageOptions();
             this.activeOptions = [];
+            this.currentChoiceOptions = [];
 
             if (this.currentStep < 0) {
                 this.userSay(option.label);
                 if (option.value === 'later') {
                     await this.wait(300);
                     await this.botSay('Baik, kapan saja Anda siap silakan kembali ke halaman ini. Semoga sehat selalu! 🙏');
+                    return;
+                }
+                if (option.value === 'skip_advanced') {
+                    await this.wait(300);
+                    window.location.href = this.config.menu_url ?? '/deteksi/pilih-skrining';
                     return;
                 }
                 this.currentStep = 0;
@@ -207,11 +248,19 @@ document.addEventListener('alpine:init', () => {
             await this.botSay(prompt);
 
             if (question.type === 'choice') {
-                this.showQuickReplies(question.options);
+                if (this.isYesNoOptions(question.options)) {
+                    this.currentChoiceOptions = question.options;
+                    this.activeOptions = [];
+                } else {
+                    this.currentChoiceOptions = [];
+                    this.showQuickReplies(question.options);
+                }
             } else if (question.type === 'multi') {
+                this.currentChoiceOptions = [];
                 this.activeOptions = question.options;
                 this.showInput = false;
             } else if (question.type === 'text') {
+                this.currentChoiceOptions = [];
                 this.activeOptions = [];
                 this.showInput = true;
                 this.$nextTick(() => this.$refs.textInput?.focus());
@@ -279,6 +328,46 @@ document.addEventListener('alpine:init', () => {
             return ids.some((id) => this.answers[id] === 'ya');
         },
 
+        computeRecommendedDiseases() {
+            if (!this.isInitialMode) {
+                return [];
+            }
+
+            const routes = this.config.initial_routes ?? {};
+            const order = this.config.disease_order ?? [];
+            const catalog = this.config.disease_catalog ?? {};
+            const bySlug = {};
+
+            Object.entries(routes).forEach(([questionId, diseases]) => {
+                if (this.answers[questionId] !== 'ya') {
+                    return;
+                }
+
+                const question = this.config.questions.find((item) => item.id === questionId);
+                const trigger = question
+                    ? `${question.no}. ${question.text}`
+                    : questionId;
+
+                diseases.forEach((slug) => {
+                    if (!bySlug[slug]) {
+                        bySlug[slug] = {
+                            ...(catalog[slug] ?? {}),
+                            slug,
+                            triggers: [],
+                        };
+                    }
+
+                    if (!bySlug[slug].triggers.includes(trigger)) {
+                        bySlug[slug].triggers.push(trigger);
+                    }
+                });
+            });
+
+            return order
+                .filter((slug) => bySlug[slug])
+                .map((slug) => bySlug[slug]);
+        },
+
         standardRisikoKategori(total) {
             if (total >= 9) return 'Tinggi';
             if (total >= 5) return 'Sedang';
@@ -298,6 +387,13 @@ document.addEventListener('alpine:init', () => {
 
             if (this.config.disease === 'ppok') {
                 return this.standardRisikoKategori(total);
+            }
+
+            if (this.config.disease === 'rheumatoid_arthritis') {
+                if (total >= 10) return 'Tinggi';
+                if (total >= 5) return 'Sedang';
+
+                return 'Rendah';
             }
 
             if (['penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi'].includes(this.config.disease)) {
@@ -339,6 +435,17 @@ document.addEventListener('alpine:init', () => {
                 this.answers._hasil_kategori = this.hasilKategori;
                 this.answers._risiko_label = this.risikoLabel;
                 this.answers._has_warning_signs = this.hasWarningSigns;
+            } else if (this.isInitialMode) {
+                this.recommendedDiseases = this.computeRecommendedDiseases();
+                this.answers._recommended_diseases = this.recommendedDiseases.map((item) => item.slug);
+
+                if (this.answers.q18 === 'ya') {
+                    this.isEmergency = true;
+                    this.emergencySymptoms = ['Gejala stroke mendadak (FAST)'];
+                } else if (this.answers.q13 === 'ya' && this.answers.q14 === 'ya') {
+                    this.isEmergency = true;
+                    this.emergencySymptoms = ['Demam dengan tanda perdarahan (DHF)'];
+                }
             }
 
             const summary = this.buildSummary();
@@ -369,9 +476,19 @@ document.addEventListener('alpine:init', () => {
                         `📋 Berikut panduan self-management untuk ${this.activeSelfManagement.label}. Lihat detail di kartu hasil di bawah.`
                     );
                 }
+            } else if (this.isInitialMode) {
+                if (this.recommendedDiseases.length > 0) {
+                    await this.botSay(
+                        `📌 Berdasarkan jawaban ya Anda, silakan lanjutkan skrining lanjut pada ${this.recommendedDiseases.length} penyakit yang direkomendasikan di bawah.`
+                    );
+                } else {
+                    await this.botSay('📌 Tidak ada skrining lanjut spesifik dari jawaban ya. Risiko umum relatif rendah, tetapi tetap waspada gejala baru.');
+                }
             }
 
-            await this.botSay(this.config.result.message);
+            if (!this.isInitialMode) {
+                await this.botSay(this.config.result.message);
+            }
 
             this.messages.push({
                 id: 'result-' + Date.now(),
@@ -414,6 +531,18 @@ document.addEventListener('alpine:init', () => {
                     if (data.risiko_label) {
                         this.risikoLabel = data.risiko_label;
                     }
+                    if (data.recommended_diseases) {
+                        const existingBySlug = Object.fromEntries(
+                            this.recommendedDiseases.map((item) => [item.slug, item]),
+                        );
+
+                        this.recommendedDiseases = data.recommended_diseases.map((item) => ({
+                            ...item,
+                            triggers: existingBySlug[item.slug]?.triggers ?? item.triggers ?? [],
+                        }));
+                        this.answers._recommended_diseases = data.recommended_slugs
+                            ?? this.recommendedDiseases.map((item) => item.slug);
+                    }
                     if (this.config.suppress_emergency) {
                         this.isEmergency = false;
                     }
@@ -425,6 +554,24 @@ document.addEventListener('alpine:init', () => {
 
         buildSummary() {
             const label = this.config.disease_label ?? 'Kesehatan';
+
+            if (this.isInitialMode) {
+                const lines = ['📋 Hasil Skrining Awal', ''];
+
+                if (this.recommendedDiseases.length === 0) {
+                    lines.push('Tidak ada skrining lanjut spesifik berdasarkan jawaban ya.');
+                } else {
+                    lines.push('Skrining lanjut yang direkomendasikan:');
+                    this.recommendedDiseases.forEach((item) => {
+                        lines.push(`• ${item.label}`);
+                        (item.triggers ?? []).forEach((trigger) => {
+                            lines.push(`  - ${trigger}`);
+                        });
+                    });
+                }
+
+                return lines.join('\n');
+            }
 
             if (this.config.scoring) {
                 const rows = this.getScoreRows();

@@ -48,6 +48,7 @@ class AdminScreeningController extends Controller
                 'risk' => $risk,
                 'q' => $search,
             ],
+            'charts' => $this->stats->screeningCharts($disease, $risk, $search),
             'stats' => $this->stats,
         ]);
     }

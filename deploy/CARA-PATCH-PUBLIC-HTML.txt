@@ -1,0 +1,33 @@
+PATCH public_html v14 — chatbot-keperawatan.damgocompany.com
+Ukuran: ~200 KB (kecil — khusus folder web)
+
+MASALAH: File update ada di public/ tapi browser pakai public_html/ (build lama).
+
+=== LANGKAH (File Manager DirectAdmin) ===
+
+1. Masuk folder:
+   /domains/chatbot-keperawatan.damgocompany.com/public_html/
+
+2. Upload ZIP: public-html-patch-v14.zip
+
+3. Extract DI DALAM public_html/ → Overwrite all
+
+4. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/fix-deploy.php?key=ck2026fix
+   Tunggu SELESAI
+
+5. Hapus public_html/fix-deploy.php
+
+=== CEK ===
+
+- https://chatbot-keperawatan.damgocompany.com/version.txt → 2026-06-24-v14
+- https://chatbot-keperawatan.damgocompany.com/build/manifest.json → app-1AYJwV7I.css
+
+Kalau masih app-BF1NB4lH.css = extract salah folder (harus di public_html).
+
+=== TANPA ZIP (manual) ===
+
+File Manager → buka folder public/ → Select All → Copy
+→ masuk public_html/ → Paste → Overwrite
+
+Lalu buka fix-deploy.php seperti langkah 4 di atas.

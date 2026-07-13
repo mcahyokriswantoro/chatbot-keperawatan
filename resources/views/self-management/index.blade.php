@@ -29,7 +29,7 @@
                 <p class="mt-1 text-sm font-bold text-slate-900">
                     {{ $latestScreening->diseaseLabel() }} · {{ $latestScreening->displayRiskLabel() }}
                 </p>
-                <p class="mt-1 text-xs text-slate-500">{{ $latestScreening->created_at->translatedFormat('d F Y') }}</p>
+                <p class="mt-1 text-xs text-slate-500">{{ $latestScreening->formattedDateTime('d F Y') }}</p>
                 <div class="mt-3">
                     <x-screening.tts-button :text="$latestScreening->speechText()" :gender="auth()->user()->gender" class="w-full" />
                 </div>

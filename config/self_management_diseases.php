@@ -10,6 +10,7 @@ return [
         'jantung_koroner' => ['config' => 'jantung_koroner_self_management'],
         'diabetes_melitus' => ['config' => 'diabetes_melitus_self_management'],
         'hipertensi' => ['config' => 'hipertensi_self_management'],
+        'rheumatoid_arthritis' => ['config' => 'rheumatoid_arthritis_self_management'],
     ],
 
     'risk_levels' => ['Rendah', 'Sedang', 'Tinggi'],

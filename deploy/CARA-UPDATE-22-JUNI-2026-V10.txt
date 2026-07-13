@@ -1,0 +1,50 @@
+UPDATE v10 — chatbot-keperawatan.damgocompany.com
+Tanggal: 22 Juni 2026
+Isi: Grafik monitoring, konsultasi (hapus Bidan/Gizi/Apoteker), perbaikan UI
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server (download dari File Manager)
+2. ZIP ini TIDAK berisi .env — .env lama Anda tetap dipakai
+
+=== LANGKAH UPLOAD (File Manager) ===
+
+1. Login DirectAdmin / cPanel Qwords → File Manager
+
+2. Masuk folder ROOT project:
+   chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN hanya folder public)
+
+3. Upload ZIP:
+   chatbot-keperawatan-update-22juni2026-v10.zip
+
+4. Extract di folder tersebut → pilih OVERWRITE / timpa semua
+   (kecuali .env — pastikan .env lama masih ada)
+
+5. HAPUS file public/hot jika muncul (WAJIB — rusak CSS mobile)
+
+6. Copy deploy/clear-cache.php → public/clear-cache.php (jika belum ada)
+
+7. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+8. HAPUS dari server:
+   - public/clear-cache.php
+   - file ZIP
+   - CARA-UPDATE-22-JUNI-2026-V10.txt (opsional)
+
+=== CEK HASIL (hard refresh / incognito) ===
+
+- /monitoring → grafik garis dengan sumbu Y & tanggal, simpan per bagian
+- /konsultasi → hanya Dokter Umum, Dokter Spesialis, Perawat (Ners)
+
+=== JIKA ERROR 500 ===
+
+- storage → permission 775 recursive
+- bootstrap/cache → 775 recursive
+- Cek storage/logs/laravel.log
+
+=== CATATAN ===
+
+Folder public/build/ WAJIB ada setelah extract.

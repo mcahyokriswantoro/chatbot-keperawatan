@@ -1,0 +1,41 @@
+UPDATE Self-Management + TTS — chatbot-keperawatan.damgocompany.com
+Commit: 1b9b53b
+
+=== LANGKAH UPLOAD ===
+
+1. Login cPanel Qwords → File Manager
+
+2. Masuk ke folder ROOT project (tempat file artisan berada):
+   chatbot-keperawatan.damgocompany.com/
+
+3. Upload file ZIP ini ke folder tersebut
+
+4. Klik kanan ZIP → Extract (extract DI DALAM folder root project)
+   Struktur harus seperti:
+     app/
+     bootstrap/
+     public/
+     resources/
+     routes/
+     CARA-UPDATE-ZIP.txt
+
+5. HAPUS file public/hot jika ada (penting untuk CSS mobile)
+
+6. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu sampai muncul "SELESAI"
+
+7. HAPUS file public/clear-cache.php dari File Manager
+
+8. Tes (hard refresh / incognito):
+   - /self-management  → tombol Dengarkan Panduan + Jeda/Lanjutkan/Stop
+   - /admin/screenings/1 → audio panduan admin
+
+9. Hapus file ZIP dan CARA-UPDATE-ZIP.txt dari server (opsional)
+
+=== CATATAN ===
+
+- Jangan timpa file .env Anda
+- Document root harus tetap: .../public
+- PHP 8.3
+- Folder public/build/ WAJIB ada setelah extract

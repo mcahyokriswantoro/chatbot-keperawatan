@@ -1,0 +1,59 @@
+UPDATE v15 FULL — chatbot-keperawatan.damgocompany.com
+Tanggal: 24 Juni 2026
+Ukuran ZIP: ~30 MB (vendor + public/build + public_html)
+
+=== ISI UPDATE ===
+- Admin monitoring: filter rentang tanggal (dari–sampai)
+- Grafik Pengguna vs tamu: hitung per orang (bukan per skrining)
+- Zona waktu WIB (Asia/Jakarta)
+- TTS: optimasi HP lama (fallback cepat ke suara peramban)
+- Tombol ringkasan monitoring: putih / hijau setelah aktif
+- TTS neural via PHP (afaya/edge-tts)
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server
+2. ZIP tidak berisi .env
+
+=== LANGKAH UPLOAD ===
+
+1. Login DirectAdmin → File Manager
+
+2. Masuk folder ROOT:
+   /domains/chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN di dalam public_html saja)
+
+3. Upload ZIP (~30 MB):
+   chatbot-keperawatan-full-24juni2026-v15.zip
+
+4. Extract → OVERWRITE semua
+
+5. Pastikan .env masih ada. Tambahkan jika belum:
+   APP_TIMEZONE=Asia/Jakarta
+   TTS_DRIVER=php
+
+6. HAPUS public/hot dan public_html/hot jika ada
+
+7. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+   Jika 404, coba:
+   https://chatbot-keperawatan.damgocompany.com/public/clear-cache.php?key=ck2026fix
+
+8. Migration (jika belum pernah):
+   Copy deploy/migrate-once.php → public_html/migrate-once.php
+   Buka ?key=ck2026migrate
+   Hapus setelah SELESAI
+
+9. HAPUS dari server setelah selesai:
+   - clear-cache.php (public/ dan public_html/)
+   - migrate-once.php (jika dipakai)
+   - file ZIP
+
+=== CEK HASIL ===
+
+- version.txt → 2026-06-24-v15-full
+- /admin → rentang tanggal monitoring + tombol putih/hijau
+- /admin → grafik Pengguna vs tamu (per orang)
+- Skrining → Dengarkan Panduan (HP lama: langsung suara peramban)

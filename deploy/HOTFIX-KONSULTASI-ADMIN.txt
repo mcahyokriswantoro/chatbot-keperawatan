@@ -1,0 +1,63 @@
+HOTFIX — /admin/konsultasi/tenaga-kesehatan tidak bisa
+Tanggal: 4 Juli 2026
+
+=== GEJALA ===
+- Buka URL langsung → halaman login (normal, wajib masuk dulu)
+- Sudah login admin → error 500 / halaman kosong / 404
+- Tab "Tenaga kesehatan" tidak muncul
+
+=== PENYEBAB UMUM ===
+1. Belum login sebagai admin
+2. Update v20 belum di-upload ke server
+3. Migration belum dijalankan (tabel consultation_providers belum ada)
+4. Route cache lama
+
+=== LANGKAH PERBAIKAN ===
+
+A. LOGIN ADMIN DULU
+   1. Buka https://chatbot-keperawatan.damgocompany.com/login
+   2. Masuk dengan akun admin
+   3. Baru buka /admin/konsultasi/tenaga-kesehatan
+
+   Atau lewat menu: Admin → Konsul (bawah) → tab "Tenaga kesehatan"
+
+B. PASTIKAN UPDATE v20 SUDAH TERPASANG
+   1. Buka https://chatbot-keperawatan.damgocompany.com/version.txt
+      Harus: 2026-07-04-v20-full
+   2. Jika masih v19 atau tidak ada → upload ZIP v20:
+      chatbot-keperawatan-full-04juli2026-v20.zip
+      Extract di folder root (tempat artisan), overwrite semua
+
+C. JALANKAN SETUP (MIGRATION + SEED)
+   1. Upload deploy/setup-once.php → public/setup-once.php
+   2. Buka: https://chatbot-keperawatan.damgocompany.com/setup-once.php?key=ck2026setup
+   3. Tunggu "SELESAI" — harus ada:
+      - php artisan migrate
+      - consultation_providers.photo OK
+   4. Hapus setup-once.php
+
+D. CLEAR CACHE
+   1. Upload deploy/clear-cache.php → public/clear-cache.php
+   2. Buka: https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   3. Hapus clear-cache.php
+
+E. CEK DEPLOY (opsional)
+   1. Upload deploy/check-deploy.php → public/check-deploy.php
+   2. Buka: https://chatbot-keperawatan.damgocompany.com/check-deploy.php?key=ck2026check
+   3. Pastikan AdminConsultationProviderController.php = OK
+   4. Hapus check-deploy.php
+
+F. JADIKAN USER ADMIN (jika login tapi akses ditolak 403)
+   1. Upload deploy/make-admin-once.php → public/make-admin-once.php
+   2. Buka: .../make-admin-once.php?key=ck2026admin&email=EMAIL_ANDA
+   3. Hapus make-admin-once.php
+
+=== CEK BERHASIL ===
+- /admin/konsultasi/tenaga-kesehatan → daftar perawat
+- Tab: Verifikasi bayar | Tenaga kesehatan | Kelola voucher
+- Foto profil tampil (path /storage/...)
+
+=== JANGAN LUPA ===
+- Jangan timpa .env
+- Hapus public/.user.ini jika muncul (bikin error 500)
+- Hapus public/hot jika muncul

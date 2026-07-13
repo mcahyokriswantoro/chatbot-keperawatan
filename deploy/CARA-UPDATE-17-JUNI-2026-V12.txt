@@ -1,0 +1,51 @@
+UPDATE v12 — chatbot-keperawatan.damgocompany.com
+Tanggal: 17 Juni 2026
+Isi: Tips dari Chatbot (beranda), label Self Management di dashboard
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server (download dari File Manager)
+2. ZIP ini TIDAK berisi .env — .env lama Anda tetap dipakai
+
+=== LANGKAH UPLOAD (File Manager) ===
+
+1. Login DirectAdmin / cPanel Qwords → File Manager
+
+2. Masuk folder ROOT project:
+   chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN hanya folder public)
+
+3. Upload ZIP:
+   chatbot-keperawatan-update-17juni2026-v12.zip
+
+4. Extract di folder tersebut → pilih OVERWRITE / timpa semua
+   (kecuali .env — pastikan .env lama masih ada)
+
+5. HAPUS file public/hot jika muncul (WAJIB — rusak CSS mobile)
+
+6. Copy deploy/clear-cache.php → public/clear-cache.php (jika belum ada)
+
+7. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+8. HAPUS dari server:
+   - public/clear-cache.php
+   - file ZIP
+   - CARA-UPDATE-17-JUNI-2026-V12.txt (opsional)
+
+=== CEK HASIL (hard refresh / incognito) ===
+
+- Beranda → kartu tips: judul "Tips dari Chatbot" (bukan Tips Minggu Ini)
+- Beranda → tidak ada baris "Sumber: ayosehat.kemkes.go.id"
+- Dashboard → kartu ungu: "Self Management" (bukan Self Care)
+
+=== JIKA ERROR 500 ===
+
+- storage → permission 775 recursive
+- bootstrap/cache → 775 recursive
+- Cek storage/logs/laravel.log
+
+=== CATATAN ===
+
+Folder public/build/ WAJIB ada setelah extract.

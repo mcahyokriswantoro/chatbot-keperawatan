@@ -9,7 +9,7 @@
     <header class="shrink-0 border-b border-brand-100 bg-white/90 backdrop-blur-md px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
         <div class="flex items-center gap-3">
             <a
-                href="{{ route('detection.start') }}"
+                href="{{ $screening['back_url'] ?? route('detection.start') }}"
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-brand-600 transition hover:bg-brand-50"
                 aria-label="Kembali"
             >
@@ -70,7 +70,7 @@
                 >
                     <p x-show="!msg.isResult" x-text="msg.text"></p>
                     <div x-show="msg.isResult" class="space-y-3">
-                        <p class="font-bold text-brand-700" x-text="config.result.title"></p>
+                        <p x-show="!isInitialMode" class="font-bold text-brand-700" x-text="config.result.title"></p>
                         <div
                             x-show="config.scoring && totalScore !== null"
                             x-cloak
@@ -171,11 +171,53 @@
                             </div>
                         </div>
                         <pre
-                            x-show="!config.scoring"
+                            x-show="!config.scoring && !isInitialMode"
                             class="whitespace-pre-wrap font-sans text-xs leading-relaxed text-slate-600"
                             x-text="msg.text"
                         ></pre>
-                        <div class="flex flex-wrap justify-center gap-2 pt-1">
+                        <div x-show="isInitialMode" class="space-y-3 text-left">
+                            <p class="text-sm font-bold text-brand-800" x-text="config.result.title"></p>
+                            <p
+                                x-show="recommendedDiseases.length > 0"
+                                class="text-xs leading-relaxed text-slate-600"
+                            >
+                                Berdasarkan jawaban <strong>Ya</strong> Anda, lanjutkan skrining lanjut pada penyakit berikut:
+                            </p>
+                            <div x-show="recommendedDiseases.length > 0" class="space-y-2">
+                                <template x-for="item in recommendedDiseases" :key="item.slug">
+                                    <a
+                                        :href="item.url"
+                                        class="block rounded-xl border border-brand-200 bg-white px-3 py-3 transition hover:border-brand-400 hover:bg-brand-50 active:scale-[0.99]"
+                                    >
+                                        <div class="flex items-start gap-3">
+                                            <span class="text-2xl leading-none" x-text="item.icon"></span>
+                                            <div class="min-w-0 flex-1">
+                                                <span class="block text-sm font-bold text-slate-900" x-text="item.label"></span>
+                                                <span class="mt-1 block text-[10px] leading-relaxed text-slate-500" x-text="item.description"></span>
+                                                <ul class="mt-2 space-y-0.5 text-[10px] text-brand-700">
+                                                    <template x-for="(trigger, tIdx) in (item.triggers ?? [])" :key="tIdx">
+                                                        <li class="flex gap-1">
+                                                            <span class="shrink-0">•</span>
+                                                            <span x-text="trigger"></span>
+                                                        </li>
+                                                    </template>
+                                                </ul>
+                                            </div>
+                                            <span class="shrink-0 rounded-full bg-brand-600 px-2.5 py-1 text-[10px] font-semibold text-white">
+                                                Mulai
+                                            </span>
+                                        </div>
+                                    </a>
+                                </template>
+                            </div>
+                            <p
+                                x-show="recommendedDiseases.length === 0"
+                                class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800"
+                            >
+                                Tidak ada skrining lanjut spesifik dari jawaban ya. Tetap waspada gejala baru dan konsultasikan ke tenaga kesehatan bila perlu.
+                            </p>
+                        </div>
+                        <div x-show="!isInitialMode" class="flex flex-wrap justify-center gap-2 pt-1">
                             <button
                                 type="button"
                                 @click="listenToResult()"
@@ -242,21 +284,30 @@
         <div class="rounded-[1.75rem] border border-white/80 bg-white/95 shadow-[0_-4px_24px_-4px_rgba(0,102,255,0.12),0_8px_32px_-8px_rgba(15,23,42,0.12)] backdrop-blur-xl ring-1 ring-brand-100/60">
             <div class="px-4 py-4">
 
-                {{-- Quick reply (single choice) --}}
-                <div x-show="activeOptions.length > 0 && currentStep >= 0 && config.questions[currentStep]?.type !== 'multi'" x-cloak>
-                    <div
-                        class="flex gap-2 rounded-2xl bg-slate-50/80 p-1.5"
-                        :class="config.scoring ? 'grid grid-cols-2' : 'flex-wrap justify-center'"
-                    >
+                {{-- Ya / Tidak --}}
+                <div x-show="!finished && currentChoiceOptions.length > 0">
+                    <div class="grid grid-cols-2 gap-2 rounded-2xl bg-slate-50/80 p-1.5">
+                        <template x-for="opt in currentChoiceOptions" :key="opt.value">
+                            <button
+                                type="button"
+                                @click="selectOption(opt)"
+                                :class="opt.value === 'ya'
+                                    ? 'w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white shadow-md shadow-brand-600/25 transition hover:bg-brand-700 active:scale-[0.98]'
+                                    : 'w-full rounded-xl border border-slate-200/80 bg-white py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98]'"
+                                x-text="opt.label"
+                            ></button>
+                        </template>
+                    </div>
+                </div>
+
+                {{-- Quick reply (pilihan selain Ya/Tidak) --}}
+                <div x-show="activeOptions.length > 0 && currentStep >= 0 && config.questions[currentStep]?.type !== 'multi' && currentChoiceOptions.length === 0" x-cloak>
+                    <div class="flex flex-wrap justify-center gap-2 rounded-2xl bg-slate-50/80 p-1.5">
                         <template x-for="opt in activeOptions" :key="opt.value">
                             <button
                                 type="button"
                                 @click="selectOption(opt)"
-                                :class="config.scoring && opt.value === 'ya'
-                                    ? 'w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white shadow-md shadow-emerald-600/25 transition hover:bg-emerald-700 active:scale-[0.98]'
-                                    : config.scoring && opt.value === 'tidak'
-                                        ? 'w-full rounded-xl border border-slate-200/80 bg-white py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98]'
-                                        : 'rounded-xl border border-brand-200/80 bg-white px-4 py-2.5 text-sm font-medium text-brand-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 active:scale-95'"
+                                class="rounded-xl border border-brand-200/80 bg-white px-4 py-2.5 text-sm font-medium text-brand-700 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 active:scale-95"
                                 x-text="opt.label"
                             ></button>
                         </template>
@@ -328,10 +379,64 @@
                     <a href="{{ route('emergency') }}" class="underline underline-offset-2">Buka halaman Peringatan Darurat →</a>
                 </div>
 
-                {{-- Finished actions --}}
-                <div x-show="finished" x-cloak class="space-y-2">
+                {{-- Hasil skrining awal — rekomendasi penyakit --}}
+                <div x-show="finished && isInitialMode" x-cloak class="space-y-2">
+                    <template x-if="recommendedDiseases.length > 0">
+                        <div class="space-y-2">
+                            <p class="text-center text-xs font-semibold text-slate-600">
+                                Pilih skrining lanjut sesuai risiko Anda:
+                            </p>
+                            <template x-for="item in recommendedDiseases" :key="'footer-' + item.slug">
+                                <a
+                                    :href="item.url"
+                                    class="flex w-full items-center gap-3 rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-3.5 text-white shadow-lg shadow-brand-600/25 transition hover:from-brand-700 hover:to-brand-600 active:scale-[0.98]"
+                                >
+                                    <span class="text-xl" x-text="item.icon"></span>
+                                    <span class="min-w-0 flex-1 text-left">
+                                        <span class="block text-sm font-bold" x-text="item.label"></span>
+                                        <span class="block text-[10px] text-brand-100" x-text="(item.triggers ?? []).length + ' indikator risiko'"></span>
+                                    </span>
+                                    <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                                    </svg>
+                                </a>
+                            </template>
+                        </div>
+                    </template>
+                    <p
+                        x-show="recommendedDiseases.length === 0"
+                        class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-xs text-emerald-800"
+                    >
+                        Tidak ada penyakit spesifik yang perlu skrining lanjut dari jawaban ya Anda.
+                    </p>
+                    <div class="grid gap-2 pt-1 {{ auth()->check() ? 'grid-cols-3' : 'grid-cols-2' }}">
+                        <a
+                            href="{{ route('detection.start') }}"
+                            class="rounded-2xl border border-brand-100 bg-white py-2.5 text-center text-xs font-semibold text-brand-600 shadow-sm transition hover:bg-brand-50 active:scale-[0.98]"
+                        >
+                            Ulangi
+                        </a>
+                        <a
+                            href="{{ route('home') }}"
+                            class="rounded-2xl border border-brand-100 bg-white py-2.5 text-center text-xs font-semibold text-brand-600 shadow-sm transition hover:bg-brand-50 active:scale-[0.98]"
+                        >
+                            Beranda
+                        </a>
+                        @auth
+                            <a
+                                href="{{ route('history') }}"
+                                class="rounded-2xl border border-brand-100 bg-white py-2.5 text-center text-xs font-semibold text-brand-600 shadow-sm transition hover:bg-brand-50 active:scale-[0.98]"
+                            >
+                                Riwayat
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+
+                {{-- Hasil skrining lanjut --}}
+                <div x-show="finished && !isInitialMode" x-cloak class="space-y-2">
                     <a
-                        x-show="config.self_management"
+                        x-show="config.self_management && !isInitialMode"
                         x-cloak
                         href="{{ $screening['self_management_url'] ?? route('login') }}"
                         class="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-brand-500 bg-white py-3.5 text-sm font-semibold text-brand-600 shadow-sm transition hover:bg-brand-50 active:scale-[0.98]"
@@ -388,7 +493,7 @@
 
                 {{-- Idle hint --}}
                 <p
-                    x-show="!showInput && activeOptions.length === 0 && !finished && !isTyping && messages.length > 0"
+                    x-show="!showInput && activeOptions.length === 0 && currentChoiceOptions.length === 0 && !finished && !isTyping && messages.length > 0"
                     x-cloak
                     class="rounded-xl bg-brand-50/80 px-3 py-2 text-center text-[11px] font-medium text-slate-500"
                 >

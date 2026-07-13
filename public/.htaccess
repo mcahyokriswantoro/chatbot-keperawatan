@@ -1,8 +1,4 @@
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
     RewriteEngine On
 
     # Paksa HTTPS (DirectAdmin / Apache / LiteSpeed)
@@ -27,4 +23,9 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Hindari 500 jika host melarang Options di .htaccess
+<IfModule mod_negotiation.c>
+    Options -MultiViews -Indexes
 </IfModule>

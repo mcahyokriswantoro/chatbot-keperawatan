@@ -1,0 +1,23 @@
+PATCH — Link video (hindari ModSecurity)
+=========================================
+
+Upload file video besar diblokir ModSecurity → gunakan Link video.
+
+File yang perlu di-upload ke server (overwrite):
+
+- app/Http/Controllers/Admin/AdminArticleController.php
+- resources/views/admin/articles/form.blade.php
+- resources/js/admin-video-thumbnail.js
+- public/build/ (folder lengkap)
+- public_html/build/ (salin dari public/build)
+
+Atau deploy ulang patch terbaru dari project.
+
+CARA PAKAI (admin):
+1. Tambah Video → pilih **Link video**
+2. Paste URL YouTube/Vimeo, contoh:
+   https://www.youtube.com/watch?v=XXXXXXXX
+3. Upload thumbnail manual (bagian bawah)
+4. Isi judul, kategori, ringkasan → Simpan
+
+POST hanya kirim teks (kecil) → tidak kena ModSecurity.

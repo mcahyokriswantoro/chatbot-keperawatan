@@ -9,7 +9,8 @@ use App\Models\Wilayah;
 use App\Support\GenderMapper;
 use App\Services\DhfScoringService;
 use App\Services\DiabetesMelitusScoringService;
-use App\Services\HipertensiScoringService;
+use App\Services\InitialScreeningService;
+use App\Services\RheumatoidArthritisScoringService;
 use App\Services\JantungKoronerScoringService;
 use App\Services\PenyakitGinjalScoringService;
 use App\Services\PpokScoringService;
@@ -117,9 +118,25 @@ class DetectionController extends Controller
             return $redirect;
         }
 
+        $screening = $this->buildInitialScreeningConfig();
+
+        return view('detection.chat', compact('screening'));
+    }
+
+    public function menu(): View|RedirectResponse
+    {
+        if ($redirect = $this->redirectIfNoIdentity()) {
+            return $redirect;
+        }
+
         return view('detection.menu', [
-            'diseases' => config('diseases'),
+            'diseases' => $this->advancedDiseases(),
         ]);
+    }
+
+    public function initialScreening(): RedirectResponse
+    {
+        return redirect()->route('detection.start');
     }
 
     public function show(string $disease): View|RedirectResponse
@@ -132,7 +149,11 @@ class DetectionController extends Controller
             return $redirect;
         }
 
-        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi'], true)) {
+        if ($disease === 'skrining_awal') {
+            return redirect()->route('detection.start');
+        }
+
+        if (in_array($disease, ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi', 'rheumatoid_arthritis'], true)) {
             return redirect()->route('detection.chat.session', $disease);
         }
 
@@ -239,6 +260,14 @@ class DetectionController extends Controller
             $questionPrefix = config('hipertensi_skrining.question_prefix');
             $scoringLegend = config('hipertensi_skrining.scoring_legend');
             $selfManagement = config('hipertensi_self_management');
+        } elseif ($disease === 'rheumatoid_arthritis') {
+            $raScoring = app(RheumatoidArthritisScoringService::class);
+            $questions = $raScoring->questions();
+            $maxScore = $raScoring->maxScore();
+            $scoringItems = config('rheumatoid_arthritis_skrining.items');
+            $questionPrefix = config('rheumatoid_arthritis_skrining.question_prefix');
+            $scoringLegend = config('rheumatoid_arthritis_skrining.scoring_legend');
+            $selfManagement = config('rheumatoid_arthritis_self_management');
         }
 
         $resultMessages = [
@@ -250,9 +279,11 @@ class DetectionController extends Controller
             'jantung_koroner' => 'Terima kasih telah menyelesaikan skrining Jantung Koroner. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Bila nyeri dada hebat atau tidak membaik, segera ke IGD.',
             'diabetes_melitus' => 'Terima kasih telah menyelesaikan skrining Diabetes Melitus. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan gula darah.',
             'hipertensi' => 'Terima kasih telah menyelesaikan skrining Hipertensi. Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke tenaga kesehatan bila risiko tinggi untuk pemeriksaan tekanan darah.',
+            'rheumatoid_arthritis' => 'Terima kasih telah menyelesaikan skrining Rheumatoid Arthritis (RA). Berikut total skor, klasifikasi risiko, dan panduan self-management sesuai hasil Anda. Hasil ini bersifat informatif dan bukan diagnosis medis. Segera konsultasikan ke dokter spesialis reumatologi bila risiko sedang atau tinggi.',
         ];
 
         $screening = [
+            'mode' => 'advanced',
             'bot_name' => config('screening.bot_name'),
             'disease' => $disease,
             'disease_label' => $diseaseConfig['label'],
@@ -267,6 +298,8 @@ class DetectionController extends Controller
             'scoring_legend' => $scoringLegend,
             'self_management' => $selfManagement,
             'suppress_emergency' => $suppressEmergency,
+            'back_url' => route('detection.menu'),
+            'menu_url' => route('detection.menu'),
             'self_management_url' => auth()->check()
                 ? route('self-management.show', $disease)
                 : route('login'),
@@ -280,6 +313,58 @@ class DetectionController extends Controller
         ];
 
         return view('detection.chat', compact('screening'));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildInitialScreeningConfig(): array
+    {
+        $initial = app(InitialScreeningService::class);
+        $advanced = $this->advancedDiseases();
+
+        return [
+            'mode' => 'initial',
+            'bot_name' => config('screening.bot_name'),
+            'disease' => 'skrining_awal',
+            'disease_label' => 'Skrining Awal',
+            'welcome' => config('diseases.skrining_awal.welcome'),
+            'start_options' => config('screening.start_options'),
+            'questions' => $initial->questions(),
+            'scoring' => false,
+            'initial_routes' => config('skrining_awal.routes'),
+            'disease_order' => config('skrining_awal.disease_order'),
+            'disease_catalog' => collect(config('skrining_awal.disease_order'))
+                ->mapWithKeys(fn (string $slug) => [
+                    $slug => [
+                        'slug' => $slug,
+                        'label' => $advanced[$slug]['label'] ?? $slug,
+                        'icon' => $advanced[$slug]['icon'] ?? '📋',
+                        'description' => $advanced[$slug]['description'] ?? '',
+                        'url' => route('detection.chat.session', $slug),
+                    ],
+                ])
+                ->all(),
+            'back_url' => route('home'),
+            'menu_url' => route('detection.menu'),
+            'screening_identity_id' => session('screening_identity_id'),
+            'user_gender' => auth()->user()?->gender,
+            'result' => [
+                'title' => 'Rekomendasi Skrining Lanjut',
+                'message' => 'Terima kasih telah menyelesaikan skrining awal. Lanjutkan skrining pada penyakit yang direkomendasikan sesuai jawaban ya Anda. Hasil ini bersifat informatif dan bukan diagnosis medis.',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    private function advancedDiseases(): array
+    {
+        return array_filter(
+            config('diseases'),
+            fn (array $item) => ($item['advanced'] ?? true) !== false,
+        );
     }
 
     private function userProfileComplete(User $user): bool

@@ -1,0 +1,63 @@
+UPDATE v8 — chatbot-keperawatan.damgocompany.com
+Tanggal: 20 Juni 2026
+Isi: Chat pengantar keluhan, perbaikan teks subtitle, monitoring terbaru
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server (download dari File Manager)
+2. ZIP ini TIDAK berisi .env — .env lama Anda tetap dipakai
+
+=== LANGKAH UPLOAD (File Manager) ===
+
+1. Login cPanel Qwords → File Manager
+
+2. Masuk folder ROOT project:
+   chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN hanya folder public)
+
+3. Upload ZIP:
+   chatbot-keperawatan-update-20juni2026-v8.zip
+
+4. Extract di folder tersebut → pilih OVERWRITE / timpa semua
+   (kecuali .env — pastikan .env lama masih ada)
+
+5. HAPUS file public/hot jika muncul (WAJIB — rusak CSS mobile)
+
+6. Copy deploy/clear-cache.php → public/clear-cache.php (jika belum ada)
+
+7. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+8. HAPUS dari server:
+   - public/clear-cache.php
+   - file ZIP
+   - CARA-UPDATE-20-JUNI-2026-V8.txt (opsional)
+
+=== CEK HASIL (hard refresh / incognito) ===
+
+- /monitoring → tab Harian → Keluhan
+  • Chat pengantar bot sebelum pertanyaan gejala
+  • Tombol "Lanjut" → baru masuk gejala
+  • Simpan per bagian (keluhan, obat, vital, self management)
+
+- /monitoring → tab Bulanan
+  • Kekambuhan collapsed (tombol "Mulai catat kekambuhan")
+
+=== JIKA SITUS TIDAK BISA DIBUKA (DNS_PROBE_FINISHED_NXDOMAIN) ===
+
+Itu masalah DNS/hosting, BUKAN file ZIP:
+- Cek subdomain ada di cPanel → Subdomains
+- Cek DNS A record subdomain mengarah ke IP server
+- Tunggu propagate DNS (bisa 1–24 jam)
+
+=== JIKA ERROR 500 ===
+
+- storage → permission 775 recursive
+- bootstrap/cache → 775 recursive
+- Cek storage/logs/laravel.log
+
+=== CATATAN ===
+
+Migration TIDAK perlu diulang jika setup-once.php sudah pernah dijalankan.
+Folder public/build/ WAJIB ada setelah extract.

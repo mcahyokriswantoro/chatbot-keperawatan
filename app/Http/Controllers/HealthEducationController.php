@@ -2,92 +2,90 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AyosehatArticle;
 use App\Models\HealthArticle;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class HealthEducationController extends Controller
 {
     public function index(): View
     {
-        $categoryConfig = collect(config('ayosehat.categories'));
-        $dbArticles = AyosehatArticle::query()
-            ->active()
-            ->orderByDesc('published_at')
-            ->orderByDesc('synced_at')
-            ->get();
-
-        $articles = $this->mapArticlesForView($dbArticles, $categoryConfig);
-        $categories = $this->buildCategoryGroups($articles, $categoryConfig);
-        $lastSyncedAt = AyosehatArticle::query()->max('synced_at');
+        $articles = $this->mapArticlesForView($this->publishedArticles());
+        $categories = $this->buildCategoriesForView($articles);
 
         return view('education.index', [
-            'sourceUrl' => config('ayosehat.base_url'),
-            'categories' => $categories,
             'articles' => $articles,
-            'featured' => $articles->first(),
-            'lastSyncedAt' => $lastSyncedAt,
+            'categories' => $categories,
         ]);
     }
 
-    public function show(string $slug): RedirectResponse|View
+    public function show(string $slug): View
     {
-        $article = AyosehatArticle::query()
-            ->active()
-            ->where('external_slug', $slug)
-            ->first();
-
-        if ($article) {
-            return redirect()->away($article->url);
-        }
-
-        $legacy = collect(config('ayosehat.categories', []))
-            ->flatMap(fn (array $category) => $category['articles'] ?? [])
-            ->firstWhere('slug', $slug);
-
-        if ($legacy) {
-            return redirect()->away($legacy['url']);
-        }
-
         $article = HealthArticle::query()
             ->where('slug', $slug)
             ->where('is_published', true)
+            ->where('content_type', 'video')
             ->firstOrFail();
 
         return view('education.show', compact('article'));
     }
 
-    protected function mapArticlesForView(Collection $dbArticles, Collection $categoryConfig): Collection
+    /**
+     * @return Collection<int, HealthArticle>
+     */
+    protected function publishedArticles(): Collection
     {
-        return $dbArticles->map(function (AyosehatArticle $article) use ($categoryConfig) {
-            $meta = $categoryConfig->firstWhere('id', $article->category_id) ?? [];
+        if (! Schema::hasTable('health_articles')) {
+            return collect();
+        }
+
+        return HealthArticle::query()
+            ->where('is_published', true)
+            ->where('content_type', 'video')
+            ->latest()
+            ->get();
+    }
+
+    /**
+     * @param  Collection<int, HealthArticle>  $records
+     * @return Collection<int, array<string, mixed>>
+     */
+    protected function mapArticlesForView(Collection $records): Collection
+    {
+        return $records->map(function (HealthArticle $article) {
+            $categoryName = trim((string) $article->category) !== '' ? $article->category : 'Umum';
+            $categoryId = 'cat-'.(Str::slug($categoryName) ?: 'umum');
 
             return [
-                'slug' => $article->external_slug,
+                'slug' => $article->slug,
                 'title' => $article->title,
-                'excerpt' => $article->excerpt,
-                'url' => $article->url,
-                'image' => $article->image_url,
-                'read_min' => $article->read_min ?? 3,
-                'tag' => $article->tag ?? $article->category_name,
-                'category_id' => $article->category_id,
-                'category_name' => $article->category_name,
-                'category_icon' => $meta['icon'] ?? '📄',
-                'category_gradient' => $meta['gradient'] ?? 'from-brand-500 to-blue-600',
-                'category_chip' => $meta['chip'] ?? 'bg-brand-50 text-brand-700 ring-brand-200',
-                'published_at' => $article->published_at?->translatedFormat('d M Y'),
+                'url' => route('education.show', $article->slug),
+                'image' => $article->coverImageUrl() ?? asset('images/robot.png'),
+                'read_label' => 'Video edukasi',
+                'tag' => $categoryName,
+                'category_id' => $categoryId,
+                'category_name' => $categoryName,
+                'category_icon' => '▶️',
+                'category_chip' => 'bg-violet-50 text-violet-700 ring-violet-200',
+                'published_at' => $article->created_at?->translatedFormat('d M Y'),
+                'is_video' => true,
             ];
         })->values();
     }
 
-    protected function buildCategoryGroups(Collection $articles, Collection $categoryConfig): Collection
+    /**
+     * @param  Collection<int, array<string, mixed>>  $articles
+     * @return Collection<int, array<string, mixed>>
+     */
+    protected function buildCategoriesForView(Collection $articles): Collection
     {
-        return $categoryConfig->map(function (array $category) use ($articles) {
-            return array_merge($category, [
-                'articles' => $articles->where('category_id', $category['id'])->values()->all(),
-            ]);
-        });
+        return $articles->unique('category_id')->map(fn (array $article) => [
+            'id' => $article['category_id'],
+            'name' => $article['category_name'],
+            'icon' => '📂',
+            'chip' => 'bg-slate-50 text-slate-700 ring-slate-200',
+        ])->values();
     }
 }

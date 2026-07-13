@@ -1,0 +1,46 @@
+UPDATE v14 — chatbot-keperawatan.damgocompany.com
+Tanggal: 24 Juni 2026
+Ukuran ZIP: ~29 MB (sama seperti update v13, v12, dll.)
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server
+2. ZIP tidak berisi .env
+
+=== LANGKAH UPLOAD (sama seperti kemarin) ===
+
+1. Login DirectAdmin → File Manager
+
+2. Masuk folder ROOT:
+   /domains/chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN di dalam public_html saja)
+
+3. Upload ZIP (~29 MB):
+   chatbot-keperawatan-update-24juni2026-v14.zip
+
+   JANGAN pakai ZIP 400 KB — itu salah.
+
+4. Extract → OVERWRITE semua
+
+5. HAPUS public/hot dan public_html/hot jika ada
+
+6. Buka browser (sama seperti v13):
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+   Jika 404, coba:
+   https://chatbot-keperawatan.damgocompany.com/public/clear-cache.php?key=ck2026fix
+
+7. HAPUS clear-cache.php dari public/ dan public_html/
+
+=== CEK ===
+
+- https://chatbot-keperawatan.damgocompany.com/version.txt → 2026-06-24-v14
+- /admin → Ringkasan aktivitas
+- /build/manifest.json → app-1AYJwV7I.css
+
+=== Migration (hanya jika belum pernah) ===
+
+Copy deploy/setup-once.php → public/setup-once.php
+https://chatbot-keperawatan.damgocompany.com/setup-once.php?key=ck2026setup
+Hapus setelah SELESAI.

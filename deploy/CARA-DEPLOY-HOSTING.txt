@@ -1,0 +1,56 @@
+DEPLOY PENUH — chatbot-keperawatan.damgocompany.com
+Update: Juni 2026 (Self-Management + TTS + semua perubahan terbaru)
+
+=== SEBELUM UPLOAD ===
+
+1. BACKUP file .env di server (File Manager → download .env)
+   JANGAN sampai .env ikut tertimpa!
+
+=== LANGKAH UPLOAD ===
+
+1. Login cPanel Qwords → File Manager
+
+2. Masuk folder ROOT project:
+   chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN hanya folder public)
+
+3. Upload ZIP: chatbot-keperawatan-full-juni2026.zip
+
+4. Extract ZIP di folder tersebut → pilih OVERWRITE / timpa semua
+
+5. Pastikan file .env LAMA masih ada (restore dari backup jika tertimpa)
+
+6. HAPUS file public/hot jika muncul (WAJIB — rusak CSS mobile)
+
+7. Permission folder (jika error 500):
+   storage → 775 recursive
+   bootstrap/cache → 775 recursive
+
+8. Buka browser — clear cache + cek:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+9. Jika ada migration baru, jalankan setup (opsional):
+   Copy deploy/setup-once.php ke public/setup-once.php
+   https://chatbot-keperawatan.damgocompany.com/setup-once.php?key=ck2026setup
+   Hapus setup-once.php setelah selesai
+
+10. HAPUS dari server setelah selesai:
+    - public/clear-cache.php
+    - public/setup-once.php (jika dipakai)
+    - file ZIP
+
+=== CEK HASIL ===
+
+- https://chatbot-keperawatan.damgocompany.com/self-management
+  → Dengarkan Panduan + Jeda/Lanjutkan/Stop
+- https://chatbot-keperawatan.damgocompany.com/admin/screenings/1
+  → Audio panduan admin
+- Tampilan mobile/CSS normal (bukan HTML polos)
+
+=== PENTING ===
+
+- Document root: .../public
+- PHP 8.3
+- DB user: damgocom_cahyokriswantoro (sesuaikan .env)
+- APP_DEBUG=false di production

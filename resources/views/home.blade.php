@@ -21,7 +21,7 @@
         ],
         [
             'label' => 'Edukasi Kesehatan',
-            'desc' => 'Artikel & tips kesehatan',
+            'desc' => 'Video edukasi kesehatan',
             'url' => route('education.index'),
             'icon' => 'images/unggulan_edukasi.png',
         ],
@@ -153,7 +153,7 @@
         </div>
     </a>
 
-    {{-- Tips hari ini --}}
+    {{-- Tips chatbot --}}
     <section class="overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 ring-1 ring-emerald-100">
         <div class="flex items-center gap-3 p-4">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center">
@@ -164,8 +164,7 @@
                 />
             </div>
             <div class="min-w-0 flex-1">
-                <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips Minggu Ini</p>
-                <p class="text-[10px] text-emerald-600/80">Sumber: ayosehat.kemkes.go.id</p>
+                <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips dari Chatbot</p>
                 <p
                     x-text="tips[tipIndex]"
                     x-transition:enter="transition ease-out duration-300"

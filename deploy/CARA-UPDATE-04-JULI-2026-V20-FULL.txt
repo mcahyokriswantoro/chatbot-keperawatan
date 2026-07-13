@@ -1,0 +1,90 @@
+UPDATE v20 FULL — chatbot-keperawatan.damgocompany.com
+Tanggal: 4 Juli 2026
+
+=== ISI UPDATE v20 (baru sejak v19) ===
+- Konsultasi online (/konsultasi): perawat aktif, dokter segera hadir
+- Alur bayar: voucher → DANA → upload bukti → verifikasi admin → chat WhatsApp
+- Admin: kelola pesanan konsultasi, voucher, tenaga kesehatan (CRUD + foto)
+- Upload foto tenaga kesehatan (perbaikan validasi + URL relatif /storage/...)
+- Monitoring kesehatan lengkap (harian, obat, grafik bulanan)
+- TTS skrining: suara peramban instan (TTS_CLIENT_ONLY=true)
+- Semua fitur v19 (edukasi video, admin charts, dll.)
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server
+2. ZIP tidak berisi .env
+3. JANGAN upload public/.user.ini — menyebabkan error 500
+
+=== LANGKAH UPLOAD ===
+
+1. Login DirectAdmin → File Manager
+
+2. Masuk folder ROOT:
+   /home/damgocom/domains/chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan)
+
+3. Upload ZIP:
+   chatbot-keperawatan-full-04juli2026-v20.zip
+
+4. Extract → OVERWRITE semua
+
+5. Pastikan .env masih ada dan tambahkan/cek baris ini:
+   APP_URL=https://chatbot-keperawatan.damgocompany.com
+   APP_TIMEZONE=Asia/Jakarta
+   TTS_DRIVER=php
+   TTS_CLIENT_ONLY=true
+   VIDEO_MAX_UPLOAD_KB=122880
+   CONSULTATION_DANA_PHONE=085645527751
+
+6. HAPUS jika muncul setelah extract:
+   - public/.user.ini  (WAJIB — bikin error 500)
+   - public/hot
+   - public_html/hot
+
+7. PHP Settings (DirectAdmin panel, BUKAN .user.ini):
+   upload_max_filesize = 128M
+   post_max_size = 128M
+   max_execution_time = 300
+   max_input_time = 300
+   memory_limit = 256M
+
+8. Jalankan setup sekali (migration + storage + seed konsultasi):
+   Copy deploy/setup-once.php → public/setup-once.php
+   Buka: https://chatbot-keperawatan.damgocompany.com/setup-once.php?key=ck2026setup
+   Tunggu "SELESAI"
+   Hapus setup-once.php dari public/ dan public_html/
+
+   ATAU manual via SSH (jika ada):
+   php artisan migrate --force
+   php artisan db:seed --class=ConsultationVoucherSeeder --force
+   php artisan db:seed --class=ConsultationProviderSeeder --force
+   php artisan storage:link --force
+
+9. Clear cache:
+   Copy deploy/clear-cache.php → public/clear-cache.php
+   Buka: https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Hapus clear-cache.php setelah selesai
+
+10. Symlink storage (jika foto/video tidak tampil):
+    public/storage → ../storage/app/public
+    public_html/storage → ../storage/app/public
+
+=== CEK HASIL ===
+
+- version.txt → 2026-07-04-v20-full
+- /konsultasi → daftar perawat + spesialisasi lainnya
+- /admin/konsultasi → pesanan bayar + verifikasi
+- /admin/konsultasi/tenaga-kesehatan → edit foto profil tampil
+- /monitoring → form monitoring harian
+- /self-management → audio panduan
+- Homepage normal (bukan error 500)
+
+=== VOUCHER DEMO (opsional) ===
+PERAWAT100, GRATIS100 — diskon 100% untuk testing
+
+=== FILE DEPLOY ===
+- chatbot-keperawatan-full-04juli2026-v20.zip
+- deploy/setup-once.php
+- deploy/clear-cache.php
+- deploy/PERBAIKAN-ERROR-500.txt

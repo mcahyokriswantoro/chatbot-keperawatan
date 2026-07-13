@@ -1,223 +1,124 @@
 @extends('layouts.mobile')
 
 @section('content')
-    <x-mobile.page-header title="Monitoring Self Management" />
+    @php $monitoringCssVer = filemtime(public_path('css/monitoring-choices.css')) ?: time(); @endphp
+    <link rel="stylesheet" href="/css/monitoring-choices.css?v={{ $monitoringCssVer }}">
+
+    <x-mobile.page-header title="Monitoring" />
 
     <x-mobile.alert />
 
-    <form method="POST" action="{{ route('monitoring.store') }}" class="mb-8 space-y-5">
-        @csrf
+    @if ($diseases === [])
+        <div class="overflow-hidden rounded-3xl border border-dashed border-amber-200 bg-gradient-to-br from-amber-50 to-white p-8 text-center shadow-sm">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-2xl">📋</div>
+            <p class="mt-4 text-sm font-bold text-amber-900">Belum ada skrining lanjut</p>
+            <p class="mt-2 text-xs leading-relaxed text-amber-800">Selesaikan skrining penyakit terlebih dahulu untuk mengaktifkan monitoring harian dan bulanan.</p>
+            <a href="{{ route('detection.start') }}" class="mt-5 inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-2.5 text-xs font-semibold text-white shadow-soft">
+                Mulai Skrining →
+            </a>
+        </div>
+    @else
+        {{-- Hero --}}
+        <div class="monitoring-card-hero relative mb-5 overflow-hidden rounded-3xl px-5 py-5 shadow-lg">
+            <div class="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
+            <p class="monitoring-card-hero__eyebrow text-[10px] font-semibold uppercase tracking-wider">Self management</p>
+            <h1 class="monitoring-card-hero__title mt-1 text-lg font-bold">Bagaimana kabar Anda?</h1>
+            <p class="monitoring-card-hero__label mt-1 text-xs leading-relaxed">Ceritakan kondisi harian dan lihat perkembangan Anda dari waktu ke waktu</p>
+        </div>
 
-        <section class="rounded-2xl bg-white p-4 shadow-card border border-brand-100 space-y-3">
-            <h2 class="text-sm font-bold text-slate-900">Keluhan</h2>
-            <textarea
-                name="complaints"
-                rows="3"
-                class="w-full rounded-xl border border-brand-200 px-3 py-2 text-sm"
-                placeholder="Tuliskan keluhan yang Anda rasakan hari ini..."
-            >{{ old('complaints') }}</textarea>
-        </section>
-
-        <section class="rounded-2xl bg-white p-4 shadow-card border border-brand-100 space-y-3">
-            <h2 class="text-sm font-bold text-slate-900">Obat</h2>
-            <div>
-                <label class="text-xs font-medium text-slate-600">Nama Obat</label>
-                <input
-                    type="text"
-                    name="medication_name"
-                    value="{{ old('medication_name') }}"
-                    class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm"
-                    placeholder="Contoh: Metformin 500 mg"
+        <div
+            x-data="{ tab: 'harian', disease: '{{ $diseases[0]['slug'] }}' }"
+            class="space-y-4"
+        >
+            {{-- Tab --}}
+            <div class="grid grid-cols-2 gap-1 rounded-2xl bg-slate-200/70 p-1 shadow-inner">
+                <button
+                    type="button"
+                    @click="tab = 'harian'"
+                    :class="tab === 'harian' ? 'bg-brand-600 text-white shadow-md ring-2 ring-brand-200' : 'text-slate-600 hover:text-slate-800'"
+                    class="flex items-center justify-center gap-1.5 rounded-xl py-3 text-xs font-bold transition"
                 >
-            </div>
-            <div>
-                <label class="text-xs font-medium text-slate-600">Dosis</label>
-                <input
-                    type="text"
-                    name="medication_dose"
-                    value="{{ old('medication_dose') }}"
-                    class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm"
-                    placeholder="Contoh: 1 tablet"
+                    <span>📅</span> Harian
+                </button>
+                <button
+                    type="button"
+                    @click="tab = 'bulanan'"
+                    :class="tab === 'bulanan' ? 'bg-brand-600 text-white shadow-md ring-2 ring-brand-200' : 'text-slate-600 hover:text-slate-800'"
+                    class="flex items-center justify-center gap-1.5 rounded-xl py-3 text-xs font-bold transition"
                 >
+                    <span>📊</span> Bulanan
+                </button>
             </div>
+
+            {{-- Disease picker --}}
             <div>
-                <label class="text-xs font-medium text-slate-600">Jadwal</label>
-                <input
-                    type="text"
-                    name="medication_schedule"
-                    value="{{ old('medication_schedule') }}"
-                    class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm"
-                    placeholder="Contoh: Pagi dan malam setelah makan"
-                >
-            </div>
-        </section>
-
-        <section class="rounded-2xl bg-white p-4 shadow-card border border-brand-100 space-y-3">
-            <h2 class="text-sm font-bold text-slate-900">Aktivitas &amp; Latihan</h2>
-            <textarea
-                name="activities"
-                rows="3"
-                class="w-full rounded-xl border border-brand-200 px-3 py-2 text-sm"
-                placeholder="Contoh: Jalan pagi 30 menit, latihan pernapasan..."
-            >{{ old('activities') }}</textarea>
-        </section>
-
-        <section class="rounded-2xl bg-white p-4 shadow-card border border-brand-100 space-y-3">
-            <h2 class="text-sm font-bold text-slate-900">Diet</h2>
-            <p class="text-xs text-slate-600">Apakah sesuai anjuran?</p>
-            <div class="flex gap-4">
-                <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-                    <input type="radio" name="diet_compliant" value="ya" @checked(old('diet_compliant') === 'ya') class="text-brand-600 focus:ring-brand-500">
-                    Ya
-                </label>
-                <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-                    <input type="radio" name="diet_compliant" value="tidak" @checked(old('diet_compliant') === 'tidak') class="text-brand-600 focus:ring-brand-500">
-                    Tidak
-                </label>
-            </div>
-            <div>
-                <label class="text-xs font-medium text-slate-600">Contoh</label>
-                <textarea
-                    name="diet_notes"
-                    rows="2"
-                    class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm"
-                    placeholder="Contoh: Nasi merah, sayur bayam, ikan kukus..."
-                >{{ old('diet_notes') }}</textarea>
-            </div>
-        </section>
-
-        <section class="rounded-2xl bg-white p-4 shadow-card border border-brand-100 space-y-3">
-            <h2 class="text-sm font-bold text-slate-900">Monitoring</h2>
-            <div class="grid grid-cols-2 gap-3">
-                <div class="col-span-2">
-                    <label class="text-xs font-medium text-slate-600">Tekanan Darah (mmHg)</label>
-                    <div class="mt-1 flex gap-2">
-                        <input type="number" name="systolic" value="{{ old('systolic') }}" class="w-full rounded-xl border border-brand-200 px-3 py-2 text-sm" placeholder="Sistolik">
-                        <span class="self-center text-slate-400">/</span>
-                        <input type="number" name="diastolic" value="{{ old('diastolic') }}" class="w-full rounded-xl border border-brand-200 px-3 py-2 text-sm" placeholder="Diastolik">
-                    </div>
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-slate-600">Nadi (bpm)</label>
-                    <input type="number" name="heart_rate" value="{{ old('heart_rate') }}" class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm" placeholder="x/menit">
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-slate-600">Suhu (°C)</label>
-                    <input type="number" step="0.1" name="temperature" value="{{ old('temperature') }}" class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm" placeholder="36.5">
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-slate-600">Respiratory Rate</label>
-                    <input type="number" name="respiratory_rate" value="{{ old('respiratory_rate') }}" class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm" placeholder="x/menit">
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-slate-600">Gula Darah (mg/dL)</label>
-                    <input type="number" step="0.1" name="blood_sugar" value="{{ old('blood_sugar') }}" class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-slate-600">Saturasi O₂ (%)</label>
-                    <input type="number" name="oxygen_saturation" value="{{ old('oxygen_saturation') }}" class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm" placeholder="98">
-                </div>
-                <div>
-                    <label class="text-xs font-medium text-slate-600">Berat Badan (kg)</label>
-                    <input type="number" step="0.1" name="weight" value="{{ old('weight') }}" class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm">
-                </div>
-            </div>
-            <div>
-                <label class="text-xs font-medium text-slate-600">Tanggal Pencatatan</label>
-                <input type="date" name="recorded_at" value="{{ old('recorded_at', date('Y-m-d')) }}" required class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm">
-            </div>
-            <div>
-                <label class="text-xs font-medium text-slate-600">Catatan Tambahan (opsional)</label>
-                <textarea name="notes" rows="2" class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2 text-sm" placeholder="Informasi lain yang perlu dicatat...">{{ old('notes') }}</textarea>
-            </div>
-        </section>
-
-        <button type="submit" class="w-full rounded-full bg-brand-600 py-2.5 text-sm font-semibold text-white shadow-soft">Simpan Data</button>
-    </form>
-
-    <h2 class="mb-3 text-sm font-bold text-slate-900">Riwayat Monitoring</h2>
-    @forelse ($records as $record)
-        <article class="mb-3 rounded-2xl bg-white p-4 shadow-card border border-brand-100 space-y-3">
-            <div class="flex items-center justify-between gap-2">
-                <p class="font-semibold text-slate-900">{{ $record->recorded_at->format('d M Y') }}</p>
-                @if ($record->dietCompliantLabel())
-                    <span class="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-700">
-                        Diet: {{ $record->dietCompliantLabel() }}
-                    </span>
-                @endif
-            </div>
-
-            @if ($record->complaints)
-                <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Keluhan</p>
-                    <p class="mt-0.5 text-sm text-slate-700">{{ $record->complaints }}</p>
-                </div>
-            @endif
-
-            @if ($record->medication_name || $record->medication_dose || $record->medication_schedule)
-                <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Obat</p>
-                    <dl class="mt-1 space-y-0.5 text-sm text-slate-700">
-                        @if ($record->medication_name)
-                            <div><span class="text-slate-500">Nama:</span> {{ $record->medication_name }}</div>
-                        @endif
-                        @if ($record->medication_dose)
-                            <div><span class="text-slate-500">Dosis:</span> {{ $record->medication_dose }}</div>
-                        @endif
-                        @if ($record->medication_schedule)
-                            <div><span class="text-slate-500">Jadwal:</span> {{ $record->medication_schedule }}</div>
-                        @endif
-                    </dl>
-                </div>
-            @endif
-
-            @if ($record->activities)
-                <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Aktivitas &amp; Latihan</p>
-                    <p class="mt-0.5 text-sm text-slate-700">{{ $record->activities }}</p>
-                </div>
-            @endif
-
-            @if ($record->diet_notes)
-                <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Contoh Diet</p>
-                    <p class="mt-0.5 text-sm text-slate-700">{{ $record->diet_notes }}</p>
-                </div>
-            @endif
-
-            <div>
-                <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Monitoring</p>
-                <div class="mt-1 flex flex-wrap gap-2 text-xs text-slate-600">
-                    @if ($record->bloodPressureLabel())
-                        <span class="rounded-full bg-brand-50 px-2 py-1">TD: {{ $record->bloodPressureLabel() }}</span>
-                    @endif
-                    @if ($record->heart_rate)
-                        <span class="rounded-full bg-brand-50 px-2 py-1">Nadi: {{ $record->heart_rate }} bpm</span>
-                    @endif
-                    @if ($record->temperature)
-                        <span class="rounded-full bg-brand-50 px-2 py-1">Suhu: {{ $record->temperature }}°C</span>
-                    @endif
-                    @if ($record->respiratory_rate)
-                        <span class="rounded-full bg-brand-50 px-2 py-1">RR: {{ $record->respiratory_rate }}/menit</span>
-                    @endif
-                    @if ($record->blood_sugar)
-                        <span class="rounded-full bg-brand-50 px-2 py-1">GDS: {{ $record->blood_sugar }} mg/dL</span>
-                    @endif
-                    @if ($record->oxygen_saturation)
-                        <span class="rounded-full bg-brand-50 px-2 py-1">SpO₂: {{ $record->oxygen_saturation }}%</span>
-                    @endif
-                    @if ($record->weight)
-                        <span class="rounded-full bg-brand-50 px-2 py-1">BB: {{ $record->weight }} kg</span>
-                    @endif
+                <p class="mb-2 text-[10px] font-bold uppercase tracking-wide text-slate-400">Pilih Penyakit</p>
+                <div class="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    @foreach ($diseases as $item)
+                        <button
+                            type="button"
+                            @click="disease = '{{ $item['slug'] }}'"
+                            :class="disease === '{{ $item['slug'] }}'
+                                ? 'border-brand-600 bg-brand-600 text-white shadow-md ring-2 ring-brand-200'
+                                : 'border-transparent bg-slate-100 text-slate-600 hover:bg-slate-50'"
+                            class="flex shrink-0 flex-col items-start gap-1 rounded-2xl border px-3.5 py-2.5 text-left transition"
+                        >
+                            <span class="text-lg leading-none">{{ $item['icon'] }}</span>
+                            <span class="max-w-[7rem] truncate text-[11px] font-bold leading-tight">{{ $item['label'] }}</span>
+                            <span class="rounded-full px-1.5 py-0.5 text-[9px] font-semibold" :class="disease === '{{ $item['slug'] }}' ? 'bg-white/20 text-white' : 'bg-brand-50 text-brand-700'">{{ $item['risk'] }}</span>
+                        </button>
+                    @endforeach
                 </div>
             </div>
 
-            @if ($record->notes)
-                <p class="text-xs text-slate-500">{{ $record->notes }}</p>
-            @endif
-        </article>
-    @empty
-        <p class="text-sm text-slate-500 text-center py-4">Belum ada data monitoring.</p>
-    @endforelse
-    <div class="mt-4">{{ $records->links() }}</div>
+            @foreach ($diseases as $item)
+                <div x-show="tab === 'harian' && disease === '{{ $item['slug'] }}'" x-cloak class="space-y-4">
+                    @include('monitoring.partials.daily-form', [
+                        'disease' => $item['slug'],
+                        'diseaseInfo' => $item,
+                        'userMedications' => $userMedications,
+                        'severityOptions' => $severityOptions,
+                        'selfManagementOptions' => $selfManagementOptions,
+                    ])
+
+                    @include('monitoring.partials.daily-results', [
+                        'disease' => $item['slug'],
+                        'summary' => $dailySummaries[$item['slug']],
+                        'chartData' => $chartData[$item['slug']] ?? [],
+                    ])
+                </div>
+
+                <div x-show="tab === 'bulanan' && disease === '{{ $item['slug'] }}'" x-cloak>
+                    @include('monitoring.partials.monthly-form', [
+                        'disease' => $item['slug'],
+                        'diseaseInfo' => $item,
+                        'preview' => $monthlyPreviews[$item['slug']],
+                        'relapseOptions' => $relapseOptions,
+                        'currentMonth' => $currentMonth,
+                    ])
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+    <div class="monitoring-history-section">
+        <div class="mb-3 flex items-center justify-between gap-2">
+            <h2 class="text-sm font-bold text-slate-900">Riwayat catatan</h2>
+            <span class="text-[10px] font-medium text-slate-400">{{ $records->total() }} entri</span>
+        </div>
+        @forelse ($records as $record)
+            @include('monitoring.partials.history-card', ['record' => $record])
+        @empty
+            <div class="rounded-2xl border border-dashed border-slate-200 bg-white py-10 text-center">
+                <p class="text-2xl">📝</p>
+                <p class="mt-2 text-sm font-medium text-slate-600">Belum ada data</p>
+                <p class="mt-1 text-xs text-slate-400">Catatan harian dan bulanan akan muncul di sini</p>
+            </div>
+        @endforelse
+        <div class="mt-4">{{ $records->links() }}</div>
+    </div>
 @endsection
+
+@push('scripts')
+<style>[x-cloak]{display:none!important}</style>
+@endpush

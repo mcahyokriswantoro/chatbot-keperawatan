@@ -9,7 +9,7 @@
             <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0">
                     <p class="font-bold text-slate-900">{{ $session->diseaseLabel() ?? 'Skrining' }}</p>
-                    <p class="mt-0.5 text-[11px] text-slate-400">{{ $session->created_at->translatedFormat('d M Y, H:i') }}</p>
+                    <p class="mt-0.5 text-[11px] text-slate-400">{{ $session->formattedDateTime() }}</p>
                     <p class="mt-1 text-xs text-slate-600">{{ $session->user?->name ?? ($session->identity?->name ?? 'Tamu') }}</p>
                 </div>
                 @include('admin.partials.risk-badge', ['session' => $session])

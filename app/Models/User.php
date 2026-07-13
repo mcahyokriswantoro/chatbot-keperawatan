@@ -96,6 +96,16 @@ class User extends Authenticatable
         return $this->hasMany(HealthMonitoring::class);
     }
 
+    public function medications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserMedication::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function activeMedications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->medications()->where('is_active', true);
+    }
+
     public function selfManagementLogs(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(SelfManagementLog::class);

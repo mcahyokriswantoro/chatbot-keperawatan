@@ -4,6 +4,8 @@
     $theme = $session->riskTheme();
     $score = $session->scoreData();
     $guide = $session->selfManagementGuideBlock();
+    $isInitial = $session->isInitialScreening();
+    $recommended = $session->recommendedFollowUpDiseases();
 @endphp
 
 <article class="overflow-hidden rounded-2xl border bg-white shadow-sm {{ $theme['border'] }}">
@@ -13,48 +15,92 @@
             <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0 flex-1">
                     <p class="font-bold text-slate-900">{{ $session->diseaseLabel() ?? 'Skrining Kesehatan' }}</p>
-                    <p class="mt-0.5 text-[11px] text-slate-400">{{ $session->created_at->translatedFormat('d M Y, H:i') }}</p>
+                    <p class="mt-0.5 text-[11px] text-slate-400">{{ $session->formattedDateTime() }}</p>
                 </div>
                 <span @class(['shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ring-1', $theme['bg'], $theme['text'], $theme['ring']])>
-                    {{ $session->displayRiskLabel() }}
+                    {{ $session->historyBadgeLabel() }}
                 </span>
             </div>
 
-            {{-- Hasil skor --}}
-            <div @class(['mt-3 rounded-xl px-3 py-2.5 ring-1', $theme['bg'], $theme['ring']])>
-                @if ($score['total'] !== null)
-                    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                        <p @class(['text-lg font-bold', $theme['text']])>{{ $score['total'] }}@if($score['max'])<span class="text-sm font-semibold opacity-70">/{{ $score['max'] }}</span>@endif</p>
-                        <p @class(['text-xs font-semibold', $theme['text']])>{{ $session->scoreLabel() }}</p>
-                    </div>
-                @else
+            @if ($isInitial)
+                <div @class(['mt-3 rounded-xl px-3 py-2.5 ring-1', $theme['bg'], $theme['ring']])>
                     <p @class(['text-sm font-bold', $theme['text']])>{{ $session->scoreLabel() }}</p>
-                @endif
-                @if ($session->showsEmergencyUi())
-                    <p class="mt-1 text-[11px] font-semibold text-rose-700">⚠ Gejala darurat terdeteksi — segera ke fasilitas kesehatan</p>
-                @endif
-            </div>
+                    @if ($recommended !== [])
+                        <p class="mt-1 text-[11px] leading-relaxed text-slate-600">
+                            {{ implode(', ', array_column($recommended, 'label')) }}
+                        </p>
+                    @endif
+                    @if ($session->showsEmergencyUi())
+                        <p class="mt-1 text-[11px] font-semibold text-rose-700">⚠ Gejala darurat terdeteksi — segera ke fasilitas kesehatan</p>
+                    @endif
+                </div>
+
+                @unless ($compact)
+                    <div class="mt-3">
+                        @include('history.partials.initial-recommendations', ['session' => $session, 'compact' => true])
+                    </div>
+                @endunless
+            @else
+                {{-- Hasil skor skrining lanjut --}}
+                <div @class(['mt-3 rounded-xl px-3 py-2.5 ring-1', $theme['bg'], $theme['ring']])>
+                    @if ($score['total'] !== null)
+                        <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                            <p @class(['text-lg font-bold', $theme['text']])>{{ $score['total'] }}@if($score['max'])<span class="text-sm font-semibold opacity-70">/{{ $score['max'] }}</span>@endif</p>
+                            <p @class(['text-xs font-semibold', $theme['text']])>{{ $session->scoreLabel() }}</p>
+                        </div>
+                    @else
+                        <p @class(['text-sm font-bold', $theme['text']])>{{ $session->scoreLabel() }}</p>
+                    @endif
+                    @if ($session->showsEmergencyUi())
+                        <p class="mt-1 text-[11px] font-semibold text-rose-700">⚠ Gejala darurat terdeteksi — segera ke fasilitas kesehatan</p>
+                    @endif
+                </div>
+            @endif
 
             @unless ($compact)
-                <p class="mt-3 text-xs leading-relaxed text-slate-600">
-                    <span class="font-semibold text-slate-800">Langkah selanjutnya:</span>
-                    {{ $session->nextStepMessage() }}
-                </p>
+                @if (! $isInitial)
+                    <p class="mt-3 text-xs leading-relaxed text-slate-600">
+                        <span class="font-semibold text-slate-800">Langkah selanjutnya:</span>
+                        {{ $session->nextStepMessage() }}
+                    </p>
 
-                @if ($guide && ! empty($guide['sections'][0]['items']))
-                    <ul class="mt-2 space-y-1">
-                        @foreach (array_slice($guide['sections'][0]['items'], 0, 2) as $item)
-                            <li class="flex gap-2 text-[11px] text-slate-600">
-                                <span @class(['mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', $theme['accent']])></span>
-                                <span>{{ $item }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
+                    @if ($guide && ! empty($guide['sections'][0]['items']))
+                        <ul class="mt-2 space-y-1">
+                            @foreach (array_slice($guide['sections'][0]['items'], 0, 2) as $item)
+                                <li class="flex gap-2 text-[11px] text-slate-600">
+                                    <span @class(['mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', $theme['accent']])></span>
+                                    <span>{{ $item }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                @else
+                    <p class="mt-3 text-xs leading-relaxed text-slate-600">
+                        <span class="font-semibold text-slate-800">Langkah selanjutnya:</span>
+                        {{ $session->nextStepMessage() }}
+                    </p>
                 @endif
             @endunless
 
             <div class="mt-4 flex flex-wrap gap-2">
-                @if ($session->selfManagementUrl())
+                @if ($isInitial && $recommended !== [])
+                    @foreach (array_slice($recommended, 0, $compact ? 2 : 3) as $item)
+                        <a
+                            href="{{ $item['url'] }}"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-[11px] font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.98]"
+                        >
+                            {{ $item['icon'] }} {{ $item['label'] }}
+                        </a>
+                    @endforeach
+                    @if (count($recommended) > ($compact ? 2 : 3))
+                        <a
+                            href="{{ route('history.show', $session->id) }}"
+                            class="inline-flex items-center gap-1 rounded-full border border-brand-200 bg-white px-4 py-2 text-[11px] font-semibold text-brand-600 transition hover:bg-brand-50"
+                        >
+                            +{{ count($recommended) - ($compact ? 2 : 3) }} lainnya
+                        </a>
+                    @endif
+                @elseif ($session->selfManagementUrl())
                     <a
                         href="{{ $session->selfManagementUrl() }}"
                         class="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-[11px] font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.98]"

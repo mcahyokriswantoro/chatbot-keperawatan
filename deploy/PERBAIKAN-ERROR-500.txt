@@ -1,0 +1,81 @@
+PERBAIKAN ERROR 500 — setelah deploy v18
+==========================================
+
+Pesan "Internal Server Error" (Apache) = sering SEBELUM Laravel jalan.
+Penyebab paling sering: .env hilang, cache bootstrap rusak, .user.ini,
+ZIP salah folder, atau permission storage.
+
+=== LANGKAH 1 — TES PHP PALING SEDERHANA ===
+
+Upload file deploy/hotfix-v18-error500.zip → extract isi ke public_html/
+
+Buka:
+  https://chatbot-keperawatan.damgocompany.com/ping.php
+
+- Jika ping.php juga error 500 → masalah Apache/PHP/hosting (bukan Laravel).
+  Coba hapus public_html/.user.ini lewat File Manager, lalu refresh.
+- Jika ping.php OK → lanjut langkah 2.
+
+=== LANGKAH 2 — PERBAIKAN OTOMATIS ===
+
+Buka:
+  https://chatbot-keperawatan.damgocompany.com/fix-500.php?key=ck2026fix
+
+Script akan:
+- Cek struktur folder (artisan sejajar public_html)
+- Hapus public/hot dan cache bootstrap rusak
+- Nonaktifkan sementara .user.ini (jika memicu 500)
+- Coba boot Laravel + tampilkan error asli
+
+=== LANGKAH 3 — CEK MANUAL DI FILE MANAGER ===
+
+Folder ROOT domain (tempat artisan):
+  /home/damgocom/domains/chatbot-keperawatan.damgocompany.com/
+
+Wajib ada:
+  artisan
+  .env          ← JANGAN sampai hilang saat extract ZIP
+  vendor/
+  app/
+  bootstrap/
+  public_html/index.php
+
+JANGAN extract ZIP hanya ke dalam public_html saja!
+
+Hapus manual jika ada:
+  public/hot
+  public_html/hot
+  bootstrap/cache/config.php
+  bootstrap/cache/routes-v7.php
+
+JANGAN hapus:
+  bootstrap/cache/packages.php
+  bootstrap/cache/services.php
+
+Permission:
+  storage → 775 (recursive)
+  bootstrap/cache → 775 (recursive)
+
+=== LANGKAH 4 — CLEAR CACHE ===
+
+Buka:
+  https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+
+=== LANGKAH 5 — JIKA APP_KEY KOSONG ===
+
+Upload deploy/setup-once.php → public_html/setup-once.php
+Buka: setup-once.php?key=ck2026setup
+Hapus setelah selesai.
+
+=== CEK HASIL ===
+
+- https://chatbot-keperawatan.damgocompany.com/version.txt → 2026-06-24-v18-full
+- https://chatbot-keperawatan.damgocompany.com/up → Application up
+- Homepage normal
+
+Hapus dari server: ping.php, fix-500.php, check.php, clear-cache.php
+
+=== UPLOAD VIDEO (setelah situs normal) ===
+
+Jika upload file video error 500 → ModSecurity:
+Admin → Edukasi → **Sudah di server** atau **Link video**

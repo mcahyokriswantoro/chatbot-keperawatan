@@ -1,0 +1,61 @@
+UPDATE v9 — chatbot-keperawatan.damgocompany.com
+Tanggal: 22 Juni 2026
+Isi: Grafik garis monitoring, perbaikan UI, chat pengantar keluhan
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server (download dari File Manager)
+2. ZIP ini TIDAK berisi .env — .env lama Anda tetap dipakai
+
+=== LANGKAH UPLOAD (File Manager) ===
+
+1. Login DirectAdmin / cPanel Qwords → File Manager
+
+2. Masuk folder ROOT project:
+   chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN hanya folder public)
+
+3. Upload ZIP:
+   chatbot-keperawatan-update-22juni2026-v9.zip
+
+4. Extract di folder tersebut → pilih OVERWRITE / timpa semua
+   (kecuali .env — pastikan .env lama masih ada)
+
+5. HAPUS file public/hot jika muncul (WAJIB — rusak CSS mobile)
+
+6. Copy deploy/clear-cache.php → public/clear-cache.php (jika belum ada)
+
+7. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+8. HAPUS dari server:
+   - public/clear-cache.php
+   - file ZIP
+   - CARA-UPDATE-22-JUNI-2026-V9.txt (opsional)
+
+=== CEK HASIL (hard refresh / incognito) ===
+
+- /monitoring → tab Harian & Bulanan
+  • Grafik garis dengan sumbu Y (angka kiri) dan tanggal bawah
+  • Angka di setiap titik, area fill halus di bawah garis
+  • Simpan per bagian (keluhan, obat, vital, self management)
+  • Chat pengantar sebelum pertanyaan keluhan
+
+- /monitoring → tab Bulanan
+  • Kekambuhan collapsed (tombol Mulai catat kekambuhan)
+
+=== JIKA SITUS TIDAK BISA DIBUKA ===
+
+Cek DNS subdomain chatbot-keperawatan — harus ada A record ke IP server.
+
+=== JIKA ERROR 500 ===
+
+- storage → permission 775 recursive
+- bootstrap/cache → 775 recursive
+- Cek storage/logs/laravel.log
+
+=== CATATAN ===
+
+Folder public/build/ WAJIB ada setelah extract.
+Migration TIDAK perlu diulang jika setup-once.php sudah pernah dijalankan.

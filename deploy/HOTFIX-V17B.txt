@@ -1,0 +1,30 @@
+HOTFIX v17b — Error 500 setelah deploy
+======================================
+
+Upload: deploy/hotfix-v17b-error500.zip (~60 KB)
+Extract di ROOT project (tempat artisan) → overwrite.
+
+Isi patch:
+- Perbaikan error admin jika migration belum lengkap
+- setup-once.php diperbarui (migrate + storage link public_html)
+
+=== LANGKAH ===
+
+1. Extract hotfix-v17b-error500.zip di folder root (overwrite)
+
+2. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/setup-once.php?key=ck2026setup
+
+   Harus muncul:
+   - php artisan migrate — Exit: 0
+   - OK — health_articles.content_type
+   - OK — health_articles.video_url
+   - SELESAI
+
+3. Hapus setup-once.php dari public/ dan public_html/
+
+4. Tes:
+   - https://chatbot-keperawatan.damgocompany.com/
+   - https://chatbot-keperawatan.damgocompany.com/admin (login admin)
+
+Jika migrate GAGAL, kirim screenshot output setup-once.php.

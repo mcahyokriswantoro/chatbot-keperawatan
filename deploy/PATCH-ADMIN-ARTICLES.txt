@@ -1,0 +1,26 @@
+PATCH admin/articles — Error 500 saat buka /admin/articles
+=======================================================
+
+Penyebab: file v17 (model + view + JS edukasi) belum lengkap di server.
+Halaman login OK, tapi setelah login /admin/articles error.
+
+=== LANGKAH ===
+
+1. Upload deploy/patch-admin-articles-v17.zip ke ROOT project
+2. Extract → overwrite
+
+3. Upload debug-admin.php ke public/ DAN public_html/
+   Buka: https://chatbot-keperawatan.damgocompany.com/debug-admin.php?key=ck2026fix
+   
+   Harus muncul:
+   - OK — HealthArticle model
+   - OK — isVideo(), isArticle()
+   - OK — view rendered
+
+4. Perbaiki storage symlink (jika belum):
+   Upload fix-storage.php → buka ?key=ck2026fix
+   Harus: public_html/storage: symlink OK
+
+5. Hapus debug-admin.php dan fix-storage.php
+
+6. Tes: https://chatbot-keperawatan.damgocompany.com/admin/articles

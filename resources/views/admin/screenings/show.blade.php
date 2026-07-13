@@ -12,7 +12,7 @@
 
     <x-admin.page-banner
         :title="$session->diseaseLabel() ?? 'Skrining'"
-        :subtitle="$session->created_at->translatedFormat('d F Y, H:i')"
+        :subtitle="$session->formattedDateTime('d F Y, H:i')"
         :back="route('admin.screenings.index')"
         tone="emerald"
         :show-actions="false"

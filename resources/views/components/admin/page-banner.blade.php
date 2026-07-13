@@ -13,6 +13,7 @@
         'emerald' => 'from-emerald-50 via-white to-teal-50 ring-emerald-100/60',
         'violet' => 'from-violet-50 via-white to-purple-50 ring-violet-100/60',
         'rose' => 'from-rose-50 via-white to-orange-50 ring-rose-100/60',
+        'sky' => 'from-sky-50 via-white to-cyan-50 ring-sky-100/60',
     ];
     $gradient = $gradients[$tone] ?? $gradients['brand'];
 @endphp

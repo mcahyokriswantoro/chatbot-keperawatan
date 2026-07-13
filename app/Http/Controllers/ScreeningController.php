@@ -45,6 +45,8 @@ class ScreeningController extends Controller
             'max_score' => $risk['max_score'] ?? null,
             'hasil_kategori' => $risk['hasil_kategori'] ?? null,
             'risiko_label' => $risk['risiko_label'] ?? null,
+            'recommended_slugs' => $risk['recommended_slugs'] ?? null,
+            'recommended_diseases' => $risk['recommended_diseases'] ?? null,
         ], fn ($value) => $value !== null));
     }
 }

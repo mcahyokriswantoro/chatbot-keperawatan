@@ -1,0 +1,56 @@
+UPDATE v17 FULL — chatbot-keperawatan.damgocompany.com
+Tanggal: 24 Juni 2026
+Ukuran ZIP: ~90 MB (vendor + public/build + public_html)
+
+=== ISI UPDATE ===
+- Halaman /edukasi: hanya artikel & video dari admin (tanpa Ayo Sehat/Kemenkes)
+- Admin Edukasi: upload artikel + video (MP4/WebM, max 80 MB)
+- Thumbnail video: pilih 3 frame otomatis ATAU upload gambar sendiri
+- Perbaikan pemutaran video (storage link + URL relatif)
+- Bottom nav admin: label "Edukasi"
+- Semua fitur v16 (monitoring filter tanggal, TTS, grafik, dll.)
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server
+2. ZIP tidak berisi .env
+
+=== LANGKAH UPLOAD ===
+
+1. Login DirectAdmin → File Manager
+
+2. Masuk folder ROOT:
+   /domains/chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN di dalam public_html saja)
+
+3. Upload ZIP (~90 MB):
+   chatbot-keperawatan-full-24juni2026-v17.zip
+
+4. Extract → OVERWRITE semua
+
+5. Pastikan .env masih ada. Tambahkan jika belum:
+   APP_TIMEZONE=Asia/Jakarta
+   TTS_DRIVER=php
+
+6. HAPUS public/hot dan public_html/hot jika ada
+
+7. SSH / Terminal (jika ada), jalankan di folder root:
+   php artisan migrate --force
+   php artisan storage:link
+
+   Jika tidak ada SSH, buat symlink storage manual:
+   public_html/storage → ../storage/app/public
+   public/storage → ../storage/app/public
+
+8. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+9. HAPUS clear-cache.php dari public/ dan public_html/
+
+=== CEK HASIL ===
+
+- version.txt → 2026-06-24-v17-full
+- /admin/articles → Tambah artikel & Tambah video
+- /edukasi → konten admin saja, video bisa diputar
+- Bottom nav admin → menu "Edukasi"

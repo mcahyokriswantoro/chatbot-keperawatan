@@ -1,0 +1,86 @@
+UPDATE v18 FULL — chatbot-keperawatan.damgocompany.com
+Tanggal: 24 Juni 2026
+Ukuran ZIP: ~90 MB (vendor + public/build + public_html)
+
+=== ISI UPDATE v18 ===
+- Admin /admin/edukasi: HANYA video (tanpa artikel)
+- Publik /edukasi: HANYA video edukasi
+- Upload video: 3 opsi — Upload file (max 120 MB) · Sudah di server · Link video
+- Batas upload: config/education.php + public/.user.ini (128M PHP)
+- Thumbnail video: 3 frame otomatis atau upload manual
+- Perbaikan pesan error upload + pengecekan post_max_size
+- Bottom nav admin: menu "Edukasi"
+- Semua fitur v17 (monitoring, TTS, grafik, konsultasi, dll.)
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server
+2. ZIP tidak berisi .env
+
+=== LANGKAH UPLOAD ===
+
+1. Login DirectAdmin → File Manager
+
+2. Masuk folder ROOT:
+   /domains/chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN di dalam public_html saja)
+
+3. Upload ZIP (~90 MB):
+   chatbot-keperawatan-full-24juni2026-v18.zip
+
+4. Extract → OVERWRITE semua
+
+5. Pastikan .env masih ada. Tambahkan jika belum:
+   APP_TIMEZONE=Asia/Jakarta
+   TTS_DRIVER=php
+   VIDEO_MAX_UPLOAD_KB=122880
+
+6. Pastikan public/.user.ini dan public_html/.user.ini ada (128M):
+   upload_max_filesize = 128M
+   post_max_size = 128M
+   max_execution_time = 300
+   max_input_time = 300
+   memory_limit = 256M
+
+7. HAPUS public/hot dan public_html/hot jika ada
+
+8. SSH / Terminal (jika ada), jalankan di folder root:
+   php artisan migrate --force
+   php artisan storage:link
+
+   Jika tidak ada SSH, symlink manual:
+   public_html/storage → ../storage/app/public
+   public/storage → ../storage/app/public
+
+9. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+10. HAPUS clear-cache.php dari public/ dan public_html/
+
+=== UPLOAD VIDEO BESAR (HOSTING) ===
+
+Jika upload file error 500 (ModSecurity):
+1. Upload MP4 lewat File Manager ke:
+   storage/app/public/article-videos/
+2. Admin → Edukasi → Tambah Video → **Sudah di server**
+3. Pilih file → isi judul/thumbnail → Simpan
+
+Atau gunakan **Link video** (YouTube/Vimeo).
+
+Cek limit PHP:
+   debug-upload.php?key=ck2026fix
+   (hapus setelah dibaca)
+
+=== CEK HASIL ===
+
+- version.txt → 2026-06-24-v18-full
+- /admin/edukasi → hanya video, tombol Tambah video
+- /edukasi → daftar video saja, bisa diputar
+- Upload video ≤120 MB (jika PHP 128M aktif)
+
+=== FILE YANG BOLEH DIHAPUS SETELAH DEPLOY ===
+
+- clear-cache.php, debug-upload.php, debug-admin.php, debug-http.php
+- setup-once.php (jika sudah dipakai)
+- file ZIP deploy

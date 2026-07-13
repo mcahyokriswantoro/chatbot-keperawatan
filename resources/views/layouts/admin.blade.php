@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="screening-tts-client" content="{{ config('screening_tts.client_only', true) ? '1' : '0' }}">
     <meta name="theme-color" content="#eef5ff">
     @php($faviconVersion = filemtime(public_path('favicon.png')) ?: time())
     <title>@yield('title', 'Admin') — {{ config('app.name') }}</title>
@@ -13,6 +14,9 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
     <x-app.production-assets />
+    @php($adminChartsCss = filemtime(public_path('css/admin-charts.css')) ?: time())
+    <link rel="stylesheet" href="/css/admin-charts.css?v={{ $adminChartsCss }}">
+    @stack('styles')
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800">
     <div class="min-h-screen flex flex-col">

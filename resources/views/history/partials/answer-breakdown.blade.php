@@ -33,8 +33,12 @@
     <div class="border-b border-slate-100 px-4 py-4">
         <div class="flex items-start justify-between gap-3">
             <div>
-                <h2 class="text-sm font-bold text-slate-900">Jawaban Skrining</h2>
-                <p class="mt-0.5 text-[11px] text-slate-500">Fokus pada temuan — skor per pertanyaan disembunyikan agar lebih mudah dibaca</p>
+                <h2 class="text-sm font-bold text-slate-900">{{ $session->isInitialScreening() ? 'Jawaban Skrining Awal' : 'Jawaban Skrining' }}</h2>
+                <p class="mt-0.5 text-[11px] text-slate-500">
+                    {{ $session->isInitialScreening()
+                        ? 'Pertanyaan dengan jawaban Ya menentukan skrining lanjut yang direkomendasikan'
+                        : 'Fokus pada temuan — skor per pertanyaan disembunyikan agar lebih mudah dibaca' }}
+                </p>
             </div>
             @if ($rows !== [])
                 <span class="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-slate-600">
@@ -143,8 +147,12 @@
         @if (count($positiveRows) > 0)
             <div class="border-t border-slate-100 px-4 py-3">
                 <p class="text-[11px] leading-relaxed text-slate-500">
-                    <span class="font-semibold text-slate-700">{{ count($positiveRows) }} temuan</span>
-                    berkontribusi pada skor akhir. Lanjutkan dengan panduan self management sesuai tingkat risiko.
+                    <span class="font-semibold text-slate-700">{{ count($positiveRows) }} jawaban Ya</span>
+                    @if ($session->isInitialScreening())
+                        — menjadi dasar rekomendasi skrining lanjut di atas.
+                    @else
+                        berkontribusi pada skor akhir. Lanjutkan dengan panduan self management sesuai tingkat risiko.
+                    @endif
                 </p>
             </div>
         @endif

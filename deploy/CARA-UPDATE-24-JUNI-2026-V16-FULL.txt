@@ -1,0 +1,47 @@
+UPDATE v16 FULL — chatbot-keperawatan.damgocompany.com
+Tanggal: 24 Juni 2026
+Ukuran ZIP: ~30 MB (vendor + public/build + public_html)
+
+=== ISI UPDATE ===
+- Admin monitoring: grafik & daftar hanya tampil setelah pilih periode tanggal
+- Diagram monitoring mengikuti rentang tanggal filter
+- Filter rentang tanggal (dari–sampai) + zona waktu WIB
+- Grafik Pengguna vs tamu: per orang unik
+- TTS optimasi HP lama + neural PHP
+- Tombol ringkasan monitoring: putih / hijau setelah aktif
+
+=== PENTING — JANGAN TIMPA .env ===
+
+1. BACKUP file .env di server
+2. ZIP tidak berisi .env
+
+=== LANGKAH UPLOAD ===
+
+1. Login DirectAdmin → File Manager
+
+2. Masuk folder ROOT:
+   /domains/chatbot-keperawatan.damgocompany.com/
+   (tempat file artisan — BUKAN di dalam public_html saja)
+
+3. Upload ZIP (~30 MB):
+   chatbot-keperawatan-full-24juni2026-v16.zip
+
+4. Extract → OVERWRITE semua
+
+5. Pastikan .env masih ada. Tambahkan jika belum:
+   APP_TIMEZONE=Asia/Jakarta
+   TTS_DRIVER=php
+
+6. HAPUS public/hot dan public_html/hot jika ada
+
+7. Buka browser:
+   https://chatbot-keperawatan.damgocompany.com/clear-cache.php?key=ck2026fix
+   Tunggu "SELESAI"
+
+8. HAPUS clear-cache.php dari public/ dan public_html/
+
+=== CEK HASIL ===
+
+- version.txt → 2026-06-24-v16-full
+- /admin → grafik monitoring muncul setelah pilih tanggal + Tampilkan ringkasan
+- /admin/monitoring → sama

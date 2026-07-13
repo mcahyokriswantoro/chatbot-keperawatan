@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Services\HealthStatusService;
-use App\Services\HealthTipService;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index(HealthTipService $healthTipService, HealthStatusService $healthStatusService): View
+    public function index(HealthStatusService $healthStatusService): View
     {
         return view('home', [
-            'tips' => $healthTipService->getWeeklyTips(),
+            'tips' => config('health.chatbot_tips'),
             'healthStatus' => $healthStatusService->forUser(auth()->user()),
         ]);
     }

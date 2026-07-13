@@ -128,6 +128,32 @@ class ScreeningRiskEvaluator
             ];
         }
 
+        if ($disease === 'rheumatoid_arthritis') {
+            $result = app(RheumatoidArthritisScoringService::class)->evaluate($answers);
+
+            return [
+                'risk_level' => $result['risk_level'],
+                'is_emergency' => $result['is_emergency'],
+                'emergency_symptoms' => $result['emergency_symptoms'],
+                'total_score' => $result['total'],
+                'max_score' => $result['max'],
+                'hasil_kategori' => $result['hasil_kategori'],
+                'risiko_label' => $result['risiko_label'],
+            ];
+        }
+
+        if ($disease === 'skrining_awal') {
+            $result = app(InitialScreeningService::class)->evaluate($answers);
+
+            return [
+                'risk_level' => $result['risk_level'],
+                'is_emergency' => $result['is_emergency'],
+                'emergency_symptoms' => $result['emergency_symptoms'],
+                'recommended_slugs' => $result['recommended_slugs'],
+                'recommended_diseases' => $result['recommended_diseases'],
+            ];
+        }
+
         $emergencySymptoms = $this->detectEmergency($answers, $disease);
         $isEmergency = count($emergencySymptoms) > 0;
         $riskLevel = 'low';

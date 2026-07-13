@@ -31,7 +31,7 @@
             <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25h4.875c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125H6.75a.75.75 0 01-.75-.75v-4.125a.75.75 0 00-.75-.75H4.5a.75.75 0 010-1.5h1.125a.75.75 0 00.75-.75V9.375c0-.621.504-1.125 1.125-1.125z"/>
             </svg>
-            Dengarkan Panduan
+            <span data-tts-play-label>Dengarkan Panduan</span>
         </button>
         <button type="button" data-tts-action="pause" disabled class="{{ $controlClass }}">
             <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

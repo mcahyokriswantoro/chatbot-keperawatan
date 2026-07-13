@@ -92,7 +92,7 @@
 
     $shortcuts = [
         ['label' => 'Skrining', 'desc' => 'Deteksi via chatbot', 'url' => $detectionUrl, 'bg' => 'from-brand-600 to-brand-500', 'auth' => false],
-        ['label' => 'Edukasi', 'desc' => 'Artikel Ayo Sehat', 'url' => route('education.index'), 'bg' => 'from-violet-600 to-purple-500', 'auth' => false],
+        ['label' => 'Edukasi', 'desc' => 'Video edukasi kesehatan', 'url' => route('education.index'), 'bg' => 'from-violet-600 to-purple-500', 'auth' => false],
         ['label' => 'Monitoring', 'desc' => 'Catat vital signs', 'url' => route('monitoring'), 'bg' => 'from-emerald-600 to-teal-500', 'auth' => true],
         ['label' => 'Darurat', 'desc' => 'Hotline & peringatan', 'url' => route('emergency'), 'bg' => 'from-rose-600 to-red-500', 'auth' => false],
     ];

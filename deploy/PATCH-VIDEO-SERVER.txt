@@ -1,0 +1,28 @@
+PATCH — Video sudah di server (file orphan di article-videos)
+==============================================================
+
+Masalah: file MP4 sudah masuk ke storage/app/public/article-videos/
+tapi simpan artikel error 500 (ModSecurity / POST besar) → tidak ada
+record di database.
+
+Solusi: opsi **Sudah di server** — pilih file yang ada, POST kecil saja.
+
+File yang perlu di-upload ke server (overwrite):
+
+- app/Http/Controllers/Admin/AdminArticleController.php
+- resources/views/admin/articles/form.blade.php
+- resources/js/admin-video-thumbnail.js
+- public/build/ (folder lengkap)
+- public_html/build/ (salin dari public/build)
+
+Setelah upload, clear cache:
+  https://chatbot-keperawatan.damgocompany.com/clear-cache.php
+
+CARA PAKAI (admin):
+1. Buka Admin → Edukasi → Tambah Video
+2. Pilih **Sudah di server**
+3. Pilih file dari dropdown (mis. r3Ns6gmuAtZ...mp4)
+4. Tunggu thumbnail otomatis dari video, atau upload thumbnail manual
+5. Isi judul, kategori, ringkasan → Simpan
+
+Tidak perlu upload ulang file 30 MB — hanya mendaftarkan path ke database.

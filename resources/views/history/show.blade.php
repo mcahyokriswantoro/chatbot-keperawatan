@@ -16,13 +16,18 @@
                 <div>
                     <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Hasil Skrining</p>
                     <h1 class="mt-1 text-lg font-bold text-slate-900">{{ $session->diseaseLabel() ?? 'Skrining Kesehatan' }}</h1>
-                    <p class="mt-0.5 text-xs text-slate-500">{{ $session->created_at->translatedFormat('d F Y, H:i') }}</p>
+                    <p class="mt-0.5 text-xs text-slate-500">{{ $session->formattedDateTime('d F Y, H:i') }}</p>
                 </div>
                 <span @class(['shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase ring-1', $theme['bg'], $theme['text'], $theme['ring']])>
-                    {{ $session->displayRiskLabel() }}
+                    {{ $session->historyBadgeLabel() }}
                 </span>
             </div>
 
+            @if ($session->isInitialScreening())
+                <div class="mt-4">
+                    <p @class(['text-sm font-bold', $theme['text']])>{{ $session->scoreLabel() }}</p>
+                </div>
+            @else
             <div class="mt-4 flex items-end gap-3">
                 @if ($score['total'] !== null)
                     <div>
@@ -39,6 +44,7 @@
                     @endif
                 </div>
             </div>
+            @endif
 
             @if ($session->showsEmergencyUi())
                 <div class="mt-4 rounded-xl border border-rose-300 bg-rose-100 px-3 py-2.5">
@@ -66,10 +72,16 @@
 
     {{-- Langkah selanjutnya --}}
     <section class="mb-5 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
-        <h2 class="text-sm font-bold text-slate-900">Apa yang harus dilakukan?</h2>
+        <h2 class="text-sm font-bold text-slate-900">
+            {{ $session->isInitialScreening() ? 'Tindak Lanjut Skrining' : 'Apa yang harus dilakukan?' }}
+        </h2>
         <p class="mt-2 text-sm leading-relaxed text-slate-700">{{ $session->nextStepMessage() }}</p>
 
-        @if ($guide)
+        @if ($session->isInitialScreening())
+            <div class="mt-4">
+                @include('history.partials.initial-recommendations', ['session' => $session])
+            </div>
+        @elseif ($guide)
             <div class="mt-4 rounded-xl bg-brand-50/80 p-3 ring-1 ring-brand-100">
                 <p class="text-xs font-bold text-brand-800">{{ $guide['label'] ?? 'Panduan Self Management' }}</p>
                 @foreach ($guide['sections'] ?? [] as $section)
@@ -89,7 +101,7 @@
         @endif
 
         <div class="mt-4 grid gap-2 sm:grid-cols-2">
-            @if ($session->selfManagementUrl())
+            @if (! $session->isInitialScreening() && $session->selfManagementUrl())
                 <a
                     href="{{ $session->selfManagementUrl() }}"
                     class="flex items-center justify-center gap-2 rounded-2xl bg-brand-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.98]"

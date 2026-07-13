@@ -2,7 +2,19 @@
 
 return [
 
+    'skrining_awal' => [
+        'label' => 'Skrining Awal',
+        'icon' => '🔍',
+        'color' => 'blue',
+        'scoring' => false,
+        'advanced' => false,
+        'description' => 'Skrining awal 20 pertanyaan untuk menentukan skrining lanjut yang direkomendasikan',
+        'welcome' => 'Halo! Saya akan menemani skrining awal melalui 20 pertanyaan singkat tentang gejala dan faktor risiko. Jawab ya atau tidak sesuai kondisi Anda. Di akhir, saya akan rekomendasikan skrining lanjut yang sesuai. Siap mulai?',
+        'questions' => [],
+    ],
+
     'tb_paru' => [
+        'advanced' => true,
         'label' => 'TB Paru',
         'icon' => '🫁',
         'color' => 'sky',
@@ -80,6 +92,16 @@ return [
         'description' => 'Tinjau gejala dan faktor risiko tekanan darah tinggi — 20 pertanyaan',
         'welcome' => 'Halo! Mari kita periksa bersama apakah ada tanda atau faktor risiko hipertensi pada diri Anda. Saya punya 20 pertanyaan singkat — jawab sesuai yang Anda rasakan, lalu saya rangkum hasilnya. Siap mulai?',
         'questions' => [], // diisi dari HipertensiScoringService via DetectionController
+    ],
+
+    'rheumatoid_arthritis' => [
+        'label' => 'Rheumatoid Arthritis (RA)',
+        'icon' => '🦴',
+        'color' => 'purple',
+        'scoring' => true,
+        'description' => 'Skrining gejala dan faktor risiko arthritis reumatoid — 16 pertanyaan',
+        'welcome' => 'Halo! Saya akan menemani Anda menilai risiko rheumatoid arthritis (RA) melalui 16 pertanyaan tentang gejala sendi dan faktor risiko. Jawab dengan jujur ya atau tidak — tidak ada jawaban benar atau salah. Siap mulai?',
+        'questions' => [], // diisi dari RheumatoidArthritisScoringService via DetectionController
     ],
 
 ];

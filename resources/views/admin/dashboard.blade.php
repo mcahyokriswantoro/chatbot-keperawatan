@@ -2,6 +2,11 @@
 
 @section('title', 'Dashboard')
 
+@push('styles')
+    @php($monitoringCssVer = filemtime(public_path('css/monitoring-choices.css')) ?: time())
+    <link rel="stylesheet" href="/css/monitoring-choices.css?v={{ $monitoringCssVer }}">
+@endpush
+
 @section('content')
 <div class="space-y-5">
     <x-admin.hero />
@@ -28,6 +33,11 @@
                 <p class="mt-0.5 text-[10px] font-medium text-slate-500">Risiko tinggi</p>
                 <p class="text-[9px] text-rose-500">{{ $emergencyCount }} darurat</p>
             </div>
+            <div class="rounded-xl bg-sky-50/80 px-3 py-2.5 text-center ring-1 ring-sky-100">
+                <p class="text-2xl font-bold text-sky-600">{{ $consultationPendingCount }}</p>
+                <p class="mt-0.5 text-[10px] font-medium text-slate-500">Bayar pending</p>
+                <p class="text-[9px] text-slate-400">{{ $consultationPaidCount }} disetujui</p>
+            </div>
         </div>
     </div>
 
@@ -40,17 +50,89 @@
             </div>
             <svg class="h-4 w-4 shrink-0 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
         </a>
-    @else
-        <div class="flex gap-3 rounded-2xl border border-brand-100 bg-brand-50/60 px-4 py-3">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-brand-100">
-                <img src="{{ asset('images/robot.png') }}?v={{ filemtime(public_path('images/robot.png')) ?: time() }}" alt="" class="h-8 w-8 object-contain">
-            </span>
-            <p class="text-xs leading-relaxed text-slate-600">
-                <span class="font-semibold text-slate-800">Semua terpantau.</span>
-                Data pengguna dan hasil skrining tersimpan aman di panel admin.
-            </p>
-        </div>
     @endif
+
+    @if ($consultationPendingCount > 0)
+        <a href="{{ route('admin.consultations.index', ['status' => 'pending']) }}" class="flex items-center gap-3 rounded-2xl border-l-4 border-amber-400 bg-amber-50 px-4 py-3 transition active:scale-[0.99]">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">💬</span>
+            <div class="min-w-0 flex-1">
+                <p class="text-sm font-bold text-amber-900">{{ $consultationPendingCount }} pembayaran konsultasi menunggu</p>
+                <p class="text-[11px] text-amber-800">Verifikasi transfer DANA — ketuk untuk setujui/tolak</p>
+            </div>
+            <svg class="h-4 w-4 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        </a>
+    @endif
+
+    {{-- Dashboard Hasil Skrining --}}
+    <section class="admin-dashboard-section">
+        <div class="admin-dashboard-section__head">
+            <h2 class="admin-dashboard-section__title">Dashboard Hasil Skrining</h2>
+            <a href="{{ route('admin.screenings.index') }}" class="admin-dashboard-section__link">Lihat semua →</a>
+        </div>
+        <div class="admin-dashboard-section__body">
+            <x-admin.line-chart
+                title="Skrining per hari"
+                :data="$screeningsOverTime"
+                color="#059669"
+                meta="14 hari"
+            />
+            <x-admin.donut-chart title="Tingkat risiko" :items="$riskChartItems" />
+            <x-admin.bar-chart title="Skrining per penyakit" :items="$diseaseBarItems" />
+            <x-admin.donut-chart
+                title="Pengguna vs tamu"
+                center-label="orang"
+                :items="[
+                    ['label' => 'Terdaftar', 'value' => $screeningsGuestVsRegistered['registered'], 'color' => '#0066ff'],
+                    ['label' => 'Tamu', 'value' => $screeningsGuestVsRegistered['guest'], 'color' => '#94a3b8'],
+                ]"
+            />
+        </div>
+    </section>
+
+    {{-- Dashboard Monitoring --}}
+    <section class="admin-dashboard-section">
+        <div class="admin-dashboard-section__head">
+            <h2 class="admin-dashboard-section__title">Dashboard Monitoring</h2>
+            <div class="flex items-center gap-2">
+                @if ($showMonthlyDetail && ($monthlyOverview['period_label'] ?? null))
+                    <span class="text-[10px] font-semibold text-brand-600">{{ $monthlyOverview['period_label'] }}</span>
+                @endif
+                <a href="{{ route('admin.monitoring.index', $showMonthlyDetail ? array_filter(['period_from' => $periodFrom ?? '', 'period_to' => $periodTo ?? '']) : []) }}" class="admin-dashboard-section__link">Lihat semua →</a>
+            </div>
+        </div>
+        <div class="admin-dashboard-section__body">
+            @include('admin.partials.monitoring-monthly-section')
+
+            @if ($showMonthlyDetail)
+                <x-admin.line-chart
+                    title="Entri monitoring per hari"
+                    :data="$monitoringOverTime"
+                    color="#7c3aed"
+                    :meta="$monitoringPeriodLabel ?? ''"
+                />
+                <x-admin.donut-chart title="Jenis monitoring" :items="$monitoringTypeDonutItems" />
+                <x-admin.bar-chart title="Monitoring per penyakit" :items="$monitoringDiseaseItems" />
+                <x-admin.bar-chart
+                    title="Rata-rata skor keluhan"
+                    :items="$monitoringAverageBars['complaint']"
+                    :max="100"
+                    hint="Parameter: ≤25% Baik · ≤50% Cukup · >50% Kurang"
+                />
+                <x-admin.bar-chart
+                    title="Rata-rata self management"
+                    :items="$monitoringAverageBars['selfManagement']"
+                    :max="100"
+                    hint="Parameter: ≥80% Baik · ≥60% Cukup · <60% Kurang"
+                />
+                <x-admin.bar-chart
+                    title="Rata-rata kepatuhan obat"
+                    :items="$monitoringAverageBars['compliance']"
+                    :max="100"
+                    hint="Parameter: ≥80% Baik · ≥60% Cukup · <60% Kurang · Dihitung dari hari tepat waktu ÷ durasi resep"
+                />
+            @endif
+        </div>
+    </section>
 
     {{-- Menu cepat --}}
     <section>
@@ -79,13 +161,41 @@
             />
             <x-admin.action-tile
                 :url="route('admin.articles.index')"
-                label="Artikel"
+                label="Video"
                 sub="Edukasi kesehatan"
                 bg="from-slate-700 to-slate-600"
                 icon="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
             />
+            <x-admin.action-tile
+                :url="route('admin.consultations.providers.index')"
+                label="Tenaga kesehatan"
+                sub="Perawat & dokter"
+                bg="from-sky-600 to-cyan-500"
+                icon="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+            />
+            <x-admin.action-tile
+                :url="route('admin.consultations.index')"
+                label="Konsultasi"
+                :sub="$consultationPendingCount > 0 ? $consultationPendingCount.' pending verifikasi' : 'Verifikasi DANA'"
+                bg="from-teal-600 to-emerald-500"
+                icon="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+            />
         </div>
     </section>
+
+    @if ($consultationPendingCount > 0)
+        <section>
+            <div class="mb-3 flex items-center justify-between">
+                <h2 class="text-sm font-bold text-slate-900">Verifikasi pembayaran konsultasi</h2>
+                <a href="{{ route('admin.consultations.index', ['status' => 'pending']) }}" class="text-[11px] font-semibold text-brand-600">Semua →</a>
+            </div>
+            <div class="space-y-3">
+                @foreach ($pendingConsultationOrders as $order)
+                    @include('admin.partials.consultation-order-card', ['order' => $order])
+                @endforeach
+            </div>
+        </section>
+    @endif
 
     <a href="{{ route('admin.access.index') }}" class="flex items-center gap-3 rounded-2xl border border-amber-100 bg-gradient-to-r from-amber-50 to-orange-50 p-4 shadow-sm ring-1 ring-amber-100/80 transition active:scale-[0.99]">
         <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-xl shadow-sm ring-1 ring-amber-100">🔐</span>
@@ -96,62 +206,14 @@
         <svg class="h-4 w-4 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
     </a>
 
-    {{-- Ringkasan grafis --}}
-    <section class="overflow-hidden rounded-2xl bg-gradient-to-r from-brand-50 to-blue-50 ring-1 ring-brand-100">
-        <div class="flex items-center gap-3 border-b border-brand-100/80 px-4 py-3">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-brand-100">
-                <x-app.medical-note-icon class="h-7 w-7" />
-            </div>
-            <div>
-                <h2 class="text-sm font-bold text-slate-900">Skrining per penyakit</h2>
-                <a href="{{ route('admin.screenings.index') }}" class="text-[11px] font-semibold text-brand-600">Lihat semua →</a>
-            </div>
-        </div>
-        <div class="divide-y divide-brand-100/60">
-            @forelse ($screeningsByDisease as $disease => $total)
-                <div class="flex items-center justify-between px-4 py-3 text-sm">
-                    <span class="text-slate-700">{{ $stats->diseaseLabel($disease) }}</span>
-                    <span class="rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-brand-700 ring-1 ring-brand-100">{{ $total }}</span>
-                </div>
-            @empty
-                <p class="px-4 py-6 text-center text-xs text-slate-500">Belum ada data skrining.</p>
-            @endforelse
-        </div>
-    </section>
-
-    <section class="rounded-2xl border border-brand-100 bg-white shadow-sm overflow-hidden">
-        <div class="border-b border-slate-100 bg-slate-50/80 px-4 py-3">
-            <h2 class="text-sm font-bold text-slate-900">Tingkat risiko</h2>
-        </div>
-        <div class="divide-y divide-slate-100">
-            @forelse ($screeningsByRisk as $level => $total)
-                @php
-                    $chip = match ($level) {
-                        'low' => 'bg-emerald-50 text-emerald-700 ring-emerald-100',
-                        'medium' => 'bg-amber-50 text-amber-800 ring-amber-100',
-                        'high' => 'bg-orange-50 text-orange-800 ring-orange-100',
-                        'emergency' => 'bg-rose-50 text-rose-700 ring-rose-100',
-                        default => 'bg-slate-50 text-slate-700 ring-slate-100',
-                    };
-                @endphp
-                <div class="flex items-center justify-between px-4 py-3 text-sm">
-                    <span class="text-slate-700">{{ $stats->riskLabel($level) }}</span>
-                    <span class="rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 {{ $chip }}">{{ $total }}</span>
-                </div>
-            @empty
-                <p class="px-4 py-6 text-center text-xs text-slate-500">Belum ada data.</p>
-            @endforelse
-        </div>
-    </section>
-
     <section>
         <div class="mb-3 flex items-center justify-between">
             <h2 class="text-sm font-bold text-slate-900">Skrining terbaru</h2>
             <a href="{{ route('admin.screenings.index') }}" class="text-[11px] font-semibold text-brand-600">Semua →</a>
         </div>
-        <div class="space-y-3">
+        <div class="space-y-2">
             @forelse ($recentScreenings as $s)
-                @include('admin.partials.screening-list-card', [
+                @include('admin.partials.screening-list-button', [
                     'session' => $s,
                     'detailUrl' => route('admin.screenings.show', $s),
                 ])
@@ -159,6 +221,22 @@
                 <div class="rounded-2xl border border-dashed border-brand-200 bg-brand-50/30 p-8 text-center">
                     <img src="{{ asset('images/robot.png') }}" alt="" class="mx-auto h-16 w-16 object-contain opacity-80">
                     <p class="mt-3 text-sm text-slate-500">Belum ada skrining tercatat.</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
+    <section>
+        <div class="mb-3 flex items-center justify-between">
+            <h2 class="text-sm font-bold text-slate-900">Monitoring terbaru</h2>
+            <a href="{{ route('admin.monitoring.index') }}" class="text-[11px] font-semibold text-brand-600">Semua →</a>
+        </div>
+        <div class="space-y-2">
+            @forelse ($recentMonitoring as $entry)
+                @include('admin.partials.monitoring-list-button', ['entry' => $entry])
+            @empty
+                <div class="rounded-2xl border border-dashed border-violet-200 bg-violet-50/30 p-8 text-center">
+                    <p class="text-sm text-slate-500">Belum ada monitoring tercatat.</p>
                 </div>
             @endforelse
         </div>
@@ -175,6 +253,38 @@
             @empty
                 <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center">
                     <p class="text-sm text-slate-500">Belum ada pendaftar.</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
+    <section>
+        <div class="mb-3 flex items-center justify-between">
+            <h2 class="text-sm font-bold text-slate-900">Konsultasi terbaru</h2>
+            <a href="{{ route('admin.consultations.index') }}" class="text-[11px] font-semibold text-brand-600">Semua →</a>
+        </div>
+        <div class="space-y-2">
+            @forelse ($recentConsultationOrders as $order)
+                @include('admin.partials.consultation-list-button', ['order' => $order])
+            @empty
+                <div class="rounded-2xl border border-dashed border-sky-200 bg-sky-50/30 p-8 text-center">
+                    <p class="text-sm text-slate-500">Belum ada pembayaran konsultasi.</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
+    <section>
+        <div class="mb-3 flex items-center justify-between">
+            <h2 class="text-sm font-bold text-slate-900">Ringkasan aktivitas</h2>
+            <a href="{{ route('admin.screenings.index') }}" class="text-[11px] font-semibold text-brand-600">Semua →</a>
+        </div>
+        <div class="space-y-2">
+            @forelse ($patientActivitySummaries as $summary)
+                @include('admin.partials.activity-summary', ['summary' => $summary])
+            @empty
+                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/30 p-6 text-center">
+                    <p class="text-sm text-slate-500">Belum ada aktivitas tercatat di sistem.</p>
                 </div>
             @endforelse
         </div>

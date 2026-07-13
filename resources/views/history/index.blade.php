@@ -6,7 +6,7 @@
     <x-mobile.alert />
 
     <p class="mb-4 text-xs leading-relaxed text-slate-500">
-        Hasil berdasarkan skor skrining Anda. Tingkat risiko dan langkah selanjutnya mengarah ke panduan self management.
+        Riwayat skrining awal menampilkan penyakit yang perlu ditindaklanjuti. Setelah skrining lanjut selesai, hasil skor dan self management tersedia per penyakit.
     </p>
 
     @forelse ($sessions as $session)
