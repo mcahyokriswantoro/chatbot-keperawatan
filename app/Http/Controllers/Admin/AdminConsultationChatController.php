@@ -22,6 +22,12 @@ class AdminConsultationChatController extends Controller
     public function index(Request $request): View
     {
         $providerKey = $request->query('provider');
+
+        // Batasi hanya untuk provider miliknya sendiri jika bukan super admin
+        if ($request->user()->provider_key && ! $request->user()->isAdmin()) {
+            $providerKey = $request->user()->provider_key;
+        }
+
         $threads = $this->chat->activeThreads(is_string($providerKey) && $providerKey !== '' ? $providerKey : null)
             ->map(function (ConsultationOrder $thread) {
                 $thread->message_preview = $this->chat->latestMessagePreview($thread);
@@ -30,20 +36,30 @@ class AdminConsultationChatController extends Controller
             });
 
         $providers = ConsultationProvider::tableReady()
-            ? ConsultationProvider::query()->orderBy('short_name')->get(['key', 'short_name'])
+            ? ( ($request->user()->provider_key && ! $request->user()->isAdmin())
+                ? ConsultationProvider::query()->where('key', $request->user()->provider_key)->get(['key', 'short_name'])
+                : ConsultationProvider::query()->orderBy('short_name')->get(['key', 'short_name']) )
             : collect();
+
+        $unreadTotal = ($request->user()->provider_key && ! $request->user()->isAdmin())
+            ? $this->chat->unreadCountForProvider($request->user()->provider_key)
+            : $this->chat->unreadCountForProvider();
 
         return view('admin.consultations.chat.index', [
             'threads' => $threads,
             'providers' => $providers,
             'providerKey' => $providerKey,
-            'unreadTotal' => $this->chat->unreadCountForProvider(),
+            'unreadTotal' => $unreadTotal,
         ]);
     }
 
     public function show(ConsultationOrder $order): View
     {
         abort_unless($order->isActive(), 404);
+
+        if (auth()->user()->provider_key && ! auth()->user()->isAdmin()) {
+            abort_unless($order->provider_key === auth()->user()->provider_key, 403);
+        }
 
         $order->load(['user']);
         $this->chat->markReadByProvider($order);
@@ -63,6 +79,10 @@ class AdminConsultationChatController extends Controller
     {
         abort_unless($order->isActive(), 404);
 
+        if ($request->user()->provider_key && ! $request->user()->isAdmin()) {
+            abort_unless($order->provider_key === $request->user()->provider_key, 403);
+        }
+
         $afterId = $request->integer('after', 0) ?: null;
 
         if ($afterId === null) {
@@ -78,6 +98,10 @@ class AdminConsultationChatController extends Controller
     public function reply(Request $request, ConsultationOrder $order): RedirectResponse|JsonResponse
     {
         abort_unless($order->isActive(), 404);
+
+        if ($request->user()->provider_key && ! $request->user()->isAdmin()) {
+            abort_unless($order->provider_key === $request->user()->provider_key, 403);
+        }
 
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:2000'],

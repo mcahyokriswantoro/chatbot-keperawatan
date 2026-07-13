@@ -31,6 +31,7 @@ class User extends Authenticatable
         'profile_photo',
         'password',
         'is_admin',
+        'provider_key',
     ];
 
     /**

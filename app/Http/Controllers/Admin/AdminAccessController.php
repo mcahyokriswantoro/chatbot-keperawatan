@@ -17,8 +17,20 @@ class AdminAccessController extends Controller
 
     public function index(): View
     {
+        $providers = \App\Models\ConsultationProvider::tableReady()
+            ? \App\Models\ConsultationProvider::query()->where('active', true)->orderBy('short_name')->get()
+            : collect();
+
+        $providerAdmins = User::query()
+            ->whereNotNull('provider_key')
+            ->where('is_admin', false)
+            ->latest()
+            ->get();
+
         return view('admin.access.index', [
             'admins' => User::query()->where('is_admin', true)->latest()->get(),
+            'providers' => $providers,
+            'providerAdmins' => $providerAdmins,
         ]);
     }
 
@@ -53,5 +65,36 @@ class AdminAccessController extends Controller
         return redirect()
             ->route('admin.access.index')
             ->with('status', "Akses admin untuk {$user->email} telah dicabut.");
+    }
+
+    public function storeProvider(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email', 'max:255'],
+            'provider_key' => ['required', 'string', 'max:60'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'provider_key.required' => 'Tenaga kesehatan wajib dipilih.',
+        ]);
+
+        try {
+            $user = $this->access->grantProviderAccess($validated['email'], $validated['provider_key']);
+        } catch (\InvalidArgumentException $e) {
+            return back()->withErrors(['email_provider' => $e->getMessage()])->withInput();
+        }
+
+        return redirect()
+            ->route('admin.access.index')
+            ->with('status', "Akses chat untuk {$user->name} ({$user->email}) berhasil diaktifkan.");
+    }
+
+    public function destroyProvider(User $user): RedirectResponse
+    {
+        $this->access->revokeProviderAccess($user);
+
+        return redirect()
+            ->route('admin.access.index')
+            ->with('status', "Akses chat untuk {$user->email} telah dicabut.");
     }
 }

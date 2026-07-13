@@ -97,6 +97,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/access', [AdminAccessController::class, 'index'])->name('access.index');
     Route::post('/access', [AdminAccessController::class, 'store'])->name('access.store');
     Route::delete('/access/{user}', [AdminAccessController::class, 'destroy'])->name('access.destroy');
+    Route::post('/access/provider', [AdminAccessController::class, 'storeProvider'])->name('access.store-provider');
+    Route::delete('/access/provider/{user}', [AdminAccessController::class, 'destroyProvider'])->name('access.destroy-provider');
+
     Route::get('/screenings', [AdminScreeningController::class, 'index'])->name('screenings.index');
     Route::get('/screenings/{screeningSession}', [AdminScreeningController::class, 'show'])->name('screenings.show');
     Route::get('/monitoring', [AdminMonitoringController::class, 'index'])->name('monitoring.index');

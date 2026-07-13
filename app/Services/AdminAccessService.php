@@ -51,4 +51,31 @@ class AdminAccessService
 
         $user->update(['is_admin' => false]);
     }
+
+    public function grantProviderAccess(string $email, string $providerKey): User
+    {
+        $email = Str::lower(trim($email));
+
+        $user = User::query()->where('email', $email)->first();
+
+        if (! $user) {
+            throw new InvalidArgumentException('Email belum terdaftar. Pengguna harus daftar akun dulu.');
+        }
+
+        if ($user->isAdmin()) {
+            throw new InvalidArgumentException('Pengguna ini adalah Super Admin dan sudah memiliki semua akses.');
+        }
+
+        $user->update([
+            'provider_key' => $providerKey,
+            'email_verified_at' => $user->email_verified_at ?? now(),
+        ]);
+
+        return $user->fresh();
+    }
+
+    public function revokeProviderAccess(User $user): void
+    {
+        $user->update(['provider_key' => null]);
+    }
 }
