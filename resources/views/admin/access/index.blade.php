@@ -18,21 +18,27 @@
     <form method="POST" action="{{ route('admin.access.store') }}" class="mb-6 space-y-3 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
         @csrf
         <div>
-            <label for="email" class="mb-1 block text-xs font-medium text-slate-600">Email pengguna</label>
-            <input
-                type="email"
+            <label for="email" class="mb-1 block text-xs font-medium text-slate-600">Pilih Pengguna Terdaftar</label>
+            <select
                 id="email"
                 name="email"
-                value="{{ old('email') }}"
                 required
-                placeholder="nama@email.com"
-                class="w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                class="w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm bg-white focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
             >
+                @if ($eligibleUsers->isEmpty())
+                    <option value="">-- Tidak ada pengguna yang tersedia --</option>
+                @else
+                    <option value="">-- Pilih Pengguna --</option>
+                    @foreach ($eligibleUsers as $user)
+                        <option value="{{ $user->email }}">{{ $user->name }} ({{ $user->email }})</option>
+                    @endforeach
+                @endif
+            </select>
             @error('email')
                 <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
             @enderror
             <p class="mt-2 text-[11px] leading-relaxed text-slate-500">
-                Email harus sudah terdaftar di aplikasi. Setelah ditambahkan, pengguna login via <strong>/login</strong> lalu otomatis masuk panel admin.
+                Setelah ditambahkan, pengguna dapat login via <strong>/login</strong> dan mendapatkan hak akses penuh sebagai Super Admin.
             </p>
         </div>
         <button type="submit" class="w-full rounded-full bg-brand-600 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700">
