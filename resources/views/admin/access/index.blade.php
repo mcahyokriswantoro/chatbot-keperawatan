@@ -44,16 +44,22 @@
         @csrf
         <div>
             <h3 class="text-sm font-bold text-slate-900 mb-2">Akses Tenaga Kesehatan (Khusus Chat)</h3>
-            <label for="email_provider" class="mb-1 block text-xs font-medium text-slate-600">Email pengguna</label>
-            <input
-                type="email"
+            <label for="email_provider" class="mb-1 block text-xs font-medium text-slate-600">Pilih Pengguna Terdaftar</label>
+            <select
                 id="email_provider"
                 name="email"
-                value="{{ old('email') }}"
                 required
-                placeholder="dokter@email.com"
-                class="w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                class="w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm bg-white focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
             >
+                @if ($eligibleUsers->isEmpty())
+                    <option value="">-- Tidak ada pengguna yang tersedia --</option>
+                @else
+                    <option value="">-- Pilih Pengguna --</option>
+                    @foreach ($eligibleUsers as $user)
+                        <option value="{{ $user->email }}">{{ $user->name }} ({{ $user->email }})</option>
+                    @endforeach
+                @endif
+            </select>
             @error('email_provider')
                 <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
             @enderror

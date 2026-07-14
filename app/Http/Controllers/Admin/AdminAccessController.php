@@ -27,10 +27,17 @@ class AdminAccessController extends Controller
             ->latest()
             ->get();
 
+        $eligibleUsers = User::query()
+            ->where('is_admin', false)
+            ->whereNull('provider_key')
+            ->orderBy('name')
+            ->get();
+
         return view('admin.access.index', [
             'admins' => User::query()->where('is_admin', true)->latest()->get(),
             'providers' => $providers,
             'providerAdmins' => $providerAdmins,
+            'eligibleUsers' => $eligibleUsers,
         ]);
     }
 
