@@ -176,8 +176,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::delete('/homecare/{package}', [AdminHomecareController::class, 'destroy'])->name('homecare.destroy');
     Route::post('/homecare/booking/{booking}/setujui', [AdminHomecareController::class, 'approveBooking'])->name('homecare.bookings.approve');
     Route::post('/homecare/booking/{booking}/selesai', [AdminHomecareController::class, 'completeBooking'])->name('homecare.bookings.complete');
-    Route::post('/homecare/pesanan/{booking}/tolak', [AdminHomecareController::class, 'reject'])->name('homecare.reject');
-    Route::post('/homecare/pesanan/{booking}/selesai', [AdminHomecareController::class, 'complete'])->name('homecare.complete');
+    Route::post('/homecare/booking/{booking}/tolak', [AdminHomecareController::class, 'rejectBooking'])->name('homecare.bookings.reject');
+    Route::post('/homecare/settings', [AdminHomecareController::class, 'updateSettings'])->name('homecare.settings.update');
 
     // Admin Settings
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
