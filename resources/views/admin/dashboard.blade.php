@@ -242,6 +242,16 @@
         <svg class="h-4 w-4 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
     </a>
 
+    <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 rounded-2xl border border-brand-100 bg-gradient-to-r from-brand-50 to-sky-50 p-4 shadow-sm ring-1 ring-brand-100/80 transition active:scale-[0.99] mt-3">
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-xl shadow-sm ring-1 ring-brand-100">📱</span>
+        <div class="min-w-0 flex-1">
+            <p class="text-sm font-bold text-slate-900">Pengaturan Notifikasi WA</p>
+            <p class="text-[11px] text-slate-500">Ubah nomor WA Admin, Apotek & Homecare</p>
+        </div>
+        <svg class="h-4 w-4 shrink-0 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+    </a>
+
+
     <section>
         <div class="mb-3 flex items-center justify-between">
             <h2 class="text-sm font-bold text-slate-900">Skrining terbaru</h2>

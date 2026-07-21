@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminConsultationController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminMonitoringController;
 use App\Http\Controllers\Admin\AdminScreeningController;
+use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
@@ -175,8 +176,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::delete('/homecare/{package}', [AdminHomecareController::class, 'destroy'])->name('homecare.destroy');
     Route::post('/homecare/booking/{booking}/setujui', [AdminHomecareController::class, 'approveBooking'])->name('homecare.bookings.approve');
     Route::post('/homecare/booking/{booking}/selesai', [AdminHomecareController::class, 'completeBooking'])->name('homecare.bookings.complete');
-    Route::post('/homecare/booking/{booking}/tolak', [AdminHomecareController::class, 'rejectBooking'])->name('homecare.bookings.reject');
-    Route::post('/homecare/settings', [AdminHomecareController::class, 'updateSettings'])->name('homecare.settings.update');
+    Route::post('/homecare/pesanan/{booking}/tolak', [AdminHomecareController::class, 'reject'])->name('homecare.reject');
+    Route::post('/homecare/pesanan/{booking}/selesai', [AdminHomecareController::class, 'complete'])->name('homecare.complete');
+
+    // Admin Settings
+    Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
 });
 
 require __DIR__.'/auth.php';

@@ -37,15 +37,20 @@ class ConsultationWhatsAppNotifier
         $replyUrl = url('/admin/konsultasi/chat/'.$order->id);
 
         $text = implode("\n", array_filter([
-            '🔔 *Pesan konsultasi baru*',
+            'Salam dari *Nersia Health*! 🌿',
             '',
-            'Pasien: '.$patientName,
-            'Tenaga kesehatan: '.$providerName,
+            'Yth. '.$providerName.',',
+            'Terdapat pesan baru dari pasien pada sesi konsultasi Anda.',
             '',
+            '👤 *Pasien:* '.$patientName,
+            '',
+            '*Pesan Pasien:*',
             '"'.$preview.'"',
             '',
-            'Balas lewat panel admin:',
+            'Mohon kesediaannya untuk membalas pesan tersebut melalui ruang obrolan di Panel Admin:',
             $replyUrl,
+            '',
+            'Terima kasih atas dedikasi Anda. 🙏',
         ]));
 
         $sent = $this->dispatch($number, $text);
@@ -71,16 +76,19 @@ class ConsultationWhatsAppNotifier
         $adminChatUrl = url('/admin/konsultasi/chat/'.$order->id);
 
         $text = implode("\n", array_filter([
-            '🟢 *Konsultasi Baru Disetujui*',
+            'Salam dari *Nersia Health*! 🌿',
             '',
-            'Sesi konsultasi telah aktif.',
-            'Pasien: '.$patientName,
-            'Tenaga Kesehatan: '.$providerName,
-            'Metode Pembayaran: '.strtoupper($order->payment_method),
-            'Sesi Berakhir: '.$expiresAt,
+            'Yth. '.$providerName.',',
+            'Sesi konsultasi baru telah *aktif* dan pembayaran pasien telah diverifikasi.',
             '',
-            'Silakan akses panel admin chat untuk merespon:',
+            '👤 *Pasien:* '.$patientName,
+            '💳 *Metode Pembayaran:* '.strtoupper($order->payment_method),
+            '⏰ *Batas Waktu Sesi:* '.$expiresAt.' WIB',
+            '',
+            'Mohon kesediaannya untuk segera merespons pasien melalui Panel Admin:',
             $adminChatUrl,
+            '',
+            'Terima kasih atas pelayanan Anda. 🙏',
         ]));
 
         $sent = false;
