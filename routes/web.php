@@ -25,6 +25,10 @@ use App\Http\Controllers\ScreeningTtsController;
 use App\Http\Controllers\SelfManagementController;
 use App\Http\Controllers\SelfManagementLogController;
 use App\Http\Controllers\WilayahController;
+use App\Http\Controllers\MedicineController;
+use App\Http\Controllers\HomecareController;
+use App\Http\Controllers\Admin\AdminMedicineController;
+use App\Http\Controllers\Admin\AdminHomecareController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/favicon.ico', '/favicon.png', 301);
@@ -40,6 +44,13 @@ Route::get('/profil', [ProfilePageController::class, 'index'])->name('profile.pa
 
 Route::get('/konsultasi', [ConsultationController::class, 'index'])->name('consultation.index');
 
+Route::get('/obat', [MedicineController::class, 'index'])->name('medicines.index');
+Route::get('/homecare', [HomecareController::class, 'index'])->name('homecare.index');
+Route::get('/obat/keranjang', [MedicineController::class, 'cart'])->name('medicines.cart');
+Route::post('/obat/keranjang', [MedicineController::class, 'addToCart'])->name('medicines.cart.add');
+Route::post('/obat/keranjang/update', [MedicineController::class, 'updateCart'])->name('medicines.cart.update');
+Route::delete('/obat/keranjang/{id}', [MedicineController::class, 'removeFromCart'])->name('medicines.cart.remove');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/konsultasi/{provider}/checkout', [ConsultationController::class, 'checkout'])->name('consultation.checkout');
     Route::get('/konsultasi/{provider}/pembayaran', [ConsultationController::class, 'payment'])->name('consultation.payment');
@@ -52,6 +63,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/konsultasi/{provider}/chat/pesan', [ConsultationController::class, 'messages'])->name('consultation.chat.messages');
     Route::post('/konsultasi/{provider}/chat', [ConsultationController::class, 'send'])->name('consultation.send');
     Route::get('/konsultasi/{category}', [ConsultationController::class, 'category'])->name('consultation.category');
+
+    // Medicine Cart & Checkout
+    Route::post('/obat/checkout', [MedicineController::class, 'checkout'])->name('medicines.checkout');
+    Route::get('/obat/pesanan/{order}/pembayaran', [MedicineController::class, 'payment'])->name('medicines.payment');
+    Route::post('/obat/pesanan/{order}/pembayaran/konfirmasi', [MedicineController::class, 'confirmPayment'])->name('medicines.payment.confirm');
+    Route::get('/obat/pesanan/{order}/status', [MedicineController::class, 'status'])->name('medicines.status');
+
+    // Homecare Bookings
+    Route::get('/homecare/{package}/pesan', [HomecareController::class, 'book'])->name('homecare.book');
+    Route::post('/homecare/{package}/pesan', [HomecareController::class, 'storeBooking'])->name('homecare.store-booking');
+    Route::get('/homecare/booking/{booking}/pembayaran', [HomecareController::class, 'payment'])->name('homecare.payment');
+    Route::post('/homecare/booking/{booking}/pembayaran/konfirmasi', [HomecareController::class, 'confirmPayment'])->name('homecare.payment.confirm');
+    Route::get('/homecare/booking/{booking}/status', [HomecareController::class, 'status'])->name('homecare.status');
 });
 
 Route::view('/bantuan', 'help.index')->name('help');
@@ -129,6 +153,30 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/konsultasi', [AdminConsultationController::class, 'index'])->name('consultations.index');
     Route::post('/konsultasi/{order}/setujui', [AdminConsultationController::class, 'approve'])->name('consultations.approve');
     Route::post('/konsultasi/{order}/tolak', [AdminConsultationController::class, 'reject'])->name('consultations.reject');
+
+    // Admin Medicine Management
+    Route::get('/obat', [AdminMedicineController::class, 'index'])->name('medicines.index');
+    Route::get('/obat/tambah', [AdminMedicineController::class, 'create'])->name('medicines.create');
+    Route::post('/obat', [AdminMedicineController::class, 'store'])->name('medicines.store');
+    Route::get('/obat/{medicine}/edit', [AdminMedicineController::class, 'edit'])->name('medicines.edit');
+    Route::put('/obat/{medicine}', [AdminMedicineController::class, 'update'])->name('medicines.update');
+    Route::delete('/obat/{medicine}', [AdminMedicineController::class, 'destroy'])->name('medicines.destroy');
+    Route::post('/obat/pesanan/{order}/setujui', [AdminMedicineController::class, 'approveOrder'])->name('medicines.orders.approve');
+    Route::post('/obat/pesanan/{order}/kirim', [AdminMedicineController::class, 'deliverOrder'])->name('medicines.orders.deliver');
+    Route::post('/obat/pesanan/{order}/tolak', [AdminMedicineController::class, 'rejectOrder'])->name('medicines.orders.reject');
+    Route::post('/obat/settings', [AdminMedicineController::class, 'updateSettings'])->name('medicines.settings.update');
+
+    // Admin Homecare Management
+    Route::get('/homecare', [AdminHomecareController::class, 'index'])->name('homecare.index');
+    Route::get('/homecare/tambah', [AdminHomecareController::class, 'create'])->name('homecare.create');
+    Route::post('/homecare', [AdminHomecareController::class, 'store'])->name('homecare.store');
+    Route::get('/homecare/{package}/edit', [AdminHomecareController::class, 'edit'])->name('homecare.edit');
+    Route::put('/homecare/{package}', [AdminHomecareController::class, 'update'])->name('homecare.update');
+    Route::delete('/homecare/{package}', [AdminHomecareController::class, 'destroy'])->name('homecare.destroy');
+    Route::post('/homecare/booking/{booking}/setujui', [AdminHomecareController::class, 'approveBooking'])->name('homecare.bookings.approve');
+    Route::post('/homecare/booking/{booking}/selesai', [AdminHomecareController::class, 'completeBooking'])->name('homecare.bookings.complete');
+    Route::post('/homecare/booking/{booking}/tolak', [AdminHomecareController::class, 'rejectBooking'])->name('homecare.bookings.reject');
+    Route::post('/homecare/settings', [AdminHomecareController::class, 'updateSettings'])->name('homecare.settings.update');
 });
 
 require __DIR__.'/auth.php';

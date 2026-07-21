@@ -65,8 +65,8 @@
             </div>
         @endif
         <div class="flex justify-between gap-3">
-            <dt class="text-slate-500">DANA tujuan</dt>
-            <dd class="font-medium text-slate-900">{{ config('consultation.dana.merchant_phone', '085645527751') }}</dd>
+            <dt class="text-slate-500">Tujuan transfer</dt>
+            <dd class="font-medium text-slate-900">Giro BRI 004101003652303</dd>
         </div>
         <div class="flex justify-between gap-3">
             <dt class="text-slate-500">Waktu</dt>

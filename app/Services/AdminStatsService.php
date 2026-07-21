@@ -7,6 +7,8 @@ use App\Models\HealthMonitoring;
 use App\Models\ScreeningIdentity;
 use App\Models\ScreeningSession;
 use App\Models\User;
+use App\Models\MedicineOrder;
+use App\Models\HomecareBooking;
 use App\Support\AppTimezone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
@@ -115,6 +117,18 @@ class AdminStatsService
                     ->limit(5)
                     ->get()
                 : collect(),
+            'medicinePendingCount' => Schema::hasTable('medicine_orders')
+                ? MedicineOrder::query()
+                    ->where('status', 'pending')
+                    ->whereNotNull('payment_proof')
+                    ->count()
+                : 0,
+            'homecarePendingCount' => Schema::hasTable('homecare_bookings')
+                ? HomecareBooking::query()
+                    ->where('status', 'pending')
+                    ->whereNotNull('payment_proof')
+                    ->count()
+                : 0,
         ];
     }
 

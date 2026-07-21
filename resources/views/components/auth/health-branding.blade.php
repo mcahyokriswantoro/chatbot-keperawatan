@@ -8,7 +8,7 @@
         </div>
 
         <div class="min-w-0 flex-1 pt-1">
-            <p class="text-xs font-semibold uppercase tracking-wide text-brand-600">Chatbot Keperawatan</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-brand-600">Nersia Health</p>
             <h1 class="mt-0.5 text-xl font-bold leading-snug text-slate-900">{{ $title }}</h1>
             <p class="mt-1 text-sm leading-relaxed text-slate-500">{{ $subtitle }}</p>
         </div>

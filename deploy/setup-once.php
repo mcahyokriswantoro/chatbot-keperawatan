@@ -130,6 +130,8 @@ if (! $hasAppKey) {
 $commands[] = ['migrate', ['--force' => true]];
 $commands[] = ['db:seed', ['--force' => true, '--class' => 'ConsultationVoucherSeeder']];
 $commands[] = ['db:seed', ['--force' => true, '--class' => 'ConsultationProviderSeeder']];
+$commands[] = ['db:seed', ['--force' => true, '--class' => 'MedicineSeeder']];
+$commands[] = ['db:seed', ['--force' => true, '--class' => 'HomecarePackageSeeder']];
 $commands[] = ['storage:link', ['--force' => true]];
 
 echo "=== ARTISAN ===\n";
@@ -165,6 +167,12 @@ $checks = [
     'health_monitorings.medication_checks' => ['health_monitorings', 'medication_checks'],
     'consultation_orders.payment_proof' => ['consultation_orders', 'payment_proof'],
     'consultation_providers.photo' => ['consultation_providers', 'photo'],
+    'consultation_messages.id' => ['consultation_messages', 'id'],
+    'medicines.id' => ['medicines', 'id'],
+    'medicine_orders.id' => ['medicine_orders', 'id'],
+    'medicine_orders.shipping_receipt' => ['medicine_orders', 'shipping_receipt'],
+    'homecare_packages.id' => ['homecare_packages', 'id'],
+    'homecare_bookings.id' => ['homecare_bookings', 'id'],
 ];
 foreach ($checks as $label => [$table, $column]) {
     $ok = \Illuminate\Support\Facades\Schema::hasTable($table)

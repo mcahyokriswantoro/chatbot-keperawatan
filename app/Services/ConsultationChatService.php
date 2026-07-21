@@ -15,6 +15,7 @@ class ConsultationChatService
         private ConsultationAccessService $access,
         private ConsultationWhatsAppService $whatsapp,
         private ConsultationWhatsAppNotifier $notifier,
+        private OrderWhatsAppNotifier $orderNotifier,
     ) {}
 
     public function requireActiveOrder(User $user, string $providerKey): ConsultationOrder
@@ -137,15 +138,32 @@ class ConsultationChatService
             ]);
         }
 
-        return ConsultationMessage::create([
+        $provider = $this->whatsapp->provider($order->provider_key);
+        $providerName = $provider['short_name'] ?? $provider['name'] ?? 'Tenaga kesehatan';
+
+        $message = ConsultationMessage::create([
             'consultation_order_id' => $order->id,
-            'user_id' => $order->user_id,
-            'provider_key' => $order->provider_key,
-            'sender_type' => ConsultationMessage::SENDER_PROVIDER,
-            'sender_user_id' => $admin->id,
-            'body' => $body,
-            'read_by_provider_at' => now(),
+            'user_id'               => $order->user_id,
+            'provider_key'          => $order->provider_key,
+            'sender_type'           => ConsultationMessage::SENDER_PROVIDER,
+            'sender_user_id'        => $admin->id,
+            'body'                  => $body,
+            'read_by_provider_at'   => now(),
         ]);
+
+        // Notify the patient via WA when provider replies
+        $patientPhone = $order->user?->phone ?? '';
+        $patientName  = $order->user?->name ?? 'Pasien';
+        if ($patientPhone !== '') {
+            rescue(fn () => $this->orderNotifier->notifyPatientChatReplied(
+                $patientPhone,
+                $patientName,
+                $providerName,
+                $body,
+            ));
+        }
+
+        return $message;
     }
 
     public function markReadByUser(ConsultationOrder $order): void

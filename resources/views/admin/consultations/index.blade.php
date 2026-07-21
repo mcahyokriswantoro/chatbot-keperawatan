@@ -5,7 +5,7 @@
 @section('content')
     <x-admin.page-banner
         title="Verifikasi Konsultasi"
-        :subtitle="$pendingCount > 0 ? $pendingCount.' pembayaran DANA menunggu verifikasi' : 'Kelola pembayaran chat perawat'"
+        :subtitle="$pendingCount > 0 ? $pendingCount.' pembayaran Giro BRI menunggu verifikasi' : 'Kelola pembayaran chat perawat'"
         tone="emerald"
         :back="route('admin.dashboard')"
     />
@@ -28,8 +28,8 @@
     </div>
 
     <div class="mb-4 rounded-2xl border border-sky-100 bg-sky-50/50 px-4 py-3 text-xs leading-relaxed text-slate-600">
-        <strong>Cara verifikasi:</strong> cek transfer masuk ke DANA
-        <strong>{{ config('consultation.dana.merchant_phone', '085645527751') }}</strong>,
+        <strong>Cara verifikasi:</strong> cek transfer masuk ke rekening Giro BRI
+        <strong>004101003652303</strong> (a.n. Chatbot Keperawatan),
         cocokkan nominal & ID transaksi, lalu <strong>Setujui</strong> agar user bisa chat WhatsApp live.
     </div>
 

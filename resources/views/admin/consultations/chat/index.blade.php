@@ -7,7 +7,7 @@
         title="Chat Konsultasi"
         subtitle="Balas pesan pasien — notifikasi WA terkirim saat pasien menulis"
         tone="emerald"
-        :back="route('admin.dashboard')"
+        :back="auth()->user()?->isAdmin() ? route('admin.dashboard') : null"
     />
 
     @include('admin.partials.consultation-tabs')

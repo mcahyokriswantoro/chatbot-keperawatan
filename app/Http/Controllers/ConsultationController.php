@@ -196,7 +196,7 @@ class ConsultationController extends Controller
 
         return redirect()
             ->route('consultation.payment', $provider)
-            ->with('status', 'Voucher diterapkan. Bayar sisa '.$this->access->formatRupiah($order?->total_paid ?? 0).' via DANA.');
+            ->with('status', 'Voucher diterapkan. Bayar sisa '.$this->access->formatRupiah($order?->total_paid ?? 0).' via transfer Giro BRI.');
     }
 
     public function pay(string $provider): RedirectResponse

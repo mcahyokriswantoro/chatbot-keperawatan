@@ -83,6 +83,10 @@
                 @foreach ($providers as $prov)
                     <option value="{{ $prov->key }}">{{ $prov->short_name }} ({{ $prov->categoryLabel() }})</option>
                 @endforeach
+                <optgroup label="Mitra Eksternal / Pelayanan">
+                    <option value="apotek">Mitra Apotek (Kelola Obat & Kirim)</option>
+                    <option value="homecare">Mitra Homecare (Kelola Booking & Layanan)</option>
+                </optgroup>
             </select>
             @error('provider_key')
                 <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
@@ -105,8 +109,14 @@
             @endif
             @foreach ($providerAdmins as $pa)
                 @php
-                    $linkedProvider = collect($providers)->firstWhere('key', $pa->provider_key);
-                    $providerName = $linkedProvider?->short_name ?? $pa->provider_key;
+                    if ($pa->provider_key === 'apotek') {
+                        $providerName = 'Mitra Apotek';
+                    } elseif ($pa->provider_key === 'homecare') {
+                        $providerName = 'Mitra Homecare';
+                    } else {
+                        $linkedProvider = collect($providers)->firstWhere('key', $pa->provider_key);
+                        $providerName = $linkedProvider?->short_name ?? $pa->provider_key;
+                    }
                 @endphp
                 <div class="rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
                     <div class="flex items-start gap-3">

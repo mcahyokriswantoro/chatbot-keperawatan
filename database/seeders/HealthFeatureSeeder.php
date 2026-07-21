@@ -21,6 +21,28 @@ class HealthFeatureSeeder extends Seeder
             ]
         );
 
+        User::query()->updateOrCreate(
+            ['email' => 'apotek@chatsimpel.test'],
+            [
+                'name' => 'Apoteker Dummy',
+                'password' => Hash::make('password'),
+                'is_admin' => false,
+                'provider_key' => 'apotek',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::query()->updateOrCreate(
+            ['email' => 'homecare@chatsimpel.test'],
+            [
+                'name' => 'Perawat Homecare Dummy',
+                'password' => Hash::make('password'),
+                'is_admin' => false,
+                'provider_key' => 'homecare',
+                'email_verified_at' => now(),
+            ]
+        );
+
         $articles = [
             [
                 'title' => 'Pentingnya Cek Tekanan Darah Rutin',

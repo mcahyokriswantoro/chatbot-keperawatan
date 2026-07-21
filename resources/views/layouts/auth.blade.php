@@ -8,7 +8,7 @@
 
     @php($faviconVersion = filemtime(public_path('favicon.png')) ?: time())
 
-    <title>{{ $title ?? 'Masuk — '.config('app.name', 'Chatbot Keperawatan') }}</title>
+    <title>{{ $title ?? 'Masuk — '.config('app.name', 'Nersia Health') }}</title>
 
     <link rel="icon" href="{{ asset('favicon.png') }}?v={{ $faviconVersion }}" type="image/png" sizes="any">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ $faviconVersion }}">

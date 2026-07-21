@@ -50,7 +50,7 @@
         <div class="relative flex items-start gap-3">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-2xl ring-2 ring-white/30 backdrop-blur-sm" aria-hidden="true">▶️</div>
             <div class="min-w-0 flex-1">
-                <p class="text-xs font-medium text-violet-100">Chatbot Keperawatan</p>
+                <p class="text-xs font-medium text-violet-100">Nersia Health</p>
                 <h1 class="text-xl font-bold leading-tight">Video Edukasi</h1>
                 <p class="mt-1 text-xs text-white/80">Video edukasi kesehatan dari tim kesehatan</p>
             </div>

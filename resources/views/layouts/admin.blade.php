@@ -17,6 +17,12 @@
     @php($adminChartsCss = filemtime(public_path('css/admin-charts.css')) ?: time())
     <link rel="stylesheet" href="/css/admin-charts.css?v={{ $adminChartsCss }}">
     @stack('styles')
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800">
     <div class="min-h-screen flex flex-col">

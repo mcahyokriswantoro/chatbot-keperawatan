@@ -5,6 +5,7 @@
     $providersActive = request()->routeIs('admin.consultations.providers.*');
 @endphp
 
+@if (auth()->user()?->isAdmin())
 <div class="mb-4 flex gap-2 overflow-x-auto pb-1">
     <a
         href="{{ route('admin.consultations.index') }}"
@@ -47,3 +48,4 @@
         Kelola voucher
     </a>
 </div>
+@endif

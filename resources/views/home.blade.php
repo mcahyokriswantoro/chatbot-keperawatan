@@ -20,15 +20,29 @@
             'icon' => 'images/unggulan_riwayat.png',
         ],
         [
+            'label' => 'Layanan Apotek',
+            'desc' => 'Beli obat & vitamin online',
+            'url' => route('medicines.index'),
+            'icon' => 'images/unggulan_obat.png',
+        ],
+        [
+            'label' => 'Layanan Homecare',
+            'desc' => 'Panggil perawat ke rumah',
+            'url' => route('homecare.index'),
+            'icon' => 'images/unggulan_homecare.png',
+        ],
+        [
             'label' => 'Edukasi Kesehatan',
             'desc' => 'Video edukasi kesehatan',
             'url' => route('education.index'),
             'icon' => 'images/unggulan_edukasi.png',
+            'icon_class' => 'h-14 w-14',
+            'img_class' => 'scale-120',
         ],
         [
             'label' => 'Konsultasi Langsung',
-            'desc' => 'Tanya langsung ke chatbot',
-            'url' => route('help'),
+            'desc' => 'Tanya langsung ke ahli',
+            'url' => route('consultation.index'),
             'icon' => 'images/unggulan_konsultasi.png',
         ],
     ];
@@ -55,19 +69,22 @@
                 <x-app.medical-note-icon class="h-8 w-8" />
             </div>
             <div class="min-w-0 flex-1 pt-0.5">
-                <p class="text-xs font-medium text-slate-500">Hi, Saya Chatbot 👋</p>
-                <h1 class="text-lg font-bold leading-tight text-slate-900 sm:text-xl">Keperawatan Pintar</h1>
-                <p class="mt-1 text-xs leading-relaxed text-slate-500">
-                    Saya siap membantu deteksi kesehatan Anda hari ini 💙
+                <p class="text-xs font-semibold text-slate-500">Hi, Saya</p>
+                <h1 class="text-2xl font-black leading-tight tracking-tight sm:text-3xl">
+                    <span class="text-[#002966]">Nersia</span> <span class="text-[#0aa4b0]">Health</span>
+                </h1>
+                <p class="text-[10px] font-bold text-slate-400 mt-0.5">Chatbot Smart Health Screening & Care</p>
+                <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
+                    Saya siap membantu deteksi dan merawat kesehatan Anda hari ini 💙
                 </p>
             </div>
         </div>
-        <div class="pointer-events-none absolute right-2 top-2 h-16 w-16 animate-[float_3s_ease-in-out_infinite] sm:h-20 sm:w-20">
+        <div class="pointer-events-none absolute right-2 top-2 h-24 w-24 animate-[float_3s_ease-in-out_infinite] sm:h-28 sm:w-28">
             <img
                 src="{{ asset('images/robot.png') }}?v={{ filemtime(public_path('images/robot.png')) }}"
                 alt=""
-                width="80"
-                height="80"
+                width="112"
+                height="112"
                 class="h-full w-full object-contain drop-shadow-md"
             />
         </div>
@@ -106,11 +123,11 @@
                     href="{{ $feature['url'] }}"
                     class="group flex min-h-[7.5rem] flex-col items-center rounded-2xl border border-brand-50 bg-white px-2 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md active:scale-95"
                 >
-                    <span class="mb-2 flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl transition group-hover:scale-105">
+                    <span class="mb-2 flex {{ $feature['icon_class'] ?? 'h-12 w-12' }} shrink-0 items-center justify-center overflow-hidden rounded-2xl transition group-hover:scale-105">
                         <img
                             src="{{ asset($feature['icon']) }}"
                             alt=""
-                            class="h-full w-full object-contain"
+                            class="h-full w-full object-contain {{ $feature['img_class'] ?? '' }}"
                         />
                     </span>
                     <span class="text-center text-xs font-bold leading-snug text-slate-800">{{ $feature['label'] }}</span>

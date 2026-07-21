@@ -9,7 +9,7 @@
 
     @php($faviconVersion = filemtime(public_path('favicon.png')) ?: time())
 
-    <title>{{ $title ?? config('app.name', 'Chatbot Keperawatan') }}</title>
+    <title>{{ $title ?? config('app.name', 'Nersia Health') }}</title>
 
     <link rel="icon" href="{{ asset('favicon.png') }}?v={{ $faviconVersion }}" type="image/png" sizes="any">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ $faviconVersion }}">
@@ -51,6 +51,10 @@
             z-index: 50;
             background: rgba(255, 255, 255, 0.95);
             border-top: 1px solid #d9e8ff;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
         }
     </style>
 </head>

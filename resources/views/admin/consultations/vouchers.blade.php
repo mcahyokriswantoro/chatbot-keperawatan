@@ -15,7 +15,7 @@
     {{-- Form buat voucher --}}
     <section class="mb-5 rounded-2xl border border-violet-100 bg-violet-50/40 p-4">
         <h2 class="text-sm font-bold text-slate-900">Buat voucher baru</h2>
-        <p class="mt-1 text-xs text-slate-600">100% = gratis langsung chat · 50%/25% = user bayar sisa via DANA</p>
+        <p class="mt-1 text-xs text-slate-600">100% = gratis langsung chat · 50%/25% = user bayar sisa via Transfer</p>
 
         <form method="POST" action="{{ route('admin.consultations.vouchers.store') }}" class="mt-4 space-y-3">
             @csrf

@@ -25,7 +25,7 @@
     <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 via-brand-600 to-teal-600 px-5 py-6 text-white shadow-lg">
         <div class="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
         <div class="pointer-events-none absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-white/10 blur-xl"></div>
-        <p class="text-[10px] font-semibold uppercase tracking-wider text-emerald-100">Chatbot Keperawatan</p>
+        <p class="text-[10px] font-semibold uppercase tracking-wider text-emerald-100">Nersia Health</p>
         <h1 class="mt-1 text-xl font-bold leading-tight">Chat dengan Tenaga Kesehatan</h1>
         <p class="mt-2 text-xs leading-relaxed text-white/90">
             Konsultasi chat berbayar per sesi. Gunakan voucher 100% untuk gratis, atau bayar sebelum chat.
@@ -71,24 +71,12 @@
         <h2 class="mb-3 text-sm font-bold text-slate-900">Spesialisasi lainnya</h2>
         <div class="grid grid-cols-2 gap-3">
             @foreach ($otherDoctors as $cat)
-                @if ($cat['key'] === 'dokter_spesialis')
-                    <a
-                        href="{{ route('consultation.category', $cat['key']) }}"
-                        class="flex flex-col rounded-2xl border border-violet-100 bg-white p-4 shadow-sm transition hover:border-violet-200 active:scale-[0.99]"
-                    >
-                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-xl">{{ $cat['icon'] ?? '🩺' }}</span>
-                        <p class="mt-2 text-xs font-bold leading-snug text-slate-900">{{ $cat['label'] }}</p>
-                        <p class="mt-1 line-clamp-2 text-[10px] leading-snug text-slate-500">{{ $cat['description'] ?? '' }}</p>
-                        <span class="mt-2 inline-flex w-fit rounded-full bg-violet-50 px-2 py-0.5 text-[9px] font-semibold text-violet-600">Lihat spesialisasi →</span>
-                    </a>
-                @else
-                    <div class="flex flex-col rounded-2xl border border-brand-100 bg-white p-4 shadow-sm opacity-95">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-xl">{{ $cat['icon'] ?? '👨‍⚕️' }}</span>
-                        <p class="mt-2 text-xs font-bold leading-snug text-slate-900">{{ $cat['label'] }}</p>
-                        <p class="mt-1 line-clamp-2 text-[10px] leading-snug text-slate-500">{{ $cat['description'] ?? '' }}</p>
-                        <span class="mt-2 inline-flex w-fit rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-semibold text-slate-500">Segera hadir</span>
-                    </div>
-                @endif
+                <div class="flex flex-col rounded-2xl border border-brand-100 bg-white p-4 shadow-sm opacity-95">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-xl">{{ $cat['icon'] ?? '👨‍⚕️' }}</span>
+                    <p class="mt-2 text-xs font-bold leading-snug text-slate-900">{{ $cat['label'] }}</p>
+                    <p class="mt-1 line-clamp-2 text-[10px] leading-snug text-slate-500">{{ $cat['description'] ?? '' }}</p>
+                    <span class="mt-2 inline-flex w-fit rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-semibold text-slate-500">Segera hadir</span>
+                </div>
             @endforeach
         </div>
     </section>

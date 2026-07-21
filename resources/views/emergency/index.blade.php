@@ -51,7 +51,7 @@
         <div class="relative flex items-start gap-3">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-2xl ring-2 ring-white/30 backdrop-blur-sm">🚨</div>
             <div class="min-w-0 flex-1">
-                <p class="text-xs font-medium text-rose-100">Chatbot Keperawatan</p>
+                <p class="text-xs font-medium text-rose-100">Nersia Health</p>
                 <h1 class="text-xl font-bold leading-tight">Peringatan Darurat</h1>
                 <p class="mt-1 text-xs text-white/85">Bantu menilai situasi & hubungi bantuan dengan cepat</p>
             </div>

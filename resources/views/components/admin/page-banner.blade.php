@@ -38,7 +38,7 @@
             @endif
         </div>
 
-        <div class="relative h-14 w-14 shrink-0">
+        <div class="relative h-14 w-14 shrink-0 animate-[float_3s_ease-in-out_infinite]">
             <img
                 src="{{ asset('images/robot.png') }}?v={{ $robotVersion }}"
                 alt=""

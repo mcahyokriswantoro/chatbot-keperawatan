@@ -11,17 +11,26 @@ return [
     | driver: log (dev) | fonnte | wablas | disabled
     */
     'notification' => [
-        'driver' => env('CONSULTATION_WA_NOTIFY_DRIVER', 'log'),
-        'fonnte_token' => env('FONNTE_TOKEN'),
-        'wablas_token' => env('WABLAS_TOKEN'),
+        'driver'        => env('CONSULTATION_WA_NOTIFY_DRIVER', 'log'),
+        'fonnte_token'  => env('FONNTE_TOKEN'),
+        'wablas_token'  => env('WABLAS_TOKEN'),
         'wablas_secret' => env('WABLAS_SECRET'),
+        // Admin umum (penerima semua notif order/booking baru)
+        'admin_phone'   => env('ORDER_ADMIN_PHONE', ''),
+        // Mitra apotek
+        'umla_farma1_phone' => env('UMLA_FARMA1_PHONE', ''),
+        'umla_farma2_phone' => env('UMLA_FARMA2_PHONE', ''),
+        // Mitra homecare
+        'medical_center1_phone' => env('MEDICAL_CENTER1_PHONE', ''),
+        'medical_center2_phone' => env('MEDICAL_CENTER2_PHONE', ''),
     ],
 
     'pricing' => [
-        'default' => (int) env('CONSULTATION_PRICE', 25000),
-        'perawat' => (int) env('CONSULTATION_PRICE_PERAWAT', 25000),
+        'default' => (int) env('CONSULTATION_PRICE', 100000),
+        'perawat' => (int) env('CONSULTATION_PRICE_PERAWAT', 100000),
         'dokter_umum' => (int) env('CONSULTATION_PRICE_DOKTER_UMUM', 50000),
         'dokter_spesialis' => (int) env('CONSULTATION_PRICE_DOKTER_SPESIALIS', 75000),
+        'penyakit_dalam' => (int) env('CONSULTATION_PRICE_PENYAKIT_DALAM', 75000),
     ],
 
     'session_hours' => (int) env('CONSULTATION_SESSION_HOURS', 24),
@@ -54,52 +63,12 @@ return [
             'primary' => true,
         ],
         [
-            'key' => 'dokter_spesialis',
-            'label' => 'Dokter Spesialis',
-            'icon' => '🩺',
-            'description' => 'Penanganan lebih spesifik sesuai bidang medis terkait kondisi Anda.',
-            'active' => false,
-            'primary' => true,
-        ],
-        [
             'key' => 'penyakit_dalam',
-            'label' => 'Spesialis Penyakit Dalam',
+            'label' => 'Dokter Spesialis Penyakit Dalam',
             'icon' => '🫀',
             'description' => 'Konsultasi gangguan metabolik, diabetes, hipertensi, dan lainnya.',
             'active' => false,
-            'parent_key' => 'dokter_spesialis',
-        ],
-        [
-            'key' => 'kandungan',
-            'label' => 'Spesialis Kandungan',
-            'icon' => '🤰',
-            'description' => 'Kesehatan ibu hamil, kehamilan, dan reproduksi.',
-            'active' => false,
-            'parent_key' => 'dokter_spesialis',
-        ],
-        [
-            'key' => 'anak',
-            'label' => 'Spesialis Anak',
-            'icon' => '👶',
-            'description' => 'Kesehatan dan tumbuh kembang anak.',
-            'active' => false,
-            'parent_key' => 'dokter_spesialis',
-        ],
-        [
-            'key' => 'jiwa',
-            'label' => 'Kesehatan Jiwa',
-            'icon' => '🧠',
-            'description' => 'Konsultasi kesehatan mental dan dukungan psikologis.',
-            'active' => false,
-            'parent_key' => 'dokter_spesialis',
-        ],
-        [
-            'key' => 'gizi',
-            'label' => 'Spesialis Gizi',
-            'icon' => '🥗',
-            'description' => 'Pola makan sehat dan nutrisi terapeutik.',
-            'active' => false,
-            'parent_key' => 'dokter_spesialis',
+            'primary' => true,
         ],
     ],
 

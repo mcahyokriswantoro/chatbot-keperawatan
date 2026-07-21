@@ -27,7 +27,7 @@ class SelfManagementLogController extends Controller
 
     public function toggle(SelfManagementLog $log): RedirectResponse
     {
-        abort_unless($log->user_id === auth()->id(), 403);
+        abort_unless($log->user_id == auth()->id(), 403);
 
         $log->update(['completed' => ! $log->completed]);
 

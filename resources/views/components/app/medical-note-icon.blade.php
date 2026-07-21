@@ -1,5 +1,5 @@
 <img
-    src="{{ asset('images/medical_report.svg') }}"
+    src="{{ asset('images/medical_report.png') }}"
     alt=""
     aria-hidden="true"
     width="32"

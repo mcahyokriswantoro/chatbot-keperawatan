@@ -105,7 +105,7 @@
         openFaq: null,
         activeTopic: null,
         chatMessages: [
-            { role: 'bot', text: 'Halo! 👋 Saya Chatbot Keperawatan. Tap topik di bawah — saya bantu jelaskan fitur aplikasi ini.' }
+            { role: 'bot', text: 'Halo! 👋 Saya Nersia Health. Tap topik di bawah — saya bantu jelaskan fitur aplikasi ini.' }
         ],
         replies: @js($chatReplies),
         faqItems: @js($faqFlat),
@@ -161,7 +161,7 @@
             </div>
             <div>
                 <p class="text-xs font-medium text-blue-100">Pusat Bantuan</p>
-                <h1 class="text-xl font-bold">Chatbot Keperawatan</h1>
+                <h1 class="text-xl font-bold">Nersia Health</h1>
                 <p class="mt-0.5 text-xs text-blue-100/90">Tanya apa saja tentang fitur aplikasi</p>
             </div>
         </div>

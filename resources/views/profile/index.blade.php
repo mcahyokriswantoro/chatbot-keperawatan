@@ -37,7 +37,7 @@
                     <p class="text-xs font-medium text-slate-500">Profil Pasien 👋</p>
                     <h1 class="text-xl font-bold leading-tight text-slate-900">Halo, {{ $firstName }}!</h1>
                     <p class="mt-1 text-xs leading-relaxed text-slate-500">
-                        Data Anda aman dan siap mendukung layanan chatbot keperawatan 💙
+                        Data Anda aman dan siap mendukung layanan Nersia Health 💙
                     </p>
                 </div>
                 <div class="relative h-20 w-20 shrink-0 animate-[float_3s_ease-in-out_infinite]">
@@ -90,6 +90,39 @@
                 @endif
             </div>
         </header>
+
+        {{-- Pending Bills & Reminders --}}
+        @if (!empty($stats['reminders']))
+            <section class="space-y-3">
+                <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                    🔔 Tagihan & Pengingat
+                </h2>
+                <div class="space-y-2.5">
+                    @foreach ($stats['reminders'] as $reminder)
+                        <div class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3.5 shadow-sm">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-lg shadow-inner">
+                                {{ $reminder['icon'] }}
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="text-xs font-bold text-slate-800 leading-snug">{{ $reminder['title'] }}</h3>
+                                <p class="text-[11px] text-slate-500 leading-normal mt-0.5">{{ $reminder['description'] }}</p>
+                            </div>
+                            <a
+                                href="{{ $reminder['action_url'] }}"
+                                @class([
+                                    'shrink-0 rounded-full px-3 py-1.5 text-[9px] font-extrabold text-white shadow-sm transition hover:scale-[1.02] active:scale-[0.98]',
+                                    'bg-[#00529c] hover:bg-[#004787]' => $reminder['color'] === 'blue',
+                                    'bg-amber-500 hover:bg-amber-600' => $reminder['color'] === 'amber',
+                                    'bg-rose-600 hover:bg-rose-700' => $reminder['color'] === 'rose',
+                                ])
+                            >
+                                {{ $reminder['action_label'] }}
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        @endif
 
         {{-- Statistik kesehatan --}}
         <section>
@@ -215,6 +248,13 @@
                             'icon' => 'amber',
                             'svg' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>',
                         ],
+                        [
+                            'url' => route('help'),
+                            'label' => 'Pusat Bantuan',
+                            'desc' => 'Panduan & informasi aplikasi',
+                            'icon' => 'indigo',
+                            'svg' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/>',
+                        ],
                     ];
 
                     $iconBg = [
@@ -223,6 +263,7 @@
                         'emerald' => 'bg-emerald-50 text-emerald-600',
                         'rose' => 'bg-rose-50 text-rose-600',
                         'amber' => 'bg-amber-50 text-amber-600',
+                        'indigo' => 'bg-indigo-50 text-indigo-600',
                     ];
                 @endphp
 
@@ -258,6 +299,22 @@
                     </a>
                 @endif
 
+                @if ($user->provider_key && ! $user->isAdmin())
+                    <a
+                        href="{{ route('admin.consultations.chat.index') }}"
+                        class="group flex items-center gap-3 rounded-2xl bg-brand-600 px-4 py-3.5 shadow-md transition hover:bg-brand-700 active:scale-[0.99]"
+                    >
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-white">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/></svg>
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-semibold text-white">Portal Tenaga Kesehatan</p>
+                            <p class="text-[11px] text-brand-200">Masuk ke ruang chat konsultasi</p>
+                        </div>
+                        <svg class="h-4 w-4 shrink-0 text-brand-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                    </a>
+                @endif
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button
@@ -269,7 +326,7 @@
                         </span>
                         <div class="min-w-0 flex-1 text-left">
                             <p class="font-semibold text-rose-700">Keluar</p>
-                            <p class="text-[11px] text-rose-500">Akhiri sesi chatbot keperawatan</p>
+                            <p class="text-[11px] text-rose-500">Akhiri sesi Nersia Health</p>
                         </div>
                     </button>
                 </form>
@@ -284,8 +341,8 @@
                     <x-app.medical-note-icon class="h-8 w-8" />
                 </div>
                 <div class="min-w-0 flex-1 pt-0.5">
-                    <p class="text-xs font-medium text-slate-500">Hi, Saya Chatbot 👋</p>
-                    <h1 class="text-xl font-bold leading-tight text-slate-900">Profil Keperawatan</h1>
+                    <p class="text-xs font-medium text-slate-500">Hi, Saya Nersia 👋</p>
+                    <h1 class="text-xl font-bold leading-tight text-slate-900">Profil Nersia Health</h1>
                     <p class="mt-1 text-xs leading-relaxed text-slate-500">
                         Masuk untuk menyimpan riwayat skrining dan data kesehatan Anda 💙
                     </p>
@@ -301,7 +358,7 @@
                 <x-app.medical-note-icon class="h-14 w-14" />
             </div>
             <p class="mb-5 text-center text-sm leading-relaxed text-slate-600">
-                Buat akun gratis untuk akses riwayat deteksi, monitoring kesehatan, dan panduan self management dari chatbot keperawatan.
+                Buat akun gratis untuk akses riwayat deteksi, monitoring kesehatan, dan panduan self management dari Nersia Health.
             </p>
             <a href="{{ route('login') }}" class="mb-2 block w-full rounded-full bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition active:scale-[0.98]">
                 Masuk ke Akun

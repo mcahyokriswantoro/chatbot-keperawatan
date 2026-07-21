@@ -16,6 +16,7 @@ class ConsultationAccessService
 {
     public function __construct(
         private ConsultationWhatsAppNotifier $notifier,
+        private OrderWhatsAppNotifier $orderNotifier,
     ) {}
 
     public function priceFor(string $providerKey): int
@@ -138,6 +139,17 @@ class ConsultationAccessService
 
         $this->notifier->notifyOrderApproved($order);
 
+        // Notify the patient too
+        $patientPhone = $order->user?->phone ?? '';
+        $patientName  = $order->user?->name ?? 'Pasien';
+        if ($patientPhone !== '') {
+            rescue(fn () => $this->orderNotifier->notifyPatientConsultationApproved(
+                $patientPhone,
+                $patientName,
+                $order,
+            ));
+        }
+
         return $order->fresh();
     }
 
@@ -150,11 +162,22 @@ class ConsultationAccessService
         }
 
         $order->update([
-            'status' => 'rejected',
+            'status'      => 'rejected',
             'verified_at' => now(),
             'verified_by' => $admin->id,
-            'admin_note' => $note,
+            'admin_note'  => $note,
         ]);
+
+        // Notify the patient about the rejection
+        $patientPhone = $order->user?->phone ?? '';
+        $patientName  = $order->user?->name ?? 'Pasien';
+        if ($patientPhone !== '') {
+            rescue(fn () => $this->orderNotifier->notifyPatientConsultationRejected(
+                $patientPhone,
+                $patientName,
+                $note,
+            ));
+        }
 
         return $order->fresh();
     }
