@@ -62,62 +62,66 @@
     }"
     class="space-y-6"
 >
-    {{-- Hero header --}}
-    <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 px-4 pb-4 pt-4 pr-16 shadow-soft ring-1 ring-brand-100/60">
-        <div class="flex items-start gap-3">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-2 ring-brand-100">
-                <x-app.medical-note-icon class="h-8 w-8" />
+    {{-- Hero Banners 75:25 Split Grid on Laptop --}}
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+        {{-- Hero header (75% / 8 cols) --}}
+        <header class="md:col-span-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 p-5 shadow-soft ring-1 ring-brand-100/60 flex flex-col justify-between">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3 min-w-0">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-2 ring-brand-100">
+                        <x-app.medical-note-icon class="h-8 w-8" />
+                    </div>
+                    <div class="min-w-0 flex-1 pt-0.5">
+                        <p class="text-xs font-semibold text-slate-500">Hi, Saya</p>
+                        <h1 class="text-2xl font-black leading-tight tracking-tight sm:text-3xl">
+                            <span class="text-[#002966]">Nersia</span> <span class="text-[#0aa4b0]">Health</span>
+                        </h1>
+                        <p class="text-[10px] font-bold text-slate-400 mt-0.5">Chatbot Smart Health Screening & Care</p>
+                    </div>
+                </div>
+                <div class="relative h-20 w-20 shrink-0 animate-[float_3s_ease-in-out_infinite]">
+                    <img
+                        src="{{ asset('images/robot.png') }}?v={{ filemtime(public_path('images/robot.png')) }}"
+                        alt="Robot Nersia"
+                        class="h-full w-full object-contain drop-shadow-md"
+                    />
+                </div>
             </div>
-            <div class="min-w-0 flex-1 pt-0.5">
-                <p class="text-xs font-semibold text-slate-500">Hi, Saya</p>
-                <h1 class="text-2xl font-black leading-tight tracking-tight sm:text-3xl">
-                    <span class="text-[#002966]">Nersia</span> <span class="text-[#0aa4b0]">Health</span>
-                </h1>
-                <p class="text-[10px] font-bold text-slate-400 mt-0.5">Chatbot Smart Health Screening & Care</p>
-                <p class="mt-1.5 text-xs leading-relaxed text-slate-500">
-                    Saya siap membantu deteksi dan merawat kesehatan Anda hari ini 💙
-                </p>
-            </div>
-        </div>
-        <div class="pointer-events-none absolute right-2 top-2 h-24 w-24 animate-[float_3s_ease-in-out_infinite] sm:h-28 sm:w-28">
-            <img
-                src="{{ asset('images/robot.png') }}?v={{ filemtime(public_path('images/robot.png')) }}"
-                alt=""
-                width="112"
-                height="112"
-                class="h-full w-full object-contain drop-shadow-md"
-            />
-        </div>
-    </header>
+            <p class="mt-3 text-xs leading-relaxed text-slate-600">
+                Saya siap membantu deteksi dan merawat kesehatan Anda hari ini 💙
+            </p>
+        </header>
 
-    {{-- Main CTA --}}
-    <a
-        href="{{ $detectionUrl }}"
-        class="group relative block overflow-hidden rounded-3xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-600 p-5 shadow-lg shadow-brand-600/25 transition active:scale-[0.98] hover:shadow-xl hover:shadow-brand-600/30"
-    >
-        <div class="pointer-events-none absolute inset-0 opacity-20">
-            <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white"></div>
-            <div class="absolute -bottom-6 left-1/3 h-24 w-24 rounded-full bg-white/60"></div>
-        </div>
-        <div class="relative flex items-center gap-4">
-            <div class="min-w-0 flex-1">
-                <h2 class="text-lg font-bold text-white">Mulai Deteksi Kesehatan</h2>
-                <p class="mt-1 text-xs leading-relaxed text-blue-100">
-                    Jawab beberapa pertanyaan singkat dan dapatkan hasil deteksi Anda
-                </p>
+        {{-- Main CTA (25% / 4 cols) --}}
+        <a
+            href="{{ $detectionUrl }}"
+            class="md:col-span-4 group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-r from-brand-600 via-brand-500 to-brand-600 p-5 shadow-lg shadow-brand-600/25 transition active:scale-[0.98] hover:shadow-xl hover:shadow-brand-600/30 min-h-[140px]"
+        >
+            <div class="pointer-events-none absolute inset-0 opacity-20">
+                <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white"></div>
+                <div class="absolute -bottom-6 left-1/3 h-24 w-24 rounded-full bg-white/60"></div>
             </div>
-            <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-lg transition group-hover:scale-110">
-                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
-                </svg>
-            </span>
-        </div>
-    </a>
+            <div class="relative flex flex-col justify-between h-full gap-3">
+                <div>
+                    <span class="inline-block rounded-full bg-white/20 px-2.5 py-0.5 text-[9px] font-bold text-white uppercase tracking-wider mb-1 backdrop-blur-xs">Skrining Mandiri</span>
+                    <h2 class="text-base font-extrabold text-white leading-tight">Mulai Deteksi Kesehatan</h2>
+                </div>
+                <div class="flex items-center justify-between pt-2">
+                    <p class="text-[11px] text-blue-100 font-medium">Jawab pertanyaan & cek risiko</p>
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-md transition group-hover:scale-110">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </a>
+    </div>
 
     {{-- Fitur Unggulan --}}
     <section>
         <h2 class="mb-3 text-base font-bold text-slate-900">Fitur Unggulan</h2>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             @foreach ($features as $feature)
                 <a
                     href="{{ $feature['url'] }}"
@@ -137,72 +141,75 @@
         </div>
     </section>
 
-    {{-- Promo banner --}}
-    <a
-        href="{{ route('education.index') }}"
-        class="group relative flex flex-col gap-3 overflow-hidden rounded-3xl bg-gradient-to-r from-violet-50 via-purple-50 to-violet-100/80 p-4 shadow-sm ring-1 ring-violet-100 transition hover:shadow-md active:scale-[0.99] sm:flex-row sm:items-center"
-    >
-        <div class="flex items-center gap-3 sm:min-w-0 sm:flex-1">
-            <div class="flex h-14 w-12 shrink-0 items-center justify-center">
+    {{-- Promo Banner & Tips Chatbot (Side-by-side on laptop view) --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+        {{-- Promo banner --}}
+        <a
+            href="{{ route('education.index') }}"
+            class="group relative flex flex-col sm:flex-row items-center justify-between gap-3 overflow-hidden rounded-3xl bg-gradient-to-r from-violet-50 via-purple-50 to-violet-100/80 p-4 shadow-sm ring-1 ring-violet-100 transition hover:shadow-md active:scale-[0.99] h-full"
+        >
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <div class="flex h-14 w-12 shrink-0 items-center justify-center">
+                    <img
+                        src="{{ asset('images/nurse.png') }}"
+                        alt=""
+                        class="max-h-14 w-full object-contain object-center drop-shadow-sm"
+                    />
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-bold text-slate-900">Jaga kesehatan sejak dini ✨</p>
+                    <p class="mt-0.5 text-xs leading-relaxed text-slate-500">
+                        Deteksi dini membantu mencegah komplikasi serius
+                    </p>
+                    <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-violet-700 shadow-sm transition group-hover:bg-violet-600 group-hover:text-white">
+                        Pelajari Lebih Lanjut
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                    </span>
+                </div>
+            </div>
+            <div class="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl">
                 <img
-                    src="{{ asset('images/nurse.png') }}"
+                    src="{{ asset('images/shield.png') }}"
                     alt=""
-                    class="max-h-14 w-full object-contain object-center drop-shadow-sm"
+                    class="max-h-12 w-full object-contain object-center"
                 />
             </div>
-            <div class="min-w-0 flex-1">
-                <p class="text-sm font-bold text-slate-900">Jaga kesehatan sejak dini ✨</p>
-                <p class="mt-0.5 text-xs leading-relaxed text-slate-500">
-                    Deteksi dini membantu mencegah komplikasi serius
-                </p>
-                <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-violet-700 shadow-sm transition group-hover:bg-violet-600 group-hover:text-white">
-                    Pelajari Lebih Lanjut
-                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-                </span>
-            </div>
-        </div>
-        <div class="hidden h-14 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl sm:flex">
-            <img
-                src="{{ asset('images/shield.png') }}"
-                alt=""
-                class="max-h-12 w-full object-contain object-center"
-            />
-        </div>
-    </a>
+        </a>
 
-    {{-- Tips chatbot --}}
-    <section class="overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 ring-1 ring-emerald-100">
-        <div class="flex items-center gap-3 p-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center">
-                <img
-                    src="{{ asset('images/idea.png') }}"
-                    alt=""
-                    class="h-full w-full object-contain"
-                />
+        {{-- Tips chatbot --}}
+        <section class="flex flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-50 to-teal-50 ring-1 ring-emerald-100 p-4 h-full">
+            <div class="flex items-start gap-3">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center">
+                    <img
+                        src="{{ asset('images/idea.png') }}"
+                        alt=""
+                        class="h-full w-full object-contain"
+                    />
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-[10px] font-extrabold uppercase tracking-wide text-emerald-700">Tips dari Chatbot</p>
+                    <p
+                        x-text="tips[tipIndex]"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        class="mt-1 text-xs leading-relaxed text-slate-700"
+                    ></p>
+                </div>
             </div>
-            <div class="min-w-0 flex-1">
-                <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips dari Chatbot</p>
-                <p
-                    x-text="tips[tipIndex]"
-                    x-transition:enter="transition ease-out duration-300"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    class="mt-0.5 text-xs leading-relaxed text-slate-700"
-                ></p>
+            <div class="flex justify-center gap-1.5 pt-3">
+                <template x-for="(_, i) in tips" :key="i">
+                    <button
+                        type="button"
+                        @click="tipIndex = i"
+                        :class="tipIndex === i ? 'w-4 bg-emerald-500' : 'w-1.5 bg-emerald-200'"
+                        class="h-1.5 rounded-full transition-all"
+                        :aria-label="'Tip ' + (i + 1)"
+                    ></button>
+                </template>
             </div>
-        </div>
-        <div class="flex justify-center gap-1.5 pb-3">
-            <template x-for="(_, i) in tips" :key="i">
-                <button
-                    type="button"
-                    @click="tipIndex = i"
-                    :class="tipIndex === i ? 'w-4 bg-emerald-500' : 'w-1.5 bg-emerald-200'"
-                    class="h-1.5 rounded-full transition-all"
-                    :aria-label="'Tip ' + (i + 1)"
-                ></button>
-            </template>
-        </div>
-    </section>
+        </section>
+    </div>
 
     {{-- Status kesehatan --}}
     <section>

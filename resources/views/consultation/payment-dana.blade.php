@@ -220,11 +220,15 @@
                     </button>
                 </dd>
             </div>
+            <div class="flex justify-between gap-3 border-t border-slate-100 pt-2.5">
+                <dt class="text-slate-500">Biaya Konsultasi</dt>
+                <dd class="font-semibold text-slate-900">Rp {{ number_format($price, 0, ',', '.') }}</dd>
+            </div>
+            <div class="flex justify-between gap-3 text-slate-500">
+                <dt class="text-slate-500">Biaya Layanan</dt>
+                <dd class="font-semibold text-slate-900">Rp 3.000</dd>
+            </div>
             @if ($hasDiscount)
-                <div class="flex justify-between gap-3 border-t border-slate-100 pt-2.5">
-                    <dt class="text-slate-500">Harga normal</dt>
-                    <dd class="text-slate-500 line-through">{{ $originalPriceLabel }}</dd>
-                </div>
                 <div class="flex justify-between gap-3 text-emerald-700">
                     <dt>Diskon voucher</dt>
                     <dd>- {{ $discountLabel }}</dd>

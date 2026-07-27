@@ -120,6 +120,7 @@ class ConsultationController extends Controller
 
         $user = auth()->user();
         $price = $this->access->priceFor($provider);
+        $totalPrice = $price + 3000;
         $categoryKey = (string) ($profile['category'] ?? $provider);
         $accessState = $this->resolveCheckoutAccessState($user, $provider);
 
@@ -131,7 +132,7 @@ class ConsultationController extends Controller
             'provider' => $profile,
             'categoryKey' => $categoryKey,
             'price' => $price,
-            'priceLabel' => $this->access->formatRupiah($price),
+            'priceLabel' => $this->access->formatRupiah($totalPrice),
             'sessionHours' => $this->access->sessionHours(),
             'accessState' => $accessState,
             'chatUrl' => route('consultation.chat', $provider),
@@ -451,5 +452,18 @@ class ConsultationController extends Controller
         }
 
         return redirect()->away($url);
+    }
+
+    public function cancelOrder(string $provider): RedirectResponse
+    {
+        $user = auth()->user();
+        $pending = $this->access->pendingOrder($user, $provider);
+
+        if ($pending && $pending->status === 'pending') {
+            $pending->delete();
+            return back()->with('status', 'Pesanan konsultasi berhasil dibatalkan.');
+        }
+
+        return back()->with('error', 'Pesanan ini tidak dapat dibatalkan.');
     }
 }

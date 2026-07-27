@@ -51,6 +51,9 @@ class ProfilePageController extends Controller
                     'description' => "Ada {$cartCount} obat di keranjang belanja Anda yang belum dicheckout.",
                     'action_label' => 'Buka Keranjang',
                     'action_url' => route('medicines.cart'),
+                    'cancel_url' => route('medicines.cart.clear'),
+                    'cancel_method' => 'POST',
+                    'can_cancel' => true,
                     'icon' => '🛒',
                     'color' => 'blue',
                 ];
@@ -72,6 +75,9 @@ class ProfilePageController extends Controller
                         : "Konsultasi ({$cOrder->reference_code}) menanti transfer & upload bukti.",
                     'action_label' => $hasProof ? 'Lihat Detail' : 'Kirim Bukti Transfer',
                     'action_url' => route('consultation.payment', $cOrder->provider_key),
+                    'cancel_url' => route('consultation.order.cancel', $cOrder->provider_key),
+                    'cancel_method' => 'DELETE',
+                    'can_cancel' => !$hasProof,
                     'icon' => '💬',
                     'color' => $hasProof ? 'amber' : 'rose',
                 ];
@@ -92,6 +98,9 @@ class ProfilePageController extends Controller
                         : "Pemesanan obat belum dibayar. Silakan lakukan transfer.",
                     'action_label' => $hasProof ? 'Lihat Status' : 'Bayar Sekarang',
                     'action_url' => $hasProof ? route('medicines.status', $mOrder) : route('medicines.payment', $mOrder),
+                    'cancel_url' => route('medicines.order.cancel', $mOrder),
+                    'cancel_method' => 'DELETE',
+                    'can_cancel' => !$hasProof,
                     'icon' => '💊',
                     'color' => $hasProof ? 'amber' : 'rose',
                 ];
@@ -112,6 +121,9 @@ class ProfilePageController extends Controller
                         : "Layanan homecare belum dibayar. Silakan transfer & kirim bukti.",
                     'action_label' => $hasProof ? 'Lihat Status' : 'Bayar Sekarang',
                     'action_url' => $hasProof ? route('homecare.status', $hBooking) : route('homecare.payment', $hBooking),
+                    'cancel_url' => route('homecare.booking.cancel', $hBooking),
+                    'cancel_method' => 'DELETE',
+                    'can_cancel' => !$hasProof,
                     'icon' => '🏠',
                     'color' => $hasProof ? 'amber' : 'rose',
                 ];

@@ -224,7 +224,7 @@
     @endif
 
     {{-- Sticky CTA bawah --}}
-    <div class="fixed inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm sm:bottom-0">
+    <div class="fixed md:absolute inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm">
         @if ($accessState === 'active')
             <a
                 href="{{ $chatUrl }}"

@@ -76,7 +76,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/homecare/{package}/pesan', [HomecareController::class, 'storeBooking'])->name('homecare.store-booking');
     Route::get('/homecare/booking/{booking}/pembayaran', [HomecareController::class, 'payment'])->name('homecare.payment');
     Route::post('/homecare/booking/{booking}/pembayaran/konfirmasi', [HomecareController::class, 'confirmPayment'])->name('homecare.payment.confirm');
-    Route::get('/homecare/booking/{booking}/status', [HomecareController::class, 'status'])->name('homecare.status');
+    // Cancellation routes
+    Route::delete('/konsultasi/{provider}/batal', [ConsultationController::class, 'cancelOrder'])->name('consultation.order.cancel');
+    Route::post('/obat/keranjang/clear', [MedicineController::class, 'clearCart'])->name('medicines.cart.clear');
+    Route::delete('/obat/pesanan/{order}/batal', [MedicineController::class, 'cancelOrder'])->name('medicines.order.cancel');
+    Route::delete('/homecare/booking/{booking}/batal', [HomecareController::class, 'cancelBooking'])->name('homecare.booking.cancel');
 });
 
 Route::view('/bantuan', 'help.index')->name('help');
@@ -112,6 +116,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

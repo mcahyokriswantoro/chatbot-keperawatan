@@ -47,7 +47,7 @@ class HomecareController extends Controller
             'address' => ['required', 'string', 'min:10', 'max:500'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
-            'distance_km' => ['nullable', 'numeric', 'min:0'],
+            'distance_km' => ['nullable', 'numeric', 'min:0', 'max:25'],
         ], [
             'patient_name.required' => 'Nama pasien wajib diisi.',
             'patient_phone.required' => 'Nomor HP pasien wajib diisi.',
@@ -57,6 +57,7 @@ class HomecareController extends Controller
             'booking_time_only.regex' => 'Waktu kunjungan harus di antara pukul 09:00 s.d 17:00 WIB (interval 30 menit).',
             'address.required' => 'Alamat lengkap wajib diisi.',
             'address.min' => 'Alamat lengkap minimal 10 karakter.',
+            'distance_km.max' => 'Mohon maaf, jarak kunjungan (maksimal 25 km) melebihi jangkauan layanan kami.',
         ]);
 
         $bookingTime = \Illuminate\Support\Carbon::parse($validated['booking_date_only'] . ' ' . $validated['booking_time_only']);
@@ -93,7 +94,7 @@ class HomecareController extends Controller
 
         $booking->load('package');
 
-        $totalPrice = $booking->package->price + ($booking->transport_fee ?? 0);
+        $totalPrice = $booking->package->price + ($booking->transport_fee ?? 0) + 3000;
 
         return view('homecare.payment', [
             'booking' => $booking,
@@ -138,11 +139,25 @@ class HomecareController extends Controller
         abort_unless($booking->user_id == auth()->id(), 403);
         $booking->load('package');
 
-        $totalPrice = $booking->package->price + ($booking->transport_fee ?? 0);
+        $totalPrice = $booking->package->price + ($booking->transport_fee ?? 0) + 3000;
 
         return view('homecare.status', [
             'booking' => $booking,
             'priceLabel' => 'Rp ' . number_format($totalPrice, 0, ',', '.'),
         ]);
+    }
+
+    public function cancelBooking(Request $request, HomecareBooking $booking)
+    {
+        if ($booking->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($booking->status === 'pending') {
+            $booking->delete();
+            return back()->with('status', 'Booking homecare berhasil dibatalkan.');
+        }
+
+        return back()->with('error', 'Booking ini tidak dapat dibatalkan.');
     }
 }

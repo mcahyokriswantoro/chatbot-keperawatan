@@ -13,7 +13,7 @@
 
     {{-- Statistik overlap --}}
     <div class="-mt-12 rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-100">
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <div class="rounded-xl bg-brand-50/80 px-3 py-2.5 text-center ring-1 ring-brand-100">
                 <p class="text-2xl font-bold text-brand-600">{{ $userCount }}</p>
                 <p class="mt-0.5 text-[10px] font-medium text-slate-500">Pengguna</p>
@@ -159,7 +159,7 @@
     {{-- Menu cepat --}}
     <section>
         <h2 class="mb-3 text-sm font-bold text-slate-900">Kelola data</h2>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             <x-admin.action-tile
                 :url="route('admin.users.index')"
                 label="Pengguna"

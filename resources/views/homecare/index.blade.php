@@ -32,17 +32,19 @@
     {{-- Package List --}}
     <div class="space-y-3">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Pilih Paket Layanan</h2>
-        @forelse ($packages as $pkg)
-            <section class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm flex gap-3 hover:border-[#00529c]/30 hover:shadow-md transition">
-                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#00529c]/5 text-2xl">
-                    {{ $pkg->icon }}
-                </span>
-                <div class="min-w-0 flex-1 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-800">{{ $pkg->name }}</h3>
-                        <p class="mt-1 text-xs text-slate-500 leading-relaxed">{{ $pkg->description }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+            @forelse ($packages as $pkg)
+                <section class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm flex flex-col justify-between gap-3 hover:border-[#00529c]/30 hover:shadow-md transition h-full">
+                    <div class="flex gap-3 items-start">
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#00529c]/5 text-2xl">
+                            {{ $pkg->icon }}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-sm font-bold text-slate-800">{{ $pkg->name }}</h3>
+                            <p class="mt-1 text-xs text-slate-500 leading-relaxed">{{ $pkg->description }}</p>
+                        </div>
                     </div>
-                    <div class="mt-4 flex items-center justify-between border-t border-slate-50 pt-3">
+                    <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
                         <div>
                             <p class="text-[9px] text-slate-400 font-medium">Estimasi Biaya</p>
                             <p class="text-sm font-extrabold text-[#00529c]">
@@ -56,13 +58,13 @@
                             Booking Layanan
                         </a>
                     </div>
+                </section>
+            @empty
+                <div class="col-span-full rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-12 text-center text-xs text-slate-500">
+                    Tidak ada paket layanan homecare tersedia saat ini.
                 </div>
-            </section>
-        @empty
-            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-12 text-center text-xs text-slate-500">
-                Tidak ada paket layanan homecare tersedia saat ini.
-            </div>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 </div>
 @endsection

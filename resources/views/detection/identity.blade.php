@@ -1,26 +1,9 @@
-@extends('layouts.chat')
+@extends('layouts.mobile')
 
 @section('content')
-<div class="flex h-full flex-col">
-    <header class="shrink-0 border-b border-brand-100 bg-white/90 backdrop-blur-md px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
-        <div class="flex items-center gap-3">
-            <a
-                href="{{ route('home') }}"
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-brand-600 transition hover:bg-brand-50"
-                aria-label="Kembali"
-            >
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
-                </svg>
-            </a>
-            <div class="min-w-0 flex-1">
-                <h1 class="truncate text-sm font-bold text-slate-900">Identitas Peserta</h1>
-                <p class="text-xs text-slate-500">Pilih jenis deteksi lalu lengkapi data wilayah</p>
-            </div>
-        </div>
-    </header>
+    <x-mobile.page-header title="Identitas Peserta" />
 
-    <div class="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+    <div class="px-0 py-2">
         @if ($errors->any())
             <div class="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
                 <ul class="list-inside list-disc space-y-1">
@@ -45,9 +28,12 @@
         >
             @csrf
 
-            <div class="space-y-2">
-                <p class="text-xs font-medium text-slate-600">Siapa yang akan diskrining? <span class="text-rose-500">*</span></p>
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
+                {{-- Column 1: Target Selection & Profile Info --}}
+                <div class="md:col-span-5 space-y-4">
+                    <div class="space-y-2">
+                        <p class="text-xs font-medium text-slate-600">Siapa yang akan diskrining? <span class="text-rose-500">*</span></p>
+                        <div class="grid grid-cols-1 gap-3">
                     <label
                         class="relative flex cursor-pointer rounded-2xl border-2 p-4 transition"
                         :class="[
@@ -141,8 +127,11 @@
                     </dl>
                 </template>
             </div>
+            </div>
 
-            {{-- Form manual (mode orang lain) --}}
+            {{-- Column 2: Form Input & Wilayah --}}
+            <div class="md:col-span-7 space-y-4">
+                    {{-- Form manual (mode orang lain) --}}
             <div x-show="!isSelf" x-cloak class="space-y-4">
                 <div>
                     <label for="name" class="text-xs font-medium text-slate-600">Nama <span class="text-rose-500">*</span></label>
@@ -324,12 +313,12 @@
 
             <button
                 type="submit"
-                class="w-full rounded-full bg-brand-600 py-3 text-sm font-semibold text-white shadow-soft hover:bg-brand-700 active:scale-[0.98]"
+                class="w-full rounded-full bg-brand-600 py-3.5 text-sm font-semibold text-white shadow-soft hover:bg-brand-700 active:scale-[0.98]"
             >
                 Lanjut ke Menu Deteksi
             </button>
+                </div>
+            </div>
         </form>
     </div>
-</div>
-
 @endsection

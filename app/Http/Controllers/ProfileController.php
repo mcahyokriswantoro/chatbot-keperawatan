@@ -73,4 +73,21 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Update only the user's address (AJAX from cart page).
+     */
+    public function updateAddress(Request $request)
+    {
+        $validated = $request->validate([
+            'address' => ['required', 'string', 'min:10', 'max:1000'],
+        ], [
+            'address.required' => 'Alamat wajib diisi.',
+            'address.min' => 'Alamat minimal 10 karakter.',
+        ]);
+
+        $request->user()->update(['address' => $validated['address']]);
+
+        return response()->json(['success' => true]);
+    }
 }

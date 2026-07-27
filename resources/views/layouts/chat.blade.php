@@ -13,8 +13,8 @@
 
     <x-app.production-assets />
 </head>
-<body class="font-sans antialiased bg-brand-50 text-slate-800 overflow-hidden">
-    <div class="mx-auto flex h-[100dvh] max-w-md flex-col">
+<body class="font-sans antialiased bg-slate-50 text-slate-800 overflow-x-hidden min-h-screen flex flex-col selection:bg-[#00529c] selection:text-white">
+    <div class="mx-auto flex h-[100dvh] md:h-auto md:min-h-screen w-full max-w-md md:max-w-5xl lg:max-w-6xl flex-col bg-white md:bg-transparent md:p-6 lg:p-8">
         @yield('content')
     </div>
 

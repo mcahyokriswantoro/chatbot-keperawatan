@@ -200,6 +200,12 @@
                 <dd class="font-semibold text-[#00529c]">Rp {{ number_format($order->shipping_fee, 0, ',', '.') }}</dd>
             </div>
             @endif
+            @if($order->service_fee > 0)
+            <div class="flex justify-between gap-3">
+                <dt class="text-slate-500">Biaya Layanan</dt>
+                <dd class="font-semibold text-slate-800">Rp {{ number_format($order->service_fee, 0, ',', '.') }}</dd>
+            </div>
+            @endif
             <div class="flex justify-between gap-3 border-t border-slate-100 pt-2.5">
                 <dt class="font-bold text-slate-900">Total transfer</dt>
                 <dd class="text-lg font-bold text-[#00529c]">{{ $priceLabel }}</dd>

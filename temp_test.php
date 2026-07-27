@@ -1,14 +1,12 @@
-@extends('layouts.mobile')
-
-@php
+<?php
     $tips = config('health.chatbot_tips');
-@endphp
+?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div
     x-data="{
         tipIndex: 0,
-        tips: @js($tips),
+        tips: <?php echo \Illuminate\Support\Js::from($tips)->toHtml() ?>,
         init() {
             setInterval(() => {
                 this.tipIndex = (this.tipIndex + 1) % this.tips.length;
@@ -17,127 +15,135 @@
     }"
     class="space-y-6"
 >
-    @auth
-        @php
+    <?php if(auth()->check()): ?>
+        <?php
             $user = auth()->user();
             $firstName = explode(' ', trim($user->name))[0];
             $genderLabel = $user->genderLabel();
-        @endphp
+        ?>
 
-        {{-- Hero profil --}}
-        <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 px-4 pb-5 pt-4 shadow-soft ring-1 ring-brand-100/60">
+        <div class="space-y-6 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0">
+            
+            <div class="lg:col-span-5 space-y-6">
+                
+                <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 px-4 pb-5 pt-4 shadow-soft ring-1 ring-brand-100/60">
             <div class="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-brand-200/30"></div>
             <div class="pointer-events-none absolute -bottom-4 left-1/4 h-20 w-20 rounded-full bg-brand-100/50"></div>
 
             <div class="relative flex items-start gap-3">
                 <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-2 ring-brand-100">
-                    <x-app.medical-note-icon class="h-8 w-8" />
+                    <?php if (isset($component)) { $__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.app.medical-note-icon','data' => ['class' => 'h-8 w-8']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app.medical-note-icon'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['class' => 'h-8 w-8']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a)): ?>
+<?php $attributes = $__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a; ?>
+<?php unset($__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a)): ?>
+<?php $component = $__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a; ?>
+<?php unset($__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a); ?>
+<?php endif; ?>
                 </div>
                 <div class="min-w-0 flex-1 pt-0.5">
                     <p class="text-xs font-medium text-slate-500">Profil Pasien 👋</p>
-                    <h1 class="text-xl font-bold leading-tight text-slate-900">Halo, {{ $firstName }}!</h1>
+                    <h1 class="text-xl font-bold leading-tight text-slate-900">Halo, <?php echo e($firstName); ?>!</h1>
                     <p class="mt-1 text-xs leading-relaxed text-slate-500">
                         Data Anda aman dan siap mendukung layanan Nersia Health 💙
                     </p>
                 </div>
                 <div class="relative h-20 w-20 shrink-0 animate-[float_3s_ease-in-out_infinite]">
                     <img
-                        src="{{ asset('images/robot.png') }}"
+                        src="<?php echo e(asset('images/robot.png')); ?>"
                         alt=""
                         class="h-full w-full object-contain drop-shadow-md"
                     />
                 </div>
             </div>
 
-            {{-- Kartu identitas --}}
+            
             <div class="relative mt-4 overflow-hidden rounded-2xl bg-white/90 p-4 shadow-sm ring-1 ring-brand-100/80 backdrop-blur-sm">
                 <div class="flex items-center gap-4">
                     <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg ring-4 ring-brand-50">
                         <img
-                            src="{{ $user->profilePhotoUrl() }}"
-                            alt="Foto profil {{ $user->name }}"
+                            src="<?php echo e($user->profilePhotoUrl()); ?>"
+                            alt="Foto profil <?php echo e($user->name); ?>"
                             class="h-full w-full object-cover"
                         />
                         <span class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs shadow-md ring-2 ring-brand-100" aria-hidden="true">🩺</span>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="truncate font-bold text-slate-900">{{ $user->name }}</p>
-                        <p class="truncate text-xs text-slate-500">{{ $user->email }}</p>
-                        @if ($user->phone)
-                            <p class="mt-0.5 truncate text-xs text-brand-600">{{ $user->phone }}</p>
-                        @endif
+                        <p class="truncate font-bold text-slate-900"><?php echo e($user->name); ?></p>
+                        <p class="truncate text-xs text-slate-500"><?php echo e($user->email); ?></p>
+                        <?php if($user->phone): ?>
+                            <p class="mt-0.5 truncate text-xs text-brand-600"><?php echo e($user->phone); ?></p>
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                @if ($genderLabel || $user->age || $user->occupation)
+                <?php if($genderLabel || $user->age || $user->occupation): ?>
                     <div class="mt-3 flex flex-wrap gap-2">
-                        @if ($genderLabel)
+                        <?php if($genderLabel): ?>
                             <span class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-semibold text-brand-700 ring-1 ring-brand-100">
-                                {{ $genderLabel }}
+                                <?php echo e($genderLabel); ?>
+
                             </span>
-                        @endif
-                        @if ($user->age)
+                        <?php endif; ?>
+                        <?php if($user->age): ?>
                             <span class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-semibold text-violet-700 ring-1 ring-violet-100">
-                                {{ $user->age }} tahun
+                                <?php echo e($user->age); ?> tahun
                             </span>
-                        @endif
-                        @if ($user->occupation)
+                        <?php endif; ?>
+                        <?php if($user->occupation): ?>
                             <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                                {{ $user->occupation }}
+                                <?php echo e($user->occupation); ?>
+
                             </span>
-                        @endif
+                        <?php endif; ?>
                     </div>
-                @endif
+                <?php endif; ?>
             </div>
         </header>
 
-        {{-- Pending Bills & Reminders --}}
-        @if (!empty($stats['reminders']))
+        
+        <?php if(!empty($stats['reminders'])): ?>
             <section class="space-y-3">
                 <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
                     🔔 Tagihan & Pengingat
                 </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    @foreach ($stats['reminders'] as $reminder)
+                <div class="space-y-2.5">
+                    <?php $__currentLoopData = $stats['reminders']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reminder): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3.5 shadow-sm">
                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-lg shadow-inner">
-                                {{ $reminder['icon'] }}
+                                <?php echo e($reminder['icon']); ?>
+
                             </span>
                             <div class="min-w-0 flex-1">
-                                <h3 class="text-xs font-bold text-slate-800 leading-snug">{{ $reminder['title'] }}</h3>
-                                <p class="text-[11px] text-slate-500 leading-normal mt-0.5">{{ $reminder['description'] }}</p>
+                                <h3 class="text-xs font-bold text-slate-800 leading-snug"><?php echo e($reminder['title']); ?></h3>
+                                <p class="text-[11px] text-slate-500 leading-normal mt-0.5"><?php echo e($reminder['description']); ?></p>
                             </div>
-                            <div class="flex items-center gap-1.5">
-                                @if ($reminder['can_cancel'] ?? false)
-                                    <form action="{{ $reminder['cancel_url'] }}" method="POST" class="shrink-0" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan/menghapus tagihan ini?');">
-                                        @csrf
-                                        @if(($reminder['cancel_method'] ?? 'POST') !== 'POST')
-                                            @method($reminder['cancel_method'])
-                                        @endif
-                                        <button type="submit" class="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-slate-50 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 hover:scale-105 active:scale-95" title="Batalkan Pesanan">
-                                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-                                        </button>
-                                    </form>
-                                @endif
-                                <a
-                                    href="{{ $reminder['action_url'] }}"
-                                    @class([
-                                        'shrink-0 rounded-full px-3 py-1.5 text-[9px] font-extrabold text-white shadow-sm transition hover:scale-[1.02] active:scale-[0.98]',
-                                        'bg-[#00529c] hover:bg-[#004787]' => $reminder['color'] === 'blue',
-                                        'bg-amber-500 hover:bg-amber-600' => $reminder['color'] === 'amber',
-                                        'bg-rose-600 hover:bg-rose-700' => $reminder['color'] === 'rose',
-                                    ])
-                                >
-                                    {{ $reminder['action_label'] }}
-                                </a>
-                            </div>
+                            <a
+                                href="<?php echo e($reminder['action_url']); ?>"
+                                class="shrink-0 rounded-full px-3 py-1.5 text-[9px] font-extrabold text-white shadow-sm transition hover:scale-[1.02] active:scale-[0.98] <?php echo e($reminder['color'] === 'blue' ? 'bg-[#00529c] hover:bg-[#004787]' : ($reminder['color'] === 'amber' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-rose-600 hover:bg-rose-700')); ?>"
+                            >
+                                <?php echo e($reminder['action_label']); ?>
+
+                            </a>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </section>
-        @endif
+        <?php endif; ?>
 
-        {{-- Statistik kesehatan --}}
+        
         <section>
             <h2 class="mb-3 text-base font-bold text-slate-900">Ringkasan Kesehatan</h2>
             <div class="grid grid-cols-3 gap-2">
@@ -148,7 +154,7 @@
                         </svg>
                     </span>
                     <p class="text-[10px] font-medium text-slate-500">Skrining</p>
-                    <p class="mt-0.5 text-lg font-bold text-slate-900">{{ $stats['screening_count'] }}</p>
+                    <p class="mt-0.5 text-lg font-bold text-slate-900"><?php echo e($stats['screening_count']); ?></p>
                 </div>
 
                 <div class="rounded-2xl border border-brand-50 bg-white p-3 text-center shadow-sm">
@@ -158,7 +164,7 @@
                         </svg>
                     </span>
                     <p class="text-[10px] font-medium text-slate-500">Monitoring</p>
-                    <p class="mt-0.5 text-lg font-bold text-slate-900">{{ $stats['monitoring_count'] }}</p>
+                    <p class="mt-0.5 text-lg font-bold text-slate-900"><?php echo e($stats['monitoring_count']); ?></p>
                 </div>
 
                 <div class="rounded-2xl border border-brand-50 bg-white p-3 text-center shadow-sm">
@@ -168,63 +174,66 @@
                         </svg>
                     </span>
                     <p class="text-[10px] font-medium text-slate-500">IMT</p>
-                    @if ($stats['bmi'])
-                        <p class="mt-0.5 text-lg font-bold {{ $stats['bmi_tone'] }}">{{ $stats['bmi'] }}</p>
-                        <p class="text-[9px] font-semibold {{ $stats['bmi_tone'] }}">{{ $stats['bmi_label'] }}</p>
-                    @else
+                    <?php if($stats['bmi']): ?>
+                        <p class="mt-0.5 text-lg font-bold <?php echo e($stats['bmi_tone']); ?>"><?php echo e($stats['bmi']); ?></p>
+                        <p class="text-[9px] font-semibold <?php echo e($stats['bmi_tone']); ?>"><?php echo e($stats['bmi_label']); ?></p>
+                    <?php endif; ?>
+                    <?php if(! $stats['bmi']): ?>
                         <p class="mt-0.5 text-sm font-bold text-slate-400">—</p>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
-            @if ($stats['latest_screening'])
-                @php $latest = $stats['latest_screening']; @endphp
+            <?php if($stats['latest_screening']): ?>
+                <?php $latest = $stats['latest_screening']; ?>
                 <a
-                    href="{{ route('history.show', $latest->id) }}"
+                    href="<?php echo e(route('history.show', $latest->id)); ?>"
                     class="mt-3 flex items-center gap-3 rounded-2xl border border-brand-50 bg-gradient-to-r from-brand-50/80 to-white p-3 shadow-sm transition hover:shadow-md active:scale-[0.99]"
                 >
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-brand-100">
-                        <img src="{{ asset('images/unggulan_deteksi.png') }}" alt="" class="h-7 w-7 object-contain" />
+                        <img src="<?php echo e(asset('images/unggulan_deteksi.png')); ?>" alt="" class="h-7 w-7 object-contain" />
                     </span>
                     <div class="min-w-0 flex-1">
                         <p class="text-[10px] font-semibold uppercase tracking-wide text-brand-600">Skrining Terakhir</p>
-                        <p class="truncate text-sm font-bold text-slate-900">{{ $latest->diseaseLabel() ?? 'Deteksi Kesehatan' }}</p>
-                        <p class="text-[11px] text-slate-500">{{ $latest->formattedDateTime('d M Y') }} · Risiko {{ $latest->displayRiskLabel() }}</p>
+                        <p class="truncate text-sm font-bold text-slate-900"><?php echo e($latest->diseaseLabel() ?? 'Deteksi Kesehatan'); ?></p>
+                        <p class="text-[11px] text-slate-500"><?php echo e($latest->formattedDateTime('d M Y')); ?> · Risiko <?php echo e($latest->displayRiskLabel()); ?></p>
                     </div>
                     <svg class="h-4 w-4 shrink-0 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                 </a>
-            @endif
+            <?php endif; ?>
         </section>
 
-        {{-- Data tubuh --}}
-        @if ($user->weight || $user->height)
+        
+        <?php if($user->weight || $user->height): ?>
             <section class="overflow-hidden rounded-2xl bg-white p-4 shadow-sm ring-1 ring-brand-50">
                 <h2 class="mb-3 text-sm font-bold text-slate-900">Data Antropometri</h2>
                 <div class="grid grid-cols-2 gap-3">
-                    @if ($user->weight)
+                    <?php if($user->weight): ?>
                         <div class="rounded-xl bg-slate-50 px-3 py-2.5">
                             <p class="text-[10px] font-medium text-slate-500">Berat Badan</p>
-                            <p class="text-sm font-bold text-slate-900">{{ number_format((float) $user->weight, 1) }} <span class="text-xs font-normal text-slate-500">kg</span></p>
+                            <p class="text-sm font-bold text-slate-900"><?php echo e(number_format((float) $user->weight, 1)); ?> <span class="text-xs font-normal text-slate-500">kg</span></p>
                         </div>
-                    @endif
-                    @if ($user->height)
+                    <?php endif; ?>
+                    <?php if($user->height): ?>
                         <div class="rounded-xl bg-slate-50 px-3 py-2.5">
                             <p class="text-[10px] font-medium text-slate-500">Tinggi Badan</p>
-                            <p class="text-sm font-bold text-slate-900">{{ number_format((float) $user->height, 0) }} <span class="text-xs font-normal text-slate-500">cm</span></p>
+                            <p class="text-sm font-bold text-slate-900"><?php echo e(number_format((float) $user->height, 0)); ?> <span class="text-xs font-normal text-slate-500">cm</span></p>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
-                @unless ($stats['bmi'])
+                <?php if(! $stats['bmi']): ?>
                     <p class="mt-2 text-[11px] text-slate-500">Lengkapi berat & tinggi badan di edit profil untuk hitung IMT.</p>
-                @endunless
+                <?php endif; ?>
             </section>
-        @endif
+            </div>
 
-        {{-- Menu akun --}}
+            
+            <div class="lg:col-span-7 space-y-6">
+                
         <section>
             <h2 class="mb-3 text-base font-bold text-slate-900">Menu Akun</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                @php
+            <div class="space-y-2">
+                <?php
                     $menus = [
                         [
                             'url' => route('dashboard'),
@@ -278,27 +287,27 @@
                         'amber' => 'bg-amber-50 text-amber-600',
                         'indigo' => 'bg-indigo-50 text-indigo-600',
                     ];
-                @endphp
+                ?>
 
-                @foreach ($menus as $menu)
+                <?php $__currentLoopData = $menus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <a
-                        href="{{ $menu['url'] }}"
+                        href="<?php echo e($menu['url']); ?>"
                         class="group flex items-center gap-3 rounded-2xl border border-brand-50 bg-white px-4 py-3.5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md active:scale-[0.99]"
                     >
-                        <span @class(['flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition group-hover:scale-105', $iconBg[$menu['icon']]])>
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">{!! $menu['svg'] !!}</svg>
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition group-hover:scale-105 <?php echo e($iconBg[$menu['icon']]); ?>">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><?php echo $menu['svg']; ?></svg>
                         </span>
                         <div class="min-w-0 flex-1">
-                            <p class="font-semibold text-slate-900">{{ $menu['label'] }}</p>
-                            <p class="text-[11px] text-slate-500">{{ $menu['desc'] }}</p>
+                            <p class="font-semibold text-slate-900"><?php echo e($menu['label']); ?></p>
+                            <p class="text-[11px] text-slate-500"><?php echo e($menu['desc']); ?></p>
                         </div>
                         <svg class="h-4 w-4 shrink-0 text-slate-300 transition group-hover:text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                     </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                @if ($user->isAdmin())
+                <?php if($user->isAdmin()): ?>
                     <a
-                        href="{{ route('admin.dashboard') }}"
+                        href="<?php echo e(route('admin.dashboard')); ?>"
                         class="group flex items-center gap-3 rounded-2xl bg-slate-800 px-4 py-3.5 shadow-md transition hover:bg-slate-900 active:scale-[0.99]"
                     >
                         <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-700 text-white">
@@ -310,11 +319,11 @@
                         </div>
                         <svg class="h-4 w-4 shrink-0 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                     </a>
-                @endif
+                <?php endif; ?>
 
-                @if ($user->provider_key && ! $user->isAdmin())
+                <?php if($user->provider_key && ! $user->isAdmin()): ?>
                     <a
-                        href="{{ route('admin.consultations.chat.index') }}"
+                        href="<?php echo e(route('admin.consultations.chat.index')); ?>"
                         class="group flex items-center gap-3 rounded-2xl bg-brand-600 px-4 py-3.5 shadow-md transition hover:bg-brand-700 active:scale-[0.99]"
                     >
                         <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-white">
@@ -326,10 +335,10 @@
                         </div>
                         <svg class="h-4 w-4 shrink-0 text-brand-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                     </a>
-                @endif
+                <?php endif; ?>
 
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
+                <form method="POST" action="<?php echo e(route('logout')); ?>">
+                    <?php echo csrf_field(); ?>
                     <button
                         type="submit"
                         class="group flex w-full items-center gap-3 rounded-2xl border border-rose-100 bg-gradient-to-r from-rose-50 to-white px-4 py-3.5 shadow-sm transition hover:border-rose-200 hover:shadow-md active:scale-[0.99]"
@@ -345,13 +354,35 @@
                 </form>
             </div>
         </section>
+            </div>
+        </div>
+    <?php endif; ?>
 
-    @else
-        {{-- Tamu --}}
+    <?php if(! auth()->check()): ?>
+        
         <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-50 via-white to-brand-100/80 px-4 pb-5 pt-4 shadow-soft ring-1 ring-brand-100/60">
             <div class="flex items-start gap-3">
                 <div class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-2 ring-brand-100">
-                    <x-app.medical-note-icon class="h-8 w-8" />
+                    <?php if (isset($component)) { $__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.app.medical-note-icon','data' => ['class' => 'h-8 w-8']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app.medical-note-icon'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['class' => 'h-8 w-8']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a)): ?>
+<?php $attributes = $__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a; ?>
+<?php unset($__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a)): ?>
+<?php $component = $__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a; ?>
+<?php unset($__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a); ?>
+<?php endif; ?>
                 </div>
                 <div class="min-w-0 flex-1 pt-0.5">
                     <p class="text-xs font-medium text-slate-500">Hi, Saya Nersia 👋</p>
@@ -361,46 +392,65 @@
                     </p>
                 </div>
                 <div class="relative h-20 w-20 shrink-0 animate-[float_3s_ease-in-out_infinite]">
-                    <img src="{{ asset('images/robot.png') }}" alt="" class="h-full w-full object-contain drop-shadow-md" />
+                    <img src="<?php echo e(asset('images/robot.png')); ?>" alt="" class="h-full w-full object-contain drop-shadow-md" />
                 </div>
             </div>
         </header>
 
         <div class="relative overflow-hidden rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-50">
             <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-lg shadow-brand-600/15 ring-4 ring-brand-50">
-                <x-app.medical-note-icon class="h-14 w-14" />
+                <?php if (isset($component)) { $__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.app.medical-note-icon','data' => ['class' => 'h-14 w-14']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app.medical-note-icon'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['class' => 'h-14 w-14']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a)): ?>
+<?php $attributes = $__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a; ?>
+<?php unset($__attributesOriginalf8f1a5c03e685f8b545c0807a0aede0a); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a)): ?>
+<?php $component = $__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a; ?>
+<?php unset($__componentOriginalf8f1a5c03e685f8b545c0807a0aede0a); ?>
+<?php endif; ?>
             </div>
             <p class="mb-5 text-center text-sm leading-relaxed text-slate-600">
                 Buat akun gratis untuk akses riwayat deteksi, monitoring kesehatan, dan panduan self management dari Nersia Health.
             </p>
-            <a href="{{ route('login') }}" class="mb-2 block w-full rounded-full bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition active:scale-[0.98]">
+            <a href="<?php echo e(route('login')); ?>" class="mb-2 block w-full rounded-full bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-center text-sm font-semibold text-white shadow-lg shadow-brand-600/25 transition active:scale-[0.98]">
                 Masuk ke Akun
             </a>
-            <a href="{{ route('register') }}" class="block w-full rounded-full border-2 border-brand-200 bg-white py-3.5 text-center text-sm font-semibold text-brand-600 transition hover:bg-brand-50 active:scale-[0.98]">
+            <a href="<?php echo e(route('register')); ?>" class="block w-full rounded-full border-2 border-brand-200 bg-white py-3.5 text-center text-sm font-semibold text-brand-600 transition hover:bg-brand-50 active:scale-[0.98]">
                 Daftar Gratis
             </a>
         </div>
 
         <section class="grid grid-cols-2 gap-2">
-            @foreach ([
+            <?php $__currentLoopData = [
                 ['label' => 'Deteksi Dini', 'icon' => '🔍'],
                 ['label' => 'Riwayat Aman', 'icon' => '📋'],
                 ['label' => 'Monitoring', 'icon' => '📊'],
                 ['label' => 'Edukasi', 'icon' => '📚'],
-            ] as $benefit)
+            ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $benefit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="rounded-2xl border border-brand-50 bg-white p-3 text-center shadow-sm">
-                    <span class="text-2xl" aria-hidden="true">{{ $benefit['icon'] }}</span>
-                    <p class="mt-1 text-[11px] font-semibold text-slate-700">{{ $benefit['label'] }}</p>
+                    <span class="text-2xl" aria-hidden="true"><?php echo e($benefit['icon']); ?></span>
+                    <p class="mt-1 text-[11px] font-semibold text-slate-700"><?php echo e($benefit['label']); ?></p>
                 </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </section>
-    @endauth
+    <?php endif; ?>
 
-    {{-- Tips chatbot --}}
+    
     <section class="overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 ring-1 ring-emerald-100">
         <div class="flex items-center gap-3 p-4">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center">
-                <img src="{{ asset('images/idea.png') }}" alt="" class="h-full w-full object-contain" />
+                <img src="<?php echo e(asset('images/idea.png')); ?>" alt="" class="h-full w-full object-contain" />
             </div>
             <div class="min-w-0 flex-1">
                 <p class="text-[10px] font-bold uppercase tracking-wide text-emerald-700">Tips dari Chatbot</p>
@@ -426,13 +476,16 @@
         </div>
     </section>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <style>
     @keyframes float {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-6px); }
     }
 </style>
-@endpush
+<?php endif; ?>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.mobile', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>

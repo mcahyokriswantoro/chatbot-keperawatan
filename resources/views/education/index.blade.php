@@ -113,7 +113,7 @@
             <button type="button" @click="search = ''; category = 'all'" class="mt-3 text-xs font-semibold text-brand-600">Reset filter</button>
         </div>
 
-        <div class="grid gap-4">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <template x-for="article in filtered()" :key="article.slug">
                 <article class="overflow-hidden rounded-2xl border border-brand-50 bg-white shadow-sm transition hover:shadow-md">
                     <div class="relative aspect-[2/1] overflow-hidden bg-slate-100">

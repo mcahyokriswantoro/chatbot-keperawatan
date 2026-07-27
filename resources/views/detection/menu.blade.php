@@ -21,7 +21,7 @@
         $order = ['tb_paru', 'dhf', 'ppok', 'penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi', 'rheumatoid_arthritis'];
     @endphp
 
-    <div class="space-y-3">
+    <div class="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 lg:grid-cols-3">
         @foreach ($order as $slug)
             @php $item = $diseases[$slug] ?? null; @endphp
             @if ($item)

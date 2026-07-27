@@ -78,7 +78,7 @@
     </div>
 
     {{-- Products Grid --}}
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
         @forelse ($medicines as $med)
             <section class="flex flex-col rounded-2xl border border-slate-100 bg-white p-3 shadow-sm hover:shadow-md transition">
                 <div class="relative mb-3 flex h-28 items-center justify-center overflow-hidden rounded-xl bg-slate-50">
@@ -158,10 +158,10 @@
 
 {{-- Sticky Floating Cart --}}
 @if ($cartCount > 0)
-    <div class="fixed inset-x-0 px-4 py-2" style="bottom: 78px; z-index: 60;">
+    <div class="fixed md:absolute inset-x-0 px-4 py-2" style="bottom: 78px; z-index: 60;">
         <a
             href="{{ route('medicines.cart') }}"
-            class="mx-auto flex max-w-md items-center justify-between gap-3 rounded-2xl bg-[#00529c] px-4 py-3.5 text-white shadow-lg shadow-[#00529c]/25 transition hover:bg-[#004787] active:scale-[0.98]"
+            class="mx-auto flex max-w-md md:max-w-4xl lg:max-w-6xl items-center justify-between gap-3 rounded-2xl bg-[#00529c] px-4 py-3.5 text-white shadow-lg shadow-[#00529c]/25 transition hover:bg-[#004787] active:scale-[0.98]"
         >
             <div class="flex items-center gap-2.5">
                 <span class="relative flex h-8 w-8 items-center justify-center rounded-lg bg-white/20">

@@ -44,7 +44,7 @@
 
     <section>
         <h2 class="mb-3 text-sm font-bold text-slate-900">Pilih tenaga kesehatan</h2>
-        <div class="space-y-3">
+        <div class="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 lg:grid-cols-3">
             <template x-for="cat in primary()" :key="cat.key">
                 <a
                     :href="categoryUrl(cat.key)"

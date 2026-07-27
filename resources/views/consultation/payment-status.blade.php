@@ -70,7 +70,7 @@
             Memeriksa status…
         </div>
 
-        <div class="fixed inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm sm:bottom-0">
+        <div class="fixed md:absolute inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm">
             <a
                 href="{{ route('consultation.checkout', $providerKey) }}"
                 class="flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-500 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-amber-600 active:scale-[0.98]"
@@ -90,7 +90,7 @@
 
 
 
-        <div class="fixed inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm sm:bottom-0">
+        <div class="fixed md:absolute inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm">
             <a
                 href="{{ $chatUrl }}"
                 class="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-brand-600 py-4 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-700 active:scale-[0.98]"
@@ -115,7 +115,7 @@
             </p>
         </div>
 
-        <div class="fixed inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm sm:bottom-0">
+        <div class="fixed md:absolute inset-x-0 bottom-[4.5rem] z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm">
             <a
                 href="{{ $retryUrl }}"
                 class="flex w-full items-center justify-center gap-2 rounded-2xl bg-rose-500 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-rose-600 active:scale-[0.98]"

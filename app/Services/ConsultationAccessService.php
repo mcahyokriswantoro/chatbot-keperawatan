@@ -104,6 +104,7 @@ class ConsultationAccessService
         }
 
         $amount = $this->priceFor($providerKey);
+        $totalPaid = $amount + 3000;
 
         return ConsultationOrder::create([
             'user_id' => $user->id,
@@ -111,7 +112,7 @@ class ConsultationAccessService
             'reference_code' => $referenceCode,
             'amount' => $amount,
             'discount_amount' => 0,
-            'total_paid' => $amount,
+            'total_paid' => $totalPaid,
             'status' => 'pending',
             'payment_method' => 'dana',
             'dana_phone' => $danaPhone,
@@ -265,7 +266,7 @@ class ConsultationAccessService
             return max(0, (int) $pending->total_paid);
         }
 
-        return $this->priceFor($providerKey);
+        return $this->priceFor($providerKey) + 3000;
     }
 
     public function processPayment(User $user, string $providerKey, string $method = 'simulation'): ConsultationOrder

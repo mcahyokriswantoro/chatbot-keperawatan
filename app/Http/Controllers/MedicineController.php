@@ -131,12 +131,14 @@ class MedicineController extends Controller
         }
 
         $shippingFeePerKm = (int) \App\Models\Setting::getValue('medicine_shipping_fee_per_km', 3000);
+        $serviceFee = 3000;
 
         return view('medicines.cart', [
             'items' => $items,
             'total' => $total,
             'totalLabel' => 'Rp ' . number_format($total, 0, ',', '.'),
             'shippingFeePerKm' => $shippingFeePerKm,
+            'serviceFee' => $serviceFee,
         ]);
     }
 
@@ -149,7 +151,7 @@ class MedicineController extends Controller
 
         $validated = $request->validate([
             'address' => ['required', 'string', 'min:10', 'max:500'],
-            'distance_km' => ['required', 'numeric', 'min:0'],
+            'distance_km' => ['required', 'numeric', 'min:0', 'max:25'],
             'closest_pharmacy' => ['nullable', 'string', 'max:150'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
@@ -157,6 +159,7 @@ class MedicineController extends Controller
             'address.required' => 'Alamat pengiriman wajib diisi.',
             'address.min' => 'Alamat pengiriman minimal 10 karakter.',
             'distance_km.required' => 'Jarak pengiriman wajib ditentukan.',
+            'distance_km.max' => 'Mohon maaf, jarak pengiriman (maksimal 25 km) melebihi jangkauan layanan kami.',
         ]);
 
         $order = DB::transaction(function () use ($cart, $validated) {
@@ -185,7 +188,8 @@ class MedicineController extends Controller
             $distanceKm = (float) $validated['distance_km'];
             $feePerKm = (int) \App\Models\Setting::getValue('medicine_shipping_fee_per_km', 3000);
             $shippingFee = (int) round($distanceKm * $feePerKm);
-            $grandTotal = $total + $shippingFee;
+            $serviceFee = 3000;
+            $grandTotal = $total + $shippingFee + $serviceFee;
 
             $order = MedicineOrder::create([
                 'user_id' => auth()->id(),
@@ -197,6 +201,7 @@ class MedicineController extends Controller
                 'longitude' => $validated['longitude'] ?? null,
                 'distance_km' => $distanceKm,
                 'shipping_fee' => $shippingFee,
+                'service_fee' => $serviceFee,
                 'status' => 'pending',
             ]);
 
@@ -268,5 +273,26 @@ class MedicineController extends Controller
             'order' => $order,
             'priceLabel' => 'Rp ' . number_format($order->total_amount, 0, ',', '.'),
         ]);
+    }
+
+    public function cancelOrder(Request $request, MedicineOrder $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status === 'pending') {
+            $order->items()->delete();
+            $order->delete();
+            return back()->with('status', 'Pesanan obat berhasil dibatalkan.');
+        }
+
+        return back()->with('error', 'Pesanan ini tidak dapat dibatalkan.');
+    }
+
+    public function clearCart()
+    {
+        session()->forget('medicine_cart');
+        return back()->with('status', 'Keranjang obat berhasil dikosongkan.');
     }
 }

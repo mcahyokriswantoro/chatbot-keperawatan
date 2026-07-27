@@ -189,8 +189,12 @@
                 </dd>
             </div>
             <div class="flex justify-between gap-3 border-t border-slate-100 pt-2.5">
-                <dt class="text-slate-500">Biaya Layanan</dt>
+                <dt class="text-slate-500">Harga Paket Homecare</dt>
                 <dd class="font-semibold text-slate-900">Rp {{ number_format($booking->package->price, 0, ',', '.') }}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+                <dt class="text-slate-500">Biaya Layanan</dt>
+                <dd class="font-semibold text-slate-900">Rp 3.000</dd>
             </div>
             @if ($booking->distance_km !== null)
                 <div class="flex justify-between gap-3">

@@ -3,6 +3,7 @@
 @section('title', 'Booking Kunjungan Homecare')
 
 @section('content')
+<!-- Leaflet Map CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <div class="space-y-4">
     {{-- Header --}}
@@ -35,11 +36,12 @@
     <form
         x-data="{
             packagePrice: {{ $package->price }},
+            serviceFee: 3000,
             transportFeePerKm: {{ $transportFeePerKm }},
             distanceKm: null,
             closestCampus: '',
             transportFee: 0,
-            totalPrice: {{ $package->price }},
+            totalPrice: {{ $package->price + 3000 }},
             latitude: '',
             longitude: '',
             geocoding: false,
@@ -51,13 +53,13 @@
                 return 'Rp ' + amount.toLocaleString('id-ID');
             },
             calculateTransport() {
-                if (this.distanceKm === null) {
+                if (this.distanceKm === null || this.distanceKm > 25) {
                     this.transportFee = 0;
-                    this.totalPrice = this.packagePrice;
+                    this.totalPrice = this.packagePrice + this.serviceFee;
                     return;
                 }
                 this.transportFee = Math.round(this.distanceKm * this.transportFeePerKm);
-                this.totalPrice = this.packagePrice + this.transportFee;
+                this.totalPrice = this.packagePrice + this.serviceFee + this.transportFee;
             },
             init() {
                 window.alpineForm = this;
@@ -65,15 +67,15 @@
         }"
         method="POST"
         action="{{ route('homecare.store-booking', $package) }}"
-        class="space-y-4"
     >
         @csrf
-
         <input type="hidden" name="latitude" x-model="latitude">
         <input type="hidden" name="longitude" x-model="longitude">
         <input type="hidden" name="distance_km" x-model="distanceKm">
 
-        <section class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm space-y-3">
+        <div class="space-y-4 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0">
+            <div class="lg:col-span-7 space-y-4">
+                <section class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm space-y-3">
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Data Pasien</h2>
             
             <div class="space-y-1">
@@ -159,17 +161,142 @@
             </div>
         </section>
 
-        <section class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm space-y-2">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Alamat Kunjungan Perawat</h2>
-            <textarea
-                name="address"
-                rows="3"
-                required
-                placeholder="Masukkan alamat lengkap lokasi kunjungan perawat (Nomor rumah, RT/RW, kelurahan, kecamatan, kota, patokan jalan)..."
-                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs focus:border-[#00529c] focus:outline-none focus:ring-2 focus:ring-[#00529c]/15 shadow-inner"
-            >{{ old('address', auth()->user()->address) }}</textarea>
+        <section
+            class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm space-y-3"
+            x-data="{
+                editing: false,
+                saving: false,
+                saved: false,
+                savedAddress: @js(old('address', auth()->user()?->address ?? '')),
+                draftAddress: @js(old('address', auth()->user()?->address ?? '')),
+                saveAddress() {
+                    if (!this.draftAddress || this.draftAddress.trim().length < 10) {
+                        alert('Alamat pengiriman minimal 10 karakter.');
+                        return;
+                    }
+                    this.saving = true;
+                    this.saved = false;
+                    fetch('{{ route('profile.update.address') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ address: this.draftAddress.trim() })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.savedAddress = this.draftAddress.trim();
+                            this.editing = false;
+                            this.saved = true;
+                            setTimeout(() => this.saved = false, 3000);
+                            this.$nextTick(() => {
+                                if (typeof window.searchAddressOnMap === 'function') {
+                                    window.searchAddressOnMap();
+                                }
+                            });
+                        } else {
+                            alert(data.message || 'Gagal menyimpan alamat.');
+                        }
+                    })
+                    .catch(() => alert('Terjadi kesalahan jaringan. Coba lagi.'))
+                    .finally(() => this.saving = false);
+                },
+                cancelEdit() {
+                    this.draftAddress = this.savedAddress;
+                    this.editing = false;
+                }
+            }"
+        >
+            <input type="hidden" name="address" :value="savedAddress">
+
+            <div class="flex items-center justify-between">
+                <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                    <svg class="h-4 w-4 text-[#00529c]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                    Alamat Kunjungan Perawat
+                </h2>
+                <button
+                    type="button"
+                    x-show="!editing"
+                    @click="editing = true"
+                    class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] font-bold text-[#00529c] shadow-sm transition hover:bg-slate-50 hover:border-[#00529c]/30 active:scale-[0.97]"
+                >
+                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                    Ubah Alamat
+                </button>
+            </div>
+
+            {{-- Saved message --}}
+            <div
+                x-show="saved"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-1"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="flex items-center gap-1.5 rounded-lg bg-emerald-50 border border-emerald-100 px-3 py-2 text-[11px] font-semibold text-emerald-700"
+                x-cloak
+            >
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                Alamat berhasil disimpan!
+            </div>
+
+            {{-- Display mode --}}
+            <div x-show="!editing" x-cloak>
+                <template x-if="savedAddress && savedAddress.trim().length > 0">
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 px-3.5 py-3 text-xs text-slate-700 leading-relaxed">
+                        <span x-text="savedAddress"></span>
+                    </div>
+                </template>
+                <template x-if="!savedAddress || savedAddress.trim().length === 0">
+                    <div class="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 px-3.5 py-4 text-center">
+                        <p class="text-[11px] text-slate-400 font-medium">Belum ada alamat tersimpan.</p>
+                        <button
+                            type="button"
+                            @click="editing = true"
+                            class="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-[#00529c] hover:underline"
+                        >
+                            + Tambah Alamat Kunjungan
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+            {{-- Edit mode --}}
+            <div x-show="editing" x-cloak class="space-y-2.5">
+                <textarea
+                    x-model="draftAddress"
+                    rows="3"
+                    placeholder="Masukkan alamat lokasi kunjungan perawat (Nomor rumah, RT/RW, kelurahan, kecamatan, kota, patokan jalan)..."
+                    class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs focus:border-[#00529c] focus:outline-none focus:ring-2 focus:ring-[#00529c]/15 shadow-inner transition"
+                ></textarea>
+                <div class="flex items-center gap-2">
+                    <button
+                        type="button"
+                        @click="saveAddress()"
+                        :disabled="saving"
+                        class="inline-flex items-center gap-1.5 rounded-full bg-[#00529c] px-4 py-2 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#004787] active:scale-[0.97] disabled:opacity-50"
+                    >
+                        <svg x-show="!saving" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                        <span x-show="!saving">Simpan Alamat</span>
+                        <span x-show="saving">Menyimpan...</span>
+                    </button>
+                    <button
+                        type="button"
+                        @click="cancelEdit()"
+                        :disabled="saving"
+                        class="rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[11px] font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50"
+                    >
+                        Batal
+                    </button>
+                </div>
+            </div>
+
             @error('address')
-                <p class="text-[10px] text-rose-600 font-semibold">{{ $message }}</p>
+                <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
             @enderror
 
             {{-- Maps Area --}}
@@ -197,361 +324,364 @@
                 
                 <div id="map" class="h-48 w-full rounded-2xl border border-slate-200 shadow-inner z-0" style="min-height: 220px;"></div>
                 
-                <div x-show="distanceKm !== null" class="rounded-xl bg-[#00529c]/5 border border-[#00529c]/10 p-3 space-y-1 text-xs" x-cloak>
+                <div x-show="distanceKm !== null" class="rounded-xl border p-3 space-y-1 text-xs" :class="distanceKm > 25 ? 'bg-rose-50/70 border-rose-200' : 'bg-[#00529c]/5 border-[#00529c]/10'" x-cloak>
                     <p class="flex justify-between">
                         <span class="text-slate-500">Medical Center UMLA Terdekat:</span>
                         <span class="font-bold text-slate-800" x-text="closestCampus"></span>
                     </p>
                     <p class="flex justify-between">
                         <span class="text-slate-500">Jarak Kunjungan:</span>
-                        <span class="font-bold text-slate-800" x-text="distanceKm + ' km'"></span>
+                        <span class="font-bold" :class="distanceKm > 25 ? 'text-rose-600 font-extrabold' : 'text-slate-800'" x-text="distanceKm + ' km'"></span>
                     </p>
-                    <p class="flex justify-between">
-                        <span class="text-slate-500">Tarif Transport (Rp <span x-text="transportFeePerKm.toLocaleString('id-ID')"></span>/km):</span>
-                        <span class="font-bold text-[#00529c]" x-text="formatRupiah(transportFee)"></span>
-                    </p>
+                    <template x-if="distanceKm <= 25">
+                        <p class="flex justify-between">
+                            <span class="text-slate-500">Tarif Transport (Rp <span x-text="transportFeePerKm.toLocaleString('id-ID')"></span>/km):</span>
+                            <span class="font-bold text-[#00529c]" x-text="formatRupiah(transportFee)"></span>
+                        </p>
+                    </template>
+                    <template x-if="distanceKm > 25">
+                        <div class="mt-2 rounded-lg bg-rose-100/80 border border-rose-300 p-2.5 text-xs text-rose-800 space-y-0.5">
+                            <p class="font-bold flex items-center gap-1">
+                                <span>⚠️</span> Melebihi Jarak Maksimal (25 KM)
+                            </p>
+                            <p class="text-[11px] leading-relaxed text-rose-700">
+                                Mohon maaf, lokasi kunjungan Anda (<span class="font-bold" x-text="distanceKm + ' km'"></span>) melebihi jangkauan maksimal 25 km dari <span class="font-bold" x-text="closestCampus"></span> sehingga layanan Homecare tidak dapat diproses.
+                            </p>
+                        </div>
+                    </template>
                 </div>
             </div>
         </section>
 
-        <section class="rounded-2xl border border-[#00529c]/20 bg-[#00529c]/5 p-4 space-y-3">
-            <h3 class="text-sm font-bold text-slate-900">Bayar via Transfer Bank (Giro BRI)</h3>
-            <div class="space-y-1.5 text-xs text-slate-600">
-                <div class="flex justify-between">
-                    <span>Biaya Layanan:</span>
-                    <span class="font-semibold text-slate-850" x-text="formatRupiah(packagePrice)"></span>
+            </div>
+
+            {{-- Column 2: Summary Card & Submit --}}
+            <div class="lg:col-span-5 space-y-4">
+                {{-- Summary Card --}}
+        <section class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+            <h2 class="text-sm font-bold text-slate-800 mb-3">Ringkasan Pembayaran</h2>
+            <div class="space-y-2.5 text-xs">
+                <div class="flex justify-between text-slate-500">
+                    <span>Harga Paket Homecare</span>
+                    <span class="font-semibold text-slate-800" x-text="formatRupiah(packagePrice)">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between" x-show="distanceKm !== null" x-cloak>
-                    <span>Biaya Transport:</span>
-                    <span class="font-semibold text-[#00529c]" x-text="formatRupiah(transportFee)"></span>
+                <div class="flex justify-between text-slate-500">
+                    <span>Biaya Layanan</span>
+                    <span class="font-semibold text-slate-800" x-text="formatRupiah(serviceFee)">Rp 3.000</span>
                 </div>
-                <div class="flex justify-between border-t border-slate-250 pt-1.5 text-sm font-extrabold text-slate-900">
-                    <span>Total Transfer:</span>
-                    <span class="text-lg text-[#00529c]" x-text="formatRupiah(totalPrice)"></span>
+                <div class="flex justify-between items-center text-slate-500">
+                    <span>Biaya Transport (<span x-text="formatRupiah(transportFeePerKm)"></span>/km)</span>
+                    <template x-if="distanceKm === null">
+                        <span class="font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60 text-[11px] flex items-center gap-1">
+                            <span>📍</span> Tentukan lokasi di peta
+                        </span>
+                    </template>
+                    <template x-if="distanceKm !== null && distanceKm <= 25">
+                        <span class="font-bold text-[#00529c] flex items-center gap-1">
+                            <span x-text="formatRupiah(transportFee)"></span>
+                            <span class="text-[10px] font-normal text-slate-400" x-text="'(' + distanceKm + ' km)'"></span>
+                        </span>
+                    </template>
+                    <template x-if="distanceKm !== null && distanceKm > 25">
+                        <span class="font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 text-[11px]">
+                            Tidak tersedia (> 25 km)
+                        </span>
+                    </template>
+                </div>
+                <div class="flex justify-between border-t border-slate-100 pt-2.5 text-sm font-bold">
+                    <span class="text-slate-800">Total Tagihan</span>
+                    <span class="text-[#00529c] font-black" x-text="formatRupiah(totalPrice)">Rp {{ number_format($package->price + 3000, 0, ',', '.') }}</span>
                 </div>
             </div>
-            <p class="text-[10px] text-slate-500 mt-1">Total transfer akan diverifikasi otomatis setelah Anda mengunggah bukti pembayaran.</p>
+        </section>
+
+        {{-- Payment Action Card --}}
+        <section class="rounded-2xl border border-[#00529c]/20 bg-[#00529c]/5 p-4 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900">Bayar via Transfer Bank (Giro BRI)</h3>
+            <p class="text-xs text-slate-600">Transfer + upload bukti transfer, lalu tunggu verifikasi admin.</p>
             <button
                 type="submit"
-                class="flex w-full items-center justify-center gap-2 rounded-full bg-[#00529c] py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#004787] active:scale-[0.98]"
+                :disabled="distanceKm !== null && distanceKm > 25"
+                :class="(distanceKm !== null && distanceKm > 25) ? 'opacity-50 cursor-not-allowed bg-slate-400' : 'bg-[#00529c] hover:bg-[#004787] active:scale-[0.98]'"
+                class="flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-bold text-white shadow-sm transition"
             >
-                Lanjutkan Pembayaran
+                <template x-if="distanceKm === null || distanceKm <= 25">
+                    <span>Bayar <span x-text="formatRupiah(totalPrice)">Rp {{ number_format($package->price, 0, ',', '.') }}</span></span>
+                </template>
+                <template x-if="distanceKm !== null && distanceKm > 25">
+                    <span>⚠️ Jarak Kunjungan > 25 KM (Tidak Dapat Diproses)</span>
+                </template>
             </button>
         </section>
+            </div>
+        </div>
     </form>
 </div>
 @endsection
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Coordinates for UMLA campuses
-    const umla1 = [-7.10444, 112.38778]; // Kampus 1 (Utama - Plosowahyu)
-    const umla2 = [-6.8703, 112.3397]; // Kampus 2 (Paciran)
+    // Leaflet Map Implementation
+    document.addEventListener('DOMContentLoaded', function () {
+        // Coordinates for UMLA campuses [lat, lng]
+        const umla1 = [-7.10444, 112.38778]; // Kampus 1 (Utama - Plosowahyu)
+        const umla2 = [-6.8703, 112.3397];   // Kampus 2 (Paciran)
 
-    // Initialize map
-    const map = L.map('map').setView([-7.05, 112.40], 10); // Center around Lamongan
+        // Initialize Leaflet map
+        const map = L.map('map').setView([-7.05, 112.40], 10);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors © CARTO'
-    }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors © CARTO'
+        }).addTo(map);
 
-    setTimeout(function() {
-        map.invalidateSize();
-    }, 200);
+        setTimeout(function() {
+            map.invalidateSize();
+        }, 300);
 
-    // UMLA campus markers
-    const markerUmla1 = L.marker(umla1, {
-        icon: L.divIcon({
-            html: '🏫',
-            className: 'text-2xl flex items-center justify-center',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15]
-        })
-    }).addTo(map).bindPopup('<b>Medical Center UMLA 1</b><br>Jl. Raya Plalangan, Plosowahyu');
+        // UMLA campus markers
+        L.marker(umla1, {
+            icon: L.divIcon({
+                html: '🏫',
+                className: 'text-2xl flex items-center justify-center',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            })
+        }).addTo(map).bindPopup('<b>Medical Center UMLA 1</b><br>Jl. Raya Plalangan, Plosowahyu');
 
-    const markerUmla2 = L.marker(umla2, {
-        icon: L.divIcon({
-            html: '🏥',
-            className: 'text-2xl flex items-center justify-center',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15]
-        })
-    }).addTo(map).bindPopup('<b>Medical Center UMLA 2</b><br>Paciran, Lamongan');
+        L.marker(umla2, {
+            icon: L.divIcon({
+                html: '🏥',
+                className: 'text-2xl flex items-center justify-center',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            })
+        }).addTo(map).bindPopup('<b>Medical Center UMLA 2</b><br>Paciran, Lamongan');
 
-    let userMarker = null;
-    let distanceLine = null;
+        let userMarker = null;
+        let distanceLine = null;
 
-    // Helper: Haversine distance
-    function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; // Radius of earth in km
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
-
-    // Function to place marker and calculate distance
-    window.updateLocation = function(lat, lon) {
-        const alpine = window.alpineForm;
-        alpine.latitude = lat;
-        alpine.longitude = lon;
-
-        if (userMarker) {
-            userMarker.setLatLng([lat, lon]);
-        } else {
-            userMarker = L.marker([lat, lon], { draggable: true }).addTo(map);
-            userMarker.on('dragend', function(e) {
-                const position = e.target.getLatLng();
-                window.updateLocation(position.lat, position.lng);
-            });
+        // Helper: Haversine distance
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of earth in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
         }
 
-        map.setView([lat, lon], 13);
+        window.updateLocation = function(lat, lon) {
+            const alpine = window.alpineForm;
+            if (!alpine) return;
+            alpine.latitude = lat;
+            alpine.longitude = lon;
 
-        // Query both campuses in parallel via OSRM
-        const osrmUrl1 = `https://router.project-osrm.org/route/v1/driving/${lon},${lat};${umla1[1]},${umla1[0]}?overview=full&geometries=geojson`;
-        const osrmUrl2 = `https://router.project-osrm.org/route/v1/driving/${lon},${lat};${umla2[1]},${umla2[0]}?overview=full&geometries=geojson`;
+            if (userMarker) {
+                userMarker.setLatLng([lat, lon]);
+            } else {
+                userMarker = L.marker([lat, lon], { draggable: true }).addTo(map);
+                userMarker.on('dragend', function(e) {
+                    const pos = e.target.getLatLng();
+                    window.updateLocation(pos.lat, pos.lng);
+                });
+            }
 
-        Promise.all([
-            fetch(osrmUrl1).then(res => res.json()).catch(() => null),
-            fetch(osrmUrl2).then(res => res.json()).catch(() => null)
-        ]).then(([data1, data2]) => {
-            let route1 = (data1 && data1.code === 'Ok' && data1.routes && data1.routes.length > 0) ? data1.routes[0] : null;
-            let route2 = (data2 && data2.code === 'Ok' && data2.routes && data2.routes.length > 0) ? data2.routes[0] : null;
+            map.setView([lat, lon], 13);
 
-            let selectedRoute = null;
-            let selectedName = '';
-            let selectedCoords = null;
-            let selectedDist = null;
+            // Query OSRM for driving route
+            const osrmUrl1 = `https://router.project-osrm.org/route/v1/driving/${lon},${lat};${umla1[1]},${umla1[0]}?overview=full&geometries=geojson`;
+            const osrmUrl2 = `https://router.project-osrm.org/route/v1/driving/${lon},${lat};${umla2[1]},${umla2[0]}?overview=full&geometries=geojson`;
 
-            if (route1 && route2) {
-                const d1 = route1.distance / 1000;
-                const d2 = route2.distance / 1000;
-                if (d1 <= d2) {
+            Promise.all([
+                fetch(osrmUrl1).then(r => r.json()).catch(() => null),
+                fetch(osrmUrl2).then(r => r.json()).catch(() => null)
+            ]).then(([data1, data2]) => {
+                let route1 = (data1 && data1.code === 'Ok' && data1.routes && data1.routes.length > 0) ? data1.routes[0] : null;
+                let route2 = (data2 && data2.code === 'Ok' && data2.routes && data2.routes.length > 0) ? data2.routes[0] : null;
+
+                let selectedRoute = null;
+                let selectedName = '';
+                let selectedCoords = null;
+                let selectedDist = null;
+
+                if (route1 && route2) {
+                    const d1 = route1.distance / 1000;
+                    const d2 = route2.distance / 1000;
+                    if (d1 <= d2) {
+                        selectedRoute = route1;
+                        selectedName = 'Medical Center UMLA 1';
+                        selectedCoords = umla1;
+                        selectedDist = d1;
+                    } else {
+                        selectedRoute = route2;
+                        selectedName = 'Medical Center UMLA 2';
+                        selectedCoords = umla2;
+                        selectedDist = d2;
+                    }
+                } else if (route1) {
                     selectedRoute = route1;
                     selectedName = 'Medical Center UMLA 1';
                     selectedCoords = umla1;
-                    selectedDist = d1;
-                } else {
+                    selectedDist = route1.distance / 1000;
+                } else if (route2) {
                     selectedRoute = route2;
                     selectedName = 'Medical Center UMLA 2';
                     selectedCoords = umla2;
-                    selectedDist = d2;
+                    selectedDist = route2.distance / 1000;
                 }
-            } else if (route1) {
-                selectedRoute = route1;
-                selectedName = 'Medical Center UMLA 1';
-                selectedCoords = umla1;
-                selectedDist = route1.distance / 1000;
-            } else if (route2) {
-                selectedRoute = route2;
-                selectedName = 'Medical Center UMLA 2';
-                selectedCoords = umla2;
-                selectedDist = route2.distance / 1000;
-            }
 
-            if (selectedRoute) {
-                alpine.distanceKm = parseFloat(selectedDist.toFixed(2));
-                alpine.closestCampus = selectedName;
+                if (selectedRoute) {
+                    alpine.distanceKm = parseFloat(selectedDist.toFixed(2));
+                    alpine.closestCampus = selectedName;
+                    alpine.calculateTransport();
+
+                    if (distanceLine) map.removeLayer(distanceLine);
+                    distanceLine = L.geoJSON(selectedRoute.geometry, {
+                        style: { color: '#00529c', weight: 5, opacity: 0.9 }
+                    }).addTo(map);
+                } else {
+                    useFallback();
+                }
+            }).catch(() => useFallback());
+
+            function useFallback() {
+                const dist1 = getDistance(lat, lon, umla1[0], umla1[1]);
+                const dist2 = getDistance(lat, lon, umla2[0], umla2[1]);
+
+                let closestCoords = umla1;
+                let closestName = 'Medical Center UMLA 1';
+                let fallbackDist = dist1;
+
+                if (dist2 < dist1) {
+                    closestCoords = umla2;
+                    closestName = 'Medical Center UMLA 2';
+                    fallbackDist = dist2;
+                }
+
+                const correctedDist = fallbackDist * 1.3;
+                alpine.distanceKm = parseFloat(correctedDist.toFixed(2));
+                alpine.closestCampus = closestName;
                 alpine.calculateTransport();
 
-                // Draw actual road route
-                if (distanceLine) {
-                    map.removeLayer(distanceLine);
-                }
-                distanceLine = L.geoJSON(selectedRoute.geometry, {
-                    style: {
-                        color: '#00529c',
-                        weight: 4,
-                        opacity: 0.8
-                    }
+                if (distanceLine) map.removeLayer(distanceLine);
+                distanceLine = L.polyline([[lat, lon], closestCoords], {
+                    color: '#00529c', weight: 4, dashArray: '5, 10'
                 }).addTo(map);
-            } else {
-                useFallback();
             }
-        }).catch(() => {
-            useFallback();
+        };
+
+        // Click map
+        map.on('click', function(e) {
+            window.updateLocation(e.latlng.lat, e.latlng.lng);
         });
 
-        function useFallback() {
-            const dist1 = getDistance(lat, lon, umla1[0], umla1[1]);
-            const dist2 = getDistance(lat, lon, umla2[0], umla2[1]);
+        // Geocoding via Nominatim with progressive fallback & keyword cleaning
+        window.searchAddressOnMap = function() {
+            const alpine = window.alpineForm;
+            const inputElem = document.querySelector('textarea[name="address"]') || document.querySelector('input[name="address"]');
+            const originalAddress = inputElem ? inputElem.value : '';
 
-            let closestCoords = umla1;
-            let closestName = 'Medical Center UMLA 1';
-            let fallbackDist = dist1;
-
-            if (dist2 < dist1) {
-                closestCoords = umla2;
-                closestName = 'Medical Center UMLA 2';
-                fallbackDist = dist2;
-            }
-
-            const correctedDist = fallbackDist * 1.3;
-            alpine.distanceKm = parseFloat(correctedDist.toFixed(2));
-            alpine.closestCampus = closestName;
-            alpine.calculateTransport();
-
-            // Draw straight dashed line as fallback
-            if (distanceLine) {
-                map.removeLayer(distanceLine);
-            }
-            distanceLine = L.polyline([[lat, lon], closestCoords], {
-                color: '#00529c',
-                weight: 3,
-                dashArray: '5, 10'
-            }).addTo(map);
-        }
-    };
-
-    // Click on map to select location
-    map.on('click', function(e) {
-        window.updateLocation(e.latlng.lat, e.latlng.lng);
-    });
-
-    // Geocoding via Nominatim with robust progressive fallback and cleaning
-    window.searchAddressOnMap = function() {
-        const alpine = window.alpineForm;
-        const originalAddress = document.querySelector('textarea[name="address"]').value;
-
-        if (!originalAddress || originalAddress.trim().length < 5) {
-            alpine.geocodingError = 'Silakan tulis alamat lengkap terlebih dahulu.';
-            return;
-        }
-
-        alpine.geocoding = true;
-        alpine.geocodingError = '';
-
-        // Clean query of noise details like RT/RW, No., Blok, Gang that are not indexed in OSM
-        function cleanQuery(str) {
-            let clean = str;
-            clean = clean.replace(/rt\s*\.?\s*\d+\s*[\/\-]?\s*rw\s*\.?\s*\d+/gi, '');
-            clean = clean.replace(/rt\s*\.?\s*\d+/gi, '');
-            clean = clean.replace(/rw\s*\.?\s*\d+/gi, '');
-            clean = clean.replace(/(?:no|nomor)\s*\.?\s*\d+[a-z]?/gi, '');
-            clean = clean.replace(/blok\s*[a-z0-9\-\/]+/gi, '');
-            clean = clean.replace(/(?:gang|gg\.)\s*[a-z0-9]+/gi, '');
-            clean = clean.replace(/,\s*,/g, ',');
-            clean = clean.replace(/^\s*,|,\s*$/g, '');
-            return clean.trim();
-        }
-
-        const cleanedAddress = cleanQuery(originalAddress);
-
-        // Split into progressive query levels
-        let parts = [];
-        const hasCommas = cleanedAddress.includes(',');
-        if (hasCommas) {
-            parts = cleanedAddress.split(',').map(p => p.trim()).filter(Boolean);
-        } else {
-            parts = cleanedAddress.split(/\s+/).filter(Boolean);
-        }
-
-        // Create target search queries to avoid multiple rapid API calls:
-        // Query A: Drop the first specific component if address is long
-        // Query B: Drop first 2 specific components
-        // Query C: Broad fallback (Lamongan, Jawa Timur)
-        let queries = [];
-        queries.push(cleanedAddress); // Always try the full cleaned address first!
-
-        if (parts.length > 2) {
-            queries.push(parts.slice(1).join(hasCommas ? ', ' : ' '));
-            if (parts.length > 3) {
-                queries.push(parts.slice(2).join(hasCommas ? ', ' : ' '));
-            }
-        }
-        
-        if (queries[queries.length - 1].toLowerCase() !== 'lamongan, jawa timur, indonesia') {
-            queries.push('Lamongan, Jawa Timur, Indonesia');
-        }
-
-        function tryGeocode(index) {
-            if (index >= queries.length) {
-                alpine.geocodingError = 'Alamat spesifik tidak ditemukan di peta. Silakan plot lokasi secara manual dengan mengeklik peta.';
-                alpine.geocoding = false;
+            if (!originalAddress || originalAddress.trim().length < 3) {
+                alpine.geocodingError = 'Silakan tulis alamat lengkap terlebih dahulu.';
                 return;
             }
 
-            let query = queries[index];
+            alpine.geocoding = true;
+            alpine.geocodingError = '';
 
-            // If it's the broad fallback, just use Alun-Alun Lamongan to avoid jumping 13km away
-            if (query.toLowerCase() === 'lamongan, jawa timur, indonesia') {
-                window.updateLocation(-7.1126, 112.4150);
-                alpine.geocoding = false;
-                alpine.geocodingError = '📍 Alamat spesifik tidak ditemukan di database peta. Silakan GESER PIN (ikon biru) di peta ke lokasi rumah Anda yang tepat.';
-                return;
+            function cleanQuery(str) {
+                let clean = str;
+                clean = clean.replace(/\bkecamatan\b|\bkec\b\.?/gi, '');
+                clean = clean.replace(/\bkelurahan\b|\bkel\b\.?/gi, '');
+                clean = clean.replace(/\bdesa\b|\bds\b\.?/gi, '');
+                clean = clean.replace(/\bkabupaten\b|\bkab\b\.?/gi, '');
+                clean = clean.replace(/\bkota\b/gi, '');
+                clean = clean.replace(/rt\s*\.?\s*\d+\s*[\/\-]?\s*rw\s*\.?\s*\d+/gi, '');
+                clean = clean.replace(/rt\s*\.?\s*\d+/gi, '');
+                clean = clean.replace(/rw\s*\.?\s*\d+/gi, '');
+                clean = clean.replace(/(?:no|nomor)\s*\.?\s*\d+[a-z]?/gi, '');
+                clean = clean.replace(/blok\s*[a-z0-9\-\/]+/gi, '');
+                clean = clean.replace(/(?:gang|gg\.)\s*[a-z0-9]+/gi, '');
+                clean = clean.replace(/\s+/g, ' ');
+                clean = clean.replace(/,\s*,/g, ',');
+                clean = clean.replace(/^\s*,|,\s*$/g, '');
+                return clean.trim();
             }
 
-            // Ensure search stays within Lamongan
-            if (!query.toLowerCase().includes('lamongan')) {
-                query += ', Lamongan, Jawa Timur';
+            const cleaned = cleanQuery(originalAddress);
+            let queries = [];
+
+            function formatQ(s) {
+                return s.toLowerCase().includes('indonesia') ? s : s + ', Indonesia';
             }
 
-            const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&email=admin@nersia.com`;
+            if (cleaned.length > 0) queries.push(formatQ(cleaned));
+            queries.push(formatQ(originalAddress.trim()));
 
-            fetch(url)
-            .then(res => {
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                return res.json();
-            })
-            .then(data => {
-                if (data && data.length > 0) {
-                    const lat = parseFloat(data[0].lat);
-                    const lon = parseFloat(data[0].lon);
-                    window.updateLocation(lat, lon);
+            const words = cleaned.split(/\s+/).filter(Boolean);
+            if (words.length > 2) {
+                queries.push(formatQ(words.slice(1).join(' ')));
+            }
+
+            function tryQuery(idx) {
+                if (idx >= queries.length) {
                     alpine.geocoding = false;
-                    
-                    if (index > 0) {
-                        alpine.geocodingError = '📍 Menampilkan lokasi perkiraan. Silakan GESER PIN (ikon biru) di peta ke lokasi rumah Anda yang tepat.';
-                    }
-                } else {
-                    // Rate limit compliance: wait 600ms before retry
-                    setTimeout(() => tryGeocode(index + 1), 600);
+                    alpine.geocodingError = '📍 Alamat tidak ditemukan di database peta. Silakan KLIK atau GESER PIN (ikon biru) di peta ke lokasi rumah Anda yang tepat.';
+                    return;
                 }
-            })
-            .catch(err => {
-                // Rate limit compliance: wait 600ms before retry
-                setTimeout(() => tryGeocode(index + 1), 600);
-            });
-        }
-        tryGeocode(0);
-    };
 
-    // Geolocation API
-    window.getCurrentLocation = function() {
-        const alpine = window.alpineForm;
-        alpine.geocodingError = '';
+                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queries[idx])}&format=json&limit=1&email=admin@nersia.com`;
 
-        if (!navigator.geolocation) {
-            alpine.geocodingError = 'Browser Anda tidak mendukung deteksi lokasi.';
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                window.updateLocation(position.coords.latitude, position.coords.longitude);
-            },
-            function(err) {
-                alpine.geocodingError = 'Gagal mengakses GPS perangkat Anda. Silakan pilih lokasi secara manual di peta.';
+                fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        window.updateLocation(parseFloat(data[0].lat), parseFloat(data[0].lon));
+                        alpine.geocoding = false;
+                    } else {
+                        setTimeout(() => tryQuery(idx + 1), 300);
+                    }
+                })
+                .catch(() => {
+                    setTimeout(() => tryQuery(idx + 1), 300);
+                });
             }
-        );
-    };
 
-    // Auto-search address on load if pre-filled address is valid
-    const initialAddress = document.querySelector('textarea[name="address"]').value;
-    if (initialAddress && initialAddress.trim().length >= 10) {
-        setTimeout(function() {
-            window.searchAddressOnMap();
-        }, 1000);
-    }
-});
+            tryQuery(0);
+        };
+
+        // Geolocation
+        window.getCurrentLocation = function() {
+            const alpine = window.alpineForm;
+            alpine.geocodingError = '';
+
+            if (!navigator.geolocation) {
+                alpine.geocodingError = 'Browser Anda tidak mendukung deteksi lokasi.';
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    window.updateLocation(position.coords.latitude, position.coords.longitude);
+                },
+                function(err) {
+                    alpine.geocodingError = 'Gagal mengakses GPS perangkat Anda. Silakan pilih lokasi secara manual di peta.';
+                }
+            );
+        };
+
+        // Auto-search address on load
+        const initialAddressInput = document.querySelector('input[name="address"]') || document.querySelector('textarea[name="address"]');
+        if (initialAddressInput && initialAddressInput.value && initialAddressInput.value.trim().length >= 4) {
+            setTimeout(function() {
+                window.searchAddressOnMap();
+            }, 600);
+        }
+    });
 </script>
 @endpush
 

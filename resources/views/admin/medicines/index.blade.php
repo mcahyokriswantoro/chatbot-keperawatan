@@ -221,6 +221,12 @@
                                 </a>
                             </p>
                         @endif
+                        @if ($order->service_fee > 0)
+                            <p class="flex justify-between">
+                                <span class="text-slate-400">Biaya Layanan:</span>
+                                <span class="font-semibold text-slate-800">Rp {{ number_format($order->service_fee, 0, ',', '.') }}</span>
+                            </p>
+                        @endif
                         <p class="flex justify-between border-t border-slate-50 pt-2 text-sm font-bold">
                             <span class="text-slate-800">Total Pembayaran:</span>
                             <span class="text-[#00529c]">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>

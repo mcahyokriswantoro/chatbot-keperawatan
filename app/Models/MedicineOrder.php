@@ -22,6 +22,7 @@ class MedicineOrder extends Model
         'longitude',
         'distance_km',
         'shipping_fee',
+        'service_fee',
         'sender_identity',
         'payment_proof',
         'status', // pending, paid, delivered, rejected
@@ -31,6 +32,7 @@ class MedicineOrder extends Model
     protected $casts = [
         'distance_km' => 'float',
         'shipping_fee' => 'integer',
+        'service_fee' => 'integer',
         'total_amount' => 'integer',
     ];
 

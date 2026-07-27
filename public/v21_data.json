@@ -1,0 +1,174 @@
+{
+    "medicines": [
+        {
+            "id": 1,
+            "name": "Paracetamol 500 mg (1 Strip)",
+            "category": "Obat Bebas",
+            "price": 5000,
+            "stock": 100,
+            "description": "Meredakan demam, sakit kepala, dan nyeri ringan.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 2,
+            "name": "Sanmol Sirup 60 ml",
+            "category": "Obat Bebas",
+            "price": 20000,
+            "stock": 50,
+            "description": "Sirup penurun demam dan pereda nyeri untuk anak.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 3,
+            "name": "Bodrex (1 Strip)",
+            "category": "Obat Bebas",
+            "price": 4000,
+            "stock": 120,
+            "description": "Meredakan sakit kepala dan sakit gigi.",
+            "photo": "medicines\/LjPLZlxUPRy4Q3gOx8g7TIUBTAzTL6IKqnfn4nJO.png",
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:53:17"
+        },
+        {
+            "id": 4,
+            "name": "OBH Combi Batuk & Flu 100 ml",
+            "category": "Obat Bebas",
+            "price": 18000,
+            "stock": 40,
+            "description": "Meredakan batuk berdahak disertai gejala flu.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 5,
+            "name": "Enervon-C (30 Tablet)",
+            "category": "Vitamin & Suplemen",
+            "price": 40000,
+            "stock": 80,
+            "description": "Suplemen vitamin C untuk menjaga daya tahan tubuh.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 6,
+            "name": "CDR Effervescent (10 Tablet)",
+            "category": "Vitamin & Suplemen",
+            "price": 45000,
+            "stock": 59,
+            "description": "Kalsium effervescent dengan vitamin C, D, dan B6.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:25:49"
+        },
+        {
+            "id": 7,
+            "name": "Sangobion (10 Kapsul)",
+            "category": "Vitamin & Suplemen",
+            "price": 22000,
+            "stock": 89,
+            "description": "Suplemen zat besi dan vitamin penambah darah.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:25:49"
+        },
+        {
+            "id": 8,
+            "name": "Amoxicillin 500 mg (1 Strip)",
+            "category": "Obat Keras",
+            "price": 15000,
+            "stock": 50,
+            "description": "Antibiotik untuk mengobati infeksi bakteri. Harus dengan resep dokter.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 9,
+            "name": "Cefadroxil 500 mg (1 Strip)",
+            "category": "Obat Keras",
+            "price": 25000,
+            "stock": 30,
+            "description": "Antibiotik cephalosporin untuk infeksi bakteri. Harus dengan resep dokter.",
+            "photo": null,
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        }
+    ],
+    "homecare_packages": [
+        {
+            "id": 1,
+            "name": "Perawatan Luka Ringan",
+            "description": "Perawatan luka lecet, luka jatuh, atau luka pasca operasi kecil. Termasuk bahan medis habis pakai (kassa steril, antiseptik, perban).",
+            "price": 150000,
+            "icon": "\ud83e\ude79",
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 2,
+            "name": "Perawatan Luka Diabetes",
+            "description": "Perawatan luka kronis\/diabetes oleh perawat spesialis luka. Termasuk debridement ringan, pencucian luka, dan pembalut luka khusus.",
+            "price": 250000,
+            "icon": "\ud83e\ude7a",
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 3,
+            "name": "Pemasangan \/ Penggantian Infus",
+            "description": "Pemasangan jalur infus baru atau penggantian cairan infus di rumah. Tidak termasuk obat injeksi (harus ada resep dokter).",
+            "price": 150000,
+            "icon": "\ud83d\udca7",
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 4,
+            "name": "Pemasangan Kateter Urin",
+            "description": "Pemasangan kateter urin baru atau penggantian kateter urin berkala secara steril.",
+            "price": 175000,
+            "icon": "\ud83d\udc89",
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 5,
+            "name": "Fisioterapi Pasca Stroke",
+            "description": "Latihan fisik pasca stroke atau latihan gerak fungsional untuk mengembalikan mobilitas oleh terapis terampil.",
+            "price": 200000,
+            "icon": "\ud83c\udfc3",
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        },
+        {
+            "id": 6,
+            "name": "Pendampingan Lansia Harian (8 Jam)",
+            "description": "Kunjungan perawat\/caregiver selama 8 jam untuk memantau tanda vital, membantu aktivitas makan, mandi, minum obat, dan mobilitas lansia.",
+            "price": 300000,
+            "icon": "\ud83d\udc74",
+            "active": 1,
+            "created_at": "2026-07-14 23:06:44",
+            "updated_at": "2026-07-14 23:06:44"
+        }
+    ]
+}
