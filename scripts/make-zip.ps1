@@ -1,56 +1,90 @@
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-$src = "c:\Users\Laptopku\Documents\GitHub\chatbot-keperawatan"
-$dest = Join-Path $src "deploy\chatbot-keperawatan-full-15juli2026-v21.zip"
+$src  = "c:\Users\Laptopku\Documents\GitHub\chatbot-keperawatan"
+$date = Get-Date -Format "ddMMMyyyy"
+$dest = Join-Path $src "deploy\chatbot-keperawatan-deploy-$date.zip"
 
 if (Test-Path $dest) { Remove-Item $dest -Force }
 
-Write-Host "Creating ZIP with forward slashes (Linux-compatible)..."
+Write-Host "Creating deploy ZIP: $dest"
+Write-Host "Excluding: .git, node_modules, vendor, .env, storage/logs, *.zip, tmp files..."
+Write-Host ""
 
-# Exclude patterns
-$excludeDirs = @('.git', 'node_modules', '_zip_temp', 'deploy')
-$excludeFiles = @('.env', 'nersia-health-deploy.zip', 'tmp-search.html')
-$excludePublicFiles = @('.user.ini', 'hot')
+# Directories to skip entirely
+$excludeDirs = @(
+    '.git',
+    'node_modules',
+    'deploy',
+    'scripts'
+)
 
-$zip = [System.IO.Compression.ZipFile]::Open($dest, [System.IO.Compression.ZipArchiveMode]::Create)
+# Top-level files to skip
+$excludeRootFiles = @(
+    '.env',
+    'nersia-health-deploy.zip',
+    'tmp-search.html',
+    'temp_test.php'
+)
 
+# Specific sub-paths to skip (relative from $src, using backslash)
+$excludeSubPaths = @(
+    'storage\logs',
+    'storage\framework\cache',
+    'storage\framework\sessions',
+    'storage\framework\views',
+    'bootstrap\cache',
+    'public\.user.ini',
+    'public\hot',
+    'public\debug-order.php',
+    'public\dump-v21-data.php',
+    'public\import-v21-data.php',
+    'public\v21_data.json'
+)
+
+# Extensions to skip
+$excludeExtensions = @('.log', '.zip')
+
+$zip   = [System.IO.Compression.ZipFile]::Open($dest, [System.IO.Compression.ZipArchiveMode]::Create)
 $count = 0
 
 function Add-FileToZip($filePath, $entryName, $zip) {
-    # Convert backslashes to forward slashes for Linux compatibility
     $entryName = $entryName.Replace('\', '/')
-    
-    $compressionLevel = [System.IO.Compression.CompressionLevel]::Optimal
-    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $filePath, $entryName, $compressionLevel) | Out-Null
+    $level = [System.IO.Compression.CompressionLevel]::Optimal
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $filePath, $entryName, $level) | Out-Null
 }
 
-# Get all files recursively
 $allFiles = Get-ChildItem $src -Recurse -File -Force
 
 foreach ($file in $allFiles) {
-    $relativePath = $file.FullName.Substring($src.Length + 1)
-    $relativeDir = $relativePath.Split('\')[0]
-    
-    # Skip excluded directories
-    if ($excludeDirs -contains $relativeDir) { continue }
-    
-    # Skip excluded files at root
-    if ($excludeFiles -contains $file.Name -and $file.Directory.FullName -eq $src) { continue }
-    
-    # Skip .user.ini and hot in public/
-    if ($relativePath.StartsWith('public\')) {
-        $publicFile = $relativePath.Substring(7) # remove 'public\'
-        if ($excludePublicFiles -contains $publicFile) { continue }
+    $rel     = $file.FullName.Substring($src.Length + 1)
+    $topDir  = $rel.Split('\')[0]
+
+    # Skip excluded top-level dirs
+    if ($excludeDirs -contains $topDir) { continue }
+
+    # Skip excluded root-level files
+    if ($excludeRootFiles -contains $file.Name -and $file.Directory.FullName -eq $src) { continue }
+
+    # Skip excluded sub-paths (prefix match)
+    $skipSubPath = $false
+    foreach ($sub in $excludeSubPaths) {
+        if ($rel -eq $sub -or $rel.StartsWith($sub + '\')) {
+            $skipSubPath = $true
+            break
+        }
     }
-    
-    # Skip ZIP files inside deploy folder (but we already skip deploy/)
+    if ($skipSubPath) { continue }
+
+    # Skip excluded extensions
+    if ($excludeExtensions -contains $file.Extension.ToLower()) { continue }
+
     # Skip the output file itself
     if ($file.FullName -eq $dest) { continue }
-    
-    Add-FileToZip $file.FullName $relativePath $zip
+
+    Add-FileToZip $file.FullName $rel $zip
     $count++
-    
+
     if ($count % 500 -eq 0) {
         Write-Host "  $count files added..."
     }
@@ -58,9 +92,11 @@ foreach ($file in $allFiles) {
 
 $zip.Dispose()
 
-$fileInfo = Get-Item $dest
-$sizeMB = [math]::Round($fileInfo.Length / 1MB, 1)
+$info   = Get-Item $dest
+$sizeMB = [math]::Round($info.Length / 1MB, 1)
+
 Write-Host ""
-Write-Host "ZIP created: $dest"
-Write-Host "Total files: $count"
-Write-Host "Size: $sizeMB MB"
+Write-Host "Done!" -ForegroundColor Green
+Write-Host "ZIP : $dest"
+Write-Host "Files: $count"
+Write-Host "Size : $sizeMB MB"
