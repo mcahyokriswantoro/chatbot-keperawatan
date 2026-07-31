@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ConsultationMessage;
 use App\Models\ConsultationOrder;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -103,7 +104,8 @@ class ConsultationWhatsAppNotifier
         }
 
         // 2. Notify the admin/merchant phone (if different from provider number)
-        $adminPhone = (string) config('consultation.dana.merchant_phone', '');
+        //    Prioritas: DB settings → config/env
+        $adminPhone = (string) Setting::getValue('order_admin_phone', config('consultation.dana.merchant_phone', ''));
         if ($adminPhone !== '') {
             $adminNumber = \App\Models\ConsultationProvider::normalizeWhatsappIntl($adminPhone);
             if ($adminNumber !== '' && $adminNumber !== $providerNumber) {
