@@ -113,36 +113,45 @@ class ConsultationController extends Controller
             ->all();
     }
 
-    public function checkout(string $provider): View
+    public function checkout(string $provider): View|\Illuminate\Http\RedirectResponse
     {
         $profile = $this->whatsapp->provider($provider);
         abort_if($profile === null, 404);
 
         $user = auth()->user();
         $price = $this->access->priceFor($provider);
-        $totalPrice = $price + 3000;
+        $isFree = ($price === 0);
+        $totalPrice = $isFree ? 0 : ($price + 3000);
         $categoryKey = (string) ($profile['category'] ?? $provider);
+
+        // Jika gratis dan belum punya akses aktif → buat order gratis otomatis
+        if ($isFree && ! $this->access->hasAccess($user, $provider)) {
+            $this->access->processPayment($user, $provider, 'free');
+        }
+
         $accessState = $this->resolveCheckoutAccessState($user, $provider);
 
-        $openPayModal = request()->boolean('mulai')
+        $openPayModal = ! $isFree
+            && request()->boolean('mulai')
             && in_array($accessState, ['awaiting_payment', 'rejected'], true);
 
         return view('consultation.checkout', [
-            'providerKey' => $provider,
-            'provider' => $profile,
-            'categoryKey' => $categoryKey,
-            'price' => $price,
-            'priceLabel' => $this->access->formatRupiah($totalPrice),
-            'sessionHours' => $this->access->sessionHours(),
-            'accessState' => $accessState,
-            'chatUrl' => route('consultation.chat', $provider),
-            'statusUrl' => route('consultation.payment.status', $provider),
-            'paymentUrl' => route('consultation.payment', $provider),
-            'openPayModal' => $openPayModal,
-            'whatsappDirectUrl' => $accessState === 'active'
+            'providerKey'           => $provider,
+            'provider'              => $profile,
+            'categoryKey'           => $categoryKey,
+            'price'                 => $price,
+            'isFree'                => $isFree,
+            'priceLabel'            => $isFree ? 'Gratis' : $this->access->formatRupiah($totalPrice),
+            'sessionHours'          => $this->access->sessionHours(),
+            'accessState'           => $accessState,
+            'chatUrl'               => route('consultation.chat', $provider),
+            'statusUrl'             => route('consultation.payment.status', $provider),
+            'paymentUrl'            => route('consultation.payment', $provider),
+            'openPayModal'          => $openPayModal,
+            'whatsappDirectUrl'     => $accessState === 'active'
                 ? $this->whatsapp->buildLiveStartUrl($provider, $user)
                 : null,
-            'whatsappPreview' => $accessState === 'active'
+            'whatsappPreview'       => $accessState === 'active'
                 ? $this->whatsapp->buildLiveStartMessage($provider, $user)
                 : null,
             'whatsappDisplayNumber' => $accessState === 'active'

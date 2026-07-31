@@ -54,7 +54,7 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <h3 class="font-bold text-slate-900" x-text="cat.label"></h3>
-                            <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">Berbayar · Chat aktif</span>
+                            <span class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">Gratis · Chat aktif</span>
                         </div>
                         <p class="mt-0.5 text-xs leading-relaxed text-slate-500" x-text="cat.description"></p>
                     </div>

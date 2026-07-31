@@ -49,7 +49,7 @@ class ConsultationAccessService
             ->where('status', 'paid')
             ->where('expires_at', '>', now())
             ->where(function ($query) {
-                $query->where('payment_method', 'voucher')
+                $query->whereIn('payment_method', ['voucher', 'free'])
                     ->orWhereNotNull('verified_at');
             })
             ->exists();

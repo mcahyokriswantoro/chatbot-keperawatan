@@ -36,7 +36,9 @@
             @endif
         </div>
         <p class="relative mt-3 text-xs leading-relaxed text-white/90">
-            @if ($accessState === 'active')
+            @if ($accessState === 'active' && $isFree)
+                Konsultasi gratis — siap melakukan chat dengan {{ $providerName }}.
+            @elseif ($accessState === 'active')
                 Pembayaran terverifikasi — siap melakukan chat konsultasi dengan {{ $providerName }}.
             @elseif ($accessState === 'pending_verification')
                 Bukti transfer sedang diverifikasi admin sebelum chat aktif.
@@ -59,7 +61,11 @@
         <div class="flex gap-2 overflow-x-auto pb-0.5">
             <span class="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-semibold text-emerald-700">✓ Terverifikasi</span>
             <span class="shrink-0 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[10px] font-semibold text-brand-700">Chat Konsultasi</span>
-            <span class="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold text-slate-600">Sesi {{ $sessionHours }} jam</span>
+            @if ($isFree)
+                <span class="shrink-0 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[10px] font-semibold text-blue-700">🎁 Gratis</span>
+            @else
+                <span class="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold text-slate-600">Sesi {{ $sessionHours }} jam</span>
+            @endif
         </div>
     @elseif ($accessState === 'pending_verification')
         <div class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3.5">
@@ -78,7 +84,7 @@
                 <p class="mt-0.5 text-xs leading-relaxed text-rose-800">Transfer tidak ditemukan atau nominal tidak sesuai. Silakan bayar ulang.</p>
             </div>
         </div>
-    @else
+    @elseif (! $isFree)
         <div class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5">
             <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-600">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
@@ -131,7 +137,11 @@
                 </div>
                 <div class="mt-3">
                     <p class="text-[10px] text-slate-400">Biaya konsultasi</p>
-                    <p class="text-base font-bold text-slate-900">{{ $priceLabel }}</p>
+                    @if ($isFree)
+                        <p class="text-base font-bold text-emerald-600">🎁 Gratis</p>
+                    @else
+                        <p class="text-base font-bold text-slate-900">{{ $priceLabel }}</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -143,8 +153,8 @@
 
 
 
-    {{-- Langkah alur (belum aktif) --}}
-    @if ($accessState !== 'active')
+    {{-- Langkah alur (belum aktif, hanya tampil jika berbayar) --}}
+    @if ($accessState !== 'active' && ! $isFree)
         <div class="grid grid-cols-3 gap-2">
             <div @class([
                 'rounded-xl border px-2 py-2.5 text-center',
@@ -169,8 +179,8 @@
         </div>
     @endif
 
-    {{-- Inline bayar (mulai=1) --}}
-    @if (in_array($accessState, ['awaiting_payment', 'rejected'], true))
+    {{-- Inline bayar (hanya untuk konsultasi berbayar) --}}
+    @if (! $isFree && in_array($accessState, ['awaiting_payment', 'rejected'], true))
         <section
             x-show="showPay"
             x-cloak
@@ -251,13 +261,25 @@
                 Bayar ulang · {{ $priceLabel }}
             </button>
         @else
-            <button
-                type="button"
-                @click="showPay = true; window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })"
-                class="flex w-full items-center justify-center gap-2 rounded-2xl bg-rose-500 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-rose-600 active:scale-[0.98]"
-            >
-                Bayar dulu · {{ $priceLabel }}
-            </button>
+            @if ($isFree)
+                <a
+                    href="{{ $chatUrl }}"
+                    class="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-brand-600 py-4 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-700 active:scale-[0.98]"
+                >
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                    </svg>
+                    Mulai Chat Konsultasi
+                </a>
+            @else
+                <button
+                    type="button"
+                    @click="showPay = true; window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })"
+                    class="flex w-full items-center justify-center gap-2 rounded-2xl bg-rose-500 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-rose-600 active:scale-[0.98]"
+                >
+                    Bayar dulu · {{ $priceLabel }}
+                </button>
+            @endif
         @endif
     </div>
 </div>

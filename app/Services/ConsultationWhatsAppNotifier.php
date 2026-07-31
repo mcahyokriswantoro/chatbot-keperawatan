@@ -75,14 +75,18 @@ class ConsultationWhatsAppNotifier
         $expiresAt = $order->expires_at ? $order->expires_at->format('d M Y H:i') : '-';
         $adminChatUrl = url('/admin/konsultasi/chat/'.$order->id);
 
+        $isFree = $order->payment_method === 'free';
+
         $text = implode("\n", array_filter([
             'Salam dari *Nersia Health*! 🌿',
             '',
             'Yth. '.$providerName.',',
-            'Sesi konsultasi baru telah *aktif* dan pembayaran pasien telah diverifikasi.',
+            $isFree
+                ? 'Sesi konsultasi *gratis* baru telah *aktif*.'
+                : 'Sesi konsultasi baru telah *aktif* dan pembayaran pasien telah diverifikasi.',
             '',
             '👤 *Pasien:* '.$patientName,
-            '💳 *Metode Pembayaran:* '.strtoupper($order->payment_method),
+            '💳 *Metode:* '.($isFree ? 'Gratis (Free)' : strtoupper($order->payment_method)),
             '⏰ *Batas Waktu Sesi:* '.$expiresAt.' WIB',
             '',
             'Mohon kesediaannya untuk segera merespons pasien melalui Panel Admin:',
