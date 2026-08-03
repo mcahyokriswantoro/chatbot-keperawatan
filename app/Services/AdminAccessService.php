@@ -68,14 +68,28 @@ class AdminAccessService
 
         $user->update([
             'provider_key' => $providerKey,
+            'is_approved' => true,
             'email_verified_at' => $user->email_verified_at ?? now(),
         ]);
 
         return $user->fresh();
     }
 
+    public function approveProvider(User $user): void
+    {
+        $user->update([
+            'is_approved' => true,
+            'email_verified_at' => $user->email_verified_at ?? now(),
+        ]);
+    }
+
+    public function rejectProvider(User $user): void
+    {
+        $user->delete();
+    }
+
     public function revokeProviderAccess(User $user): void
     {
-        $user->update(['provider_key' => null]);
+        $user->update(['provider_key' => null, 'is_approved' => true]);
     }
 }

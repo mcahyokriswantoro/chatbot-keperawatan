@@ -325,7 +325,7 @@
                     </p>
                     <template x-if="distanceKm <= 25">
                         <p class="flex justify-between">
-                            <span class="text-slate-500">Tarif Pengiriman (Rp <span x-text="shippingFeePerKm.toLocaleString('id-ID')"></span>/km):</span>
+                            <span class="text-slate-500">Tarif Pengiriman:</span>
                             <span class="font-bold text-[#00529c]" x-text="formatRupiah(shippingFee)"></span>
                         </p>
                     </template>
@@ -350,13 +350,14 @@
                         <span>Total Harga Obat</span>
                         <span class="font-semibold text-slate-800">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
-                    <div class="flex justify-between text-slate-500">
-                        <span>Biaya Pengiriman</span>
-                        <span class="font-semibold text-[#00529c]" x-text="formatRupiah(shippingFee)">Rp 0</span>
-                    </div>
-                    <div class="flex justify-between text-slate-500">
-                        <span>Biaya Layanan</span>
-                        <span class="font-semibold text-slate-800" x-text="formatRupiah(serviceFee)">Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>
+                    <div>
+                        <div class="flex justify-between text-slate-500">
+                            <span>Biaya Administrasi</span>
+                            <span class="font-semibold text-slate-800" x-text="formatRupiah(shippingFee + serviceFee)">Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>
+                        </div>
+                        <p class="mt-0.5 text-[11px] text-slate-400">
+                            Termasuk biaya layanan (<span x-text="formatRupiah(serviceFee)">Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>) & transportasi (<span x-text="formatRupiah(shippingFee)">Rp 0</span>)
+                        </p>
                     </div>
                     <div class="flex justify-between border-t border-slate-100 pt-2.5 text-sm font-bold">
                         <span class="text-slate-800">Total Tagihan</span>

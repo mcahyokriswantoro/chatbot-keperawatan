@@ -32,6 +32,7 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'provider_key',
+        'is_approved',
     ];
 
     /**
@@ -54,6 +55,7 @@ class User extends Authenticatable
             'date_of_birth' => 'date',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_approved' => 'boolean',
             'weight' => 'decimal:1',
             'height' => 'decimal:1',
         ];
@@ -62,6 +64,11 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return (bool) $this->is_admin;
+    }
+
+    public function isApproved(): bool
+    {
+        return (bool) ($this->is_approved ?? true);
     }
 
     public function isFemale(): bool

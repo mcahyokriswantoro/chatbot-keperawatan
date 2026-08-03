@@ -192,16 +192,15 @@
                 <dt class="text-slate-500">Harga Paket Homecare</dt>
                 <dd class="font-semibold text-slate-900">Rp {{ number_format($booking->package->price, 0, ',', '.') }}</dd>
             </div>
-            <div class="flex justify-between gap-3">
-                <dt class="text-slate-500">Biaya Layanan</dt>
-                <dd class="font-semibold text-slate-900">Rp 3.000</dd>
-            </div>
-            @if ($booking->distance_km !== null)
+            <div class="border-t border-slate-100 pt-2.5">
                 <div class="flex justify-between gap-3">
-                    <dt class="text-slate-500">Biaya Transport ({{ $booking->distance_km }} km)</dt>
-                    <dd class="font-semibold text-[#00529c]">Rp {{ number_format($booking->transport_fee ?? 0, 0, ',', '.') }}</dd>
+                    <dt class="text-slate-500">Biaya Administrasi</dt>
+                    <dd class="font-semibold text-slate-900">Rp {{ number_format(3000 + ($booking->transport_fee ?? 0), 0, ',', '.') }}</dd>
                 </div>
-            @endif
+                <p class="mt-0.5 text-[11px] text-slate-400">
+                    Termasuk biaya layanan (Rp 3.000) & transportasi (Rp {{ number_format($booking->transport_fee ?? 0, 0, ',', '.') }}{{ $booking->distance_km ? ' - '.$booking->distance_km.' km' : '' }})
+                </p>
+            </div>
             <div class="flex justify-between gap-3 border-t border-slate-100 pt-2">
                 <dt class="font-bold text-slate-900">Total transfer</dt>
                 <dd class="text-lg font-bold text-[#00529c]">{{ $priceLabel }}</dd>

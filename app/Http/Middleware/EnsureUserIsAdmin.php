@@ -18,6 +18,10 @@ class EnsureUserIsAdmin
 
         // Jika user adalah penyedia layanan / mitra dan bukan super admin
         if ($user->provider_key && ! $user->isAdmin()) {
+            if (! $user->isApproved()) {
+                abort(403, 'Akun mitra Anda belum diverifikasi oleh Admin.');
+            }
+
             $currentRouteName = $request->route()?->getName();
             
             if ($user->provider_key === 'apotek') {

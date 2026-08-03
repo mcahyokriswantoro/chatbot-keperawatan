@@ -21,9 +21,17 @@ class AdminAccessController extends Controller
             ? \App\Models\ConsultationProvider::query()->where('active', true)->orderBy('short_name')->get()
             : collect();
 
+        $pendingProviders = User::query()
+            ->whereNotNull('provider_key')
+            ->where('is_admin', false)
+            ->where('is_approved', false)
+            ->latest()
+            ->get();
+
         $providerAdmins = User::query()
             ->whereNotNull('provider_key')
             ->where('is_admin', false)
+            ->where('is_approved', true)
             ->latest()
             ->get();
 
@@ -36,6 +44,7 @@ class AdminAccessController extends Controller
         return view('admin.access.index', [
             'admins' => User::query()->where('is_admin', true)->latest()->get(),
             'providers' => $providers,
+            'pendingProviders' => $pendingProviders,
             'providerAdmins' => $providerAdmins,
             'eligibleUsers' => $eligibleUsers,
         ]);
@@ -94,6 +103,26 @@ class AdminAccessController extends Controller
         return redirect()
             ->route('admin.access.index')
             ->with('status', "Akses chat untuk {$user->name} ({$user->email}) berhasil diaktifkan.");
+    }
+
+    public function approveProvider(User $user): RedirectResponse
+    {
+        $this->access->approveProvider($user);
+
+        return redirect()
+            ->route('admin.access.index')
+            ->with('status', "Pendaftaran mitra untuk {$user->name} ({$user->email}) berhasil diverifikasi & diaktifkan.");
+    }
+
+    public function rejectProvider(User $user): RedirectResponse
+    {
+        $name = $user->name;
+        $email = $user->email;
+        $this->access->rejectProvider($user);
+
+        return redirect()
+            ->route('admin.access.index')
+            ->with('status', "Pendaftaran mitra untuk {$name} ({$email}) telah ditolak.");
     }
 
     public function destroyProvider(User $user): RedirectResponse

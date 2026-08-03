@@ -195,17 +195,15 @@
                 <dt class="text-slate-500">Jarak Pengantaran</dt>
                 <dd class="font-semibold text-slate-800">{{ $order->distance_km }} km</dd>
             </div>
-            <div class="flex justify-between gap-3">
-                <dt class="text-slate-500">Ongkos Kirim</dt>
-                <dd class="font-semibold text-[#00529c]">Rp {{ number_format($order->shipping_fee, 0, ',', '.') }}</dd>
+            <div class="border-t border-slate-100 pt-2.5">
+                <div class="flex justify-between gap-3">
+                    <dt class="text-slate-500">Biaya Administrasi</dt>
+                    <dd class="font-semibold text-slate-900">Rp {{ number_format(($order->shipping_fee ?? 0) + ($order->service_fee ?? 0), 0, ',', '.') }}</dd>
+                </div>
+                <p class="mt-0.5 text-[11px] text-slate-400">
+                    Termasuk biaya layanan (Rp {{ number_format($order->service_fee ?? 0, 0, ',', '.') }}) & transportasi (Rp {{ number_format($order->shipping_fee ?? 0, 0, ',', '.') }}{{ $order->distance_km ? ' - '.$order->distance_km.' km' : '' }})
+                </p>
             </div>
-            @endif
-            @if($order->service_fee > 0)
-            <div class="flex justify-between gap-3">
-                <dt class="text-slate-500">Biaya Layanan</dt>
-                <dd class="font-semibold text-slate-800">Rp {{ number_format($order->service_fee, 0, ',', '.') }}</dd>
-            </div>
-            @endif
             <div class="flex justify-between gap-3 border-t border-slate-100 pt-2.5">
                 <dt class="font-bold text-slate-900">Total transfer</dt>
                 <dd class="text-lg font-bold text-[#00529c]">{{ $priceLabel }}</dd>

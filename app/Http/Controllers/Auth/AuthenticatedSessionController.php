@@ -28,9 +28,26 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $default = $request->user()?->isAdmin()
-            ? route('admin.dashboard', absolute: false)
-            : route('dashboard', absolute: false);
+        $user = $request->user();
+
+        if ($user && $user->provider_key && ! $user->isAdmin() && ! $user->isApproved()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'login' => 'Akun mitra Anda belum diverifikasi oleh Admin. Silakan tunggu verifikasi admin sebelum masuk.',
+            ]);
+        }
+
+        $default = match (true) {
+            $user?->isAdmin() => route('admin.dashboard', absolute: false),
+            $user?->provider_key === 'perawat',
+            $user?->provider_key === 'dokter' => route('admin.consultations.chat.index', absolute: false),
+            $user?->provider_key === 'apotek' => route('admin.medicines.index', absolute: false),
+            $user?->provider_key === 'homecare' => route('admin.homecare.index', absolute: false),
+            default => route('dashboard', absolute: false),
+        };
 
         return redirect()->intended($default);
     }

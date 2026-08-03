@@ -128,6 +128,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/access', [AdminAccessController::class, 'store'])->name('access.store');
     Route::delete('/access/{user}', [AdminAccessController::class, 'destroy'])->name('access.destroy');
     Route::post('/access/provider', [AdminAccessController::class, 'storeProvider'])->name('access.store-provider');
+    Route::post('/access/provider/{user}/approve', [AdminAccessController::class, 'approveProvider'])->name('access.approve-provider');
+    Route::delete('/access/provider/{user}/reject', [AdminAccessController::class, 'rejectProvider'])->name('access.reject-provider');
     Route::delete('/access/provider/{user}', [AdminAccessController::class, 'destroyProvider'])->name('access.destroy-provider');
 
     Route::get('/screenings', [AdminScreeningController::class, 'index'])->name('screenings.index');

@@ -335,7 +335,7 @@
                     </p>
                     <template x-if="distanceKm <= 25">
                         <p class="flex justify-between">
-                            <span class="text-slate-500">Tarif Transport (Rp <span x-text="transportFeePerKm.toLocaleString('id-ID')"></span>/km):</span>
+                            <span class="text-slate-500">Tarif Transport:</span>
                             <span class="font-bold text-[#00529c]" x-text="formatRupiah(transportFee)"></span>
                         </p>
                     </template>
@@ -365,28 +365,24 @@
                     <span>Harga Paket Homecare</span>
                     <span class="font-semibold text-slate-800" x-text="formatRupiah(packagePrice)">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
                 </div>
-                <div class="flex justify-between text-slate-500">
-                    <span>Biaya Layanan</span>
-                    <span class="font-semibold text-slate-800" x-text="formatRupiah(serviceFee)">Rp 3.000</span>
-                </div>
-                <div class="flex justify-between items-center text-slate-500">
-                    <span>Biaya Transport (<span x-text="formatRupiah(transportFeePerKm)"></span>/km)</span>
-                    <template x-if="distanceKm === null">
-                        <span class="font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60 text-[11px] flex items-center gap-1">
-                            <span>📍</span> Tentukan lokasi di peta
-                        </span>
-                    </template>
-                    <template x-if="distanceKm !== null && distanceKm <= 25">
-                        <span class="font-bold text-[#00529c] flex items-center gap-1">
-                            <span x-text="formatRupiah(transportFee)"></span>
-                            <span class="text-[10px] font-normal text-slate-400" x-text="'(' + distanceKm + ' km)'"></span>
-                        </span>
-                    </template>
-                    <template x-if="distanceKm !== null && distanceKm > 25">
-                        <span class="font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 text-[11px]">
-                            Tidak tersedia (> 25 km)
-                        </span>
-                    </template>
+                <div>
+                    <div class="flex justify-between items-center text-slate-500">
+                        <span>Biaya Administrasi</span>
+                        <template x-if="distanceKm === null">
+                            <span class="font-semibold text-slate-800" x-text="formatRupiah(serviceFee + transportFee)">Rp 3.000</span>
+                        </template>
+                        <template x-if="distanceKm !== null && distanceKm <= 25">
+                            <span class="font-semibold text-slate-800" x-text="formatRupiah(serviceFee + transportFee)">Rp 3.000</span>
+                        </template>
+                        <template x-if="distanceKm !== null && distanceKm > 25">
+                            <span class="font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 text-[11px]">
+                                Tidak tersedia (> 25 km)
+                            </span>
+                        </template>
+                    </div>
+                    <p class="mt-0.5 text-[11px] text-slate-400">
+                        Termasuk biaya layanan (<span x-text="formatRupiah(serviceFee)">Rp 3.000</span>) & transportasi (<span x-text="distanceKm === null ? '📍 Tentukan lokasi di peta' : (distanceKm > 25 ? 'Melebihi 25 km' : formatRupiah(transportFee))">Rp 0</span>)
+                    </p>
                 </div>
                 <div class="flex justify-between border-t border-slate-100 pt-2.5 text-sm font-bold">
                     <span class="text-slate-800">Total Tagihan</span>
