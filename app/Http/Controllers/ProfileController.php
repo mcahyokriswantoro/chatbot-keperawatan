@@ -25,8 +25,10 @@ class ProfileController extends Controller
         $user = $request->user();
         $validated = $request->safe()->except(['profile_photo', 'remove_profile_photo']);
 
-        $dateOfBirth = Carbon::parse($validated['date_of_birth']);
-        $validated['age'] = (int) $dateOfBirth->age;
+        if (! empty($validated['date_of_birth'])) {
+            $dateOfBirth = Carbon::parse($validated['date_of_birth']);
+            $validated['age'] = (int) $dateOfBirth->age;
+        }
 
         if ($request->boolean('remove_profile_photo') && $user->profile_photo) {
             Storage::disk('public')->delete($user->profile_photo);

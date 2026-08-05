@@ -130,6 +130,12 @@
             @endif
         </div>
 
+        @php
+            $isPasien = ! $user->isAdmin() && ! $user->provider_key;
+            $isApotekOrHomecare = in_array($user->provider_key, ['apotek', 'homecare'], true);
+        @endphp
+
+        @if(! $isApotekOrHomecare)
         <div>
             <label for="gender" class="text-xs font-medium text-slate-600">Jenis Kelamin <span class="text-rose-500">*</span></label>
             <select
@@ -146,6 +152,7 @@
                 <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
             @enderror
         </div>
+        @endif
 
         <div>
             <label for="phone" class="text-xs font-medium text-slate-600">No HP <span class="text-rose-500">*</span></label>
@@ -166,6 +173,7 @@
             @enderror
         </div>
 
+        @if($isPasien)
         <div class="grid grid-cols-2 gap-3">
             <div>
                 <label for="date_of_birth" class="text-xs font-medium text-slate-600">Tanggal Lahir <span class="text-rose-500">*</span></label>
@@ -231,9 +239,10 @@
                 @enderror
             </div>
         </div>
+        @endif
 
         <div>
-            <label for="address" class="text-xs font-medium text-slate-600">Alamat Domisili <span class="text-rose-500">*</span></label>
+            <label for="address" class="text-xs font-medium text-slate-600">Alamat <span class="text-rose-500">*</span></label>
             <textarea
                 id="address"
                 name="address"
@@ -246,20 +255,23 @@
             @enderror
         </div>
 
+        @if($user->occupation || ! $isPasien)
         <div>
-            <label for="occupation" class="text-xs font-medium text-slate-600">Pekerjaan <span class="text-rose-500">*</span></label>
+            <label for="occupation" class="text-xs font-medium text-slate-600">
+                {{ $isPasien ? 'Pekerjaan' : 'Info Kualifikasi / Pekerjaan' }}
+            </label>
             <input
                 type="text"
                 id="occupation"
                 name="occupation"
                 value="{{ old('occupation', $user->occupation) }}"
-                required
                 class="mt-1 w-full rounded-xl border border-brand-200 bg-white px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
             >
             @error('occupation')
                 <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
             @enderror
         </div>
+        @endif
 
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
             <button

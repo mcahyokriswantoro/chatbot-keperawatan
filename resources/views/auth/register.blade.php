@@ -156,12 +156,14 @@
                     <div>
                         <label for="title_front" class="text-xs font-medium text-slate-600">Gelar Depan <span class="text-slate-400">(opsional)</span></label>
                         <input type="text" id="title_front" name="title_front" value="{{ old('title_front') }}"
+                            :disabled="role !== 'perawat' && role !== 'dokter'"
                             :placeholder="role === 'perawat' ? 'Mis: Ns.' : 'Mis: dr.'"
                             class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                     </div>
                     <div>
                         <label for="title_back" class="text-xs font-medium text-slate-600">Gelar Belakang <span class="text-slate-400">(opsional)</span></label>
                         <input type="text" id="title_back" name="title_back" value="{{ old('title_back') }}"
+                            :disabled="role !== 'perawat' && role !== 'dokter'"
                             :placeholder="role === 'perawat' ? 'Mis: S.Kep' : 'Mis: Sp.PD'"
                             class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                     </div>
@@ -195,6 +197,7 @@
                     <label for="gender" class="text-xs font-medium text-slate-600">Jenis Kelamin <span class="text-rose-500">*</span></label>
                     <select id="gender" name="gender"
                         :required="role === 'pasien' || role === 'perawat' || role === 'dokter'"
+                        :disabled="role === 'apotek' || role === 'homecare'"
                         class="mt-1 w-full rounded-xl border border-brand-200 bg-white px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                         <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Pilih jenis kelamin</option>
                         <option value="laki-laki" @selected(old('gender') === 'laki-laki')>Laki-laki</option>
@@ -218,6 +221,7 @@
                         <label for="date_of_birth" class="text-xs font-medium text-slate-600">Tanggal Lahir <span class="text-rose-500">*</span></label>
                         <input type="date" id="date_of_birth" name="date_of_birth" x-model="dob" value="{{ old('date_of_birth') }}"
                             :required="role === 'pasien'"
+                            :disabled="role !== 'pasien'"
                             max="{{ date('Y-m-d', strtotime('-1 day')) }}"
                             class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                         @error('date_of_birth')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
@@ -234,14 +238,16 @@
                     <div>
                         <label for="weight" class="text-xs font-medium text-slate-600">Berat Badan (kg) <span class="text-rose-500">*</span></label>
                         <input type="number" step="0.1" id="weight" name="weight" value="{{ old('weight') }}"
-                            :required="role === 'pasien'" min="1" max="500"
+                            :required="role === 'pasien'"
+                            :disabled="role !== 'pasien'" min="1" max="500"
                             class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                         @error('weight')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label for="height" class="text-xs font-medium text-slate-600">Tinggi Badan (cm) <span class="text-rose-500">*</span></label>
                         <input type="number" step="0.1" id="height" name="height" value="{{ old('height') }}"
-                            :required="role === 'pasien'" min="30" max="300"
+                            :required="role === 'pasien'"
+                            :disabled="role !== 'pasien'" min="30" max="300"
                             class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                         @error('height')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
                     </div>
@@ -252,6 +258,7 @@
                     <label for="occupation" class="text-xs font-medium text-slate-600">Pekerjaan <span class="text-rose-500">*</span></label>
                     <input type="text" id="occupation" name="occupation" value="{{ old('occupation') }}"
                         :required="role === 'pasien'"
+                        :disabled="role !== 'pasien'"
                         class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                     @error('occupation')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>
@@ -264,6 +271,7 @@
                     </label>
                     <input type="text" id="str_number" name="str_number" value="{{ old('str_number') }}"
                         :required="role === 'perawat' || role === 'dokter'"
+                        :disabled="role !== 'perawat' && role !== 'dokter'"
                         placeholder="Masukkan nomor STR"
                         class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                     @error('str_number')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
@@ -274,6 +282,7 @@
                         <label for="specialty" class="text-xs font-medium text-slate-600">Spesialisasi <span class="text-rose-500">*</span></label>
                         <input type="text" id="specialty" name="specialty" value="{{ old('specialty') }}"
                             :required="role === 'perawat' || role === 'dokter'"
+                            :disabled="role !== 'perawat' && role !== 'dokter'"
                             :placeholder="role === 'perawat' ? 'Mis: Keperawatan Medikal Bedah' : 'Mis: Dokter Umum'"
                             class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                         @error('specialty')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
@@ -282,28 +291,24 @@
                         <label for="experience_years" class="text-xs font-medium text-slate-600">Pengalaman (thn) <span class="text-rose-500">*</span></label>
                         <input type="number" id="experience_years" name="experience_years" value="{{ old('experience_years') }}"
                             :required="role === 'perawat' || role === 'dokter'"
+                            :disabled="role !== 'perawat' && role !== 'dokter'"
                             min="0" max="60" placeholder="5"
                             class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                         @error('experience_years')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
                     </div>
                 </div>
 
-                {{-- ========== APOTEK: SIPA/SIA ========== --}}
-                <div x-show="role === 'apotek'" x-transition>
-                    <label for="license_number_apotek" class="text-xs font-medium text-slate-600">No. SIPA/SIA <span class="text-rose-500">*</span></label>
-                    <input type="text" id="license_number_apotek" name="license_number" value="{{ old('license_number') }}"
-                        :required="role === 'apotek'"
-                        placeholder="Masukkan nomor SIPA atau SIA"
-                        class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                    @error('license_number')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
-                </div>
-
-                {{-- ========== HOMECARE: Izin Usaha ========== --}}
-                <div x-show="role === 'homecare'" x-transition>
-                    <label for="license_number_homecare" class="text-xs font-medium text-slate-600">No. Izin Usaha <span class="text-rose-500">*</span></label>
-                    <input type="text" id="license_number_homecare" name="license_number" value="{{ old('license_number') }}"
-                        :required="role === 'homecare'"
-                        placeholder="Masukkan nomor izin usaha"
+                {{-- ========== APOTEK & HOMECARE: SIPA/SIA & Izin Usaha ========== --}}
+                <div x-show="role === 'apotek' || role === 'homecare'" x-transition>
+                    <label for="license_number" class="text-xs font-medium text-slate-600">
+                        <span x-show="role === 'apotek'">No. SIPA/SIA</span>
+                        <span x-show="role === 'homecare'">No. Izin Usaha</span>
+                        <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text" id="license_number" name="license_number" value="{{ old('license_number') }}"
+                        :required="role === 'apotek' || role === 'homecare'"
+                        :disabled="role !== 'apotek' && role !== 'homecare'"
+                        :placeholder="role === 'apotek' ? 'Masukkan nomor SIPA atau SIA' : 'Masukkan nomor izin usaha'"
                         class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                     @error('license_number')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>

@@ -24,6 +24,10 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = $this->user();
+        $isPasien = ! $user->isAdmin() && ! $user->provider_key;
+        $isApotekOrHomecare = in_array($user->provider_key, ['apotek', 'homecare'], true);
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -32,20 +36,23 @@ class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                Rule::unique(User::class)->ignore($user->id),
             ],
-            'gender' => ['required', Rule::in(['laki-laki', 'perempuan'])],
+            'gender' => [
+                $isApotekOrHomecare ? 'nullable' : 'required',
+                Rule::in(['laki-laki', 'perempuan']),
+            ],
             'phone' => [
                 'required',
                 'string',
                 'max:20',
-                Rule::unique(User::class, 'phone')->ignore($this->user()->id),
+                Rule::unique(User::class, 'phone')->ignore($user->id),
             ],
-            'date_of_birth' => ['required', 'date', 'before:today'],
-            'weight' => ['required', 'numeric', 'min:1', 'max:500'],
-            'height' => ['required', 'numeric', 'min:30', 'max:300'],
+            'date_of_birth' => $isPasien ? ['required', 'date', 'before:today'] : ['nullable', 'date', 'before:today'],
+            'weight' => $isPasien ? ['required', 'numeric', 'min:1', 'max:500'] : ['nullable', 'numeric', 'min:1', 'max:500'],
+            'height' => $isPasien ? ['required', 'numeric', 'min:30', 'max:300'] : ['nullable', 'numeric', 'min:30', 'max:300'],
             'address' => ['required', 'string', 'max:1000'],
-            'occupation' => ['required', 'string', 'max:255'],
+            'occupation' => $isPasien ? ['required', 'string', 'max:255'] : ['nullable', 'string', 'max:255'],
             'profile_photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
             'remove_profile_photo' => ['nullable', 'boolean'],
         ];
@@ -62,7 +69,7 @@ class ProfileUpdateRequest extends FormRequest
             'phone.unique' => 'Nomor HP sudah digunakan akun lain.',
             'date_of_birth.required' => 'Tanggal lahir wajib diisi.',
             'date_of_birth.before' => 'Tanggal lahir harus sebelum hari ini.',
-            'profile_photo.image' => 'Foto profil harus berupa gambar.',
+            'profile_photo.image' => 'Foto profil harus berupa gambar (JPEG, PNG, WEBP).',
             'profile_photo.max' => 'Ukuran foto profil maksimal 2 MB.',
         ];
     }

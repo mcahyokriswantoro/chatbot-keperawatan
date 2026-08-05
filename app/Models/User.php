@@ -33,6 +33,7 @@ class User extends Authenticatable
         'is_admin',
         'provider_key',
         'is_approved',
+        'email_verified_at',
     ];
 
     /**
