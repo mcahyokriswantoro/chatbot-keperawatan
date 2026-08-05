@@ -380,9 +380,6 @@
                             </span>
                         </template>
                     </div>
-                    <p class="mt-0.5 text-[11px] text-slate-400">
-                        Termasuk biaya layanan (<span x-text="formatRupiah(serviceFee)">Rp 3.000</span>) & transportasi (<span x-text="distanceKm === null ? '📍 Tentukan lokasi di peta' : (distanceKm > 25 ? 'Melebihi 25 km' : formatRupiah(transportFee))">Rp 0</span>)
-                    </p>
                 </div>
                 <div class="flex justify-between border-t border-slate-100 pt-2.5 text-sm font-bold">
                     <span class="text-slate-800">Total Tagihan</span>
