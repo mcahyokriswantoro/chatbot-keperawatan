@@ -21,25 +21,34 @@ class AdminAccessController extends Controller
             ? \App\Models\ConsultationProvider::query()->where('active', true)->orderBy('short_name')->get()
             : collect();
 
-        $pendingProviders = User::query()
-            ->whereNotNull('provider_key')
-            ->where('is_admin', false)
-            ->where('is_approved', false)
-            ->latest()
-            ->get();
+        $hasProviderKey = \Illuminate\Support\Facades\Schema::hasColumn('users', 'provider_key');
+        $hasIsApproved = \Illuminate\Support\Facades\Schema::hasColumn('users', 'is_approved');
 
-        $providerAdmins = User::query()
-            ->whereNotNull('provider_key')
-            ->where('is_admin', false)
-            ->where('is_approved', true)
-            ->latest()
-            ->get();
+        $pendingProviders = ($hasProviderKey && $hasIsApproved)
+            ? User::query()
+                ->whereNotNull('provider_key')
+                ->where('is_admin', false)
+                ->where('is_approved', false)
+                ->latest()
+                ->get()
+            : collect();
 
-        $eligibleUsers = User::query()
-            ->where('is_admin', false)
-            ->whereNull('provider_key')
-            ->orderBy('name')
-            ->get();
+        $providerAdmins = ($hasProviderKey && $hasIsApproved)
+            ? User::query()
+                ->whereNotNull('provider_key')
+                ->where('is_admin', false)
+                ->where('is_approved', true)
+                ->latest()
+                ->get()
+            : collect();
+
+        $eligibleUsers = $hasProviderKey
+            ? User::query()
+                ->where('is_admin', false)
+                ->whereNull('provider_key')
+                ->orderBy('name')
+                ->get()
+            : User::query()->where('is_admin', false)->orderBy('name')->get();
 
         return view('admin.access.index', [
             'admins' => User::query()->where('is_admin', true)->latest()->get(),
