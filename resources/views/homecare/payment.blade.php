@@ -197,9 +197,6 @@
                     <dt class="text-slate-500">Biaya Administrasi</dt>
                     <dd class="font-semibold text-slate-900">Rp {{ number_format(3000 + ($booking->transport_fee ?? 0), 0, ',', '.') }}</dd>
                 </div>
-                <p class="mt-0.5 text-[11px] text-slate-400">
-                    Termasuk biaya layanan (Rp 3.000) & transportasi (Rp {{ number_format($booking->transport_fee ?? 0, 0, ',', '.') }}{{ $booking->distance_km ? ' - '.$booking->distance_km.' km' : '' }})
-                </p>
             </div>
             <div class="flex justify-between gap-3 border-t border-slate-100 pt-2">
                 <dt class="font-bold text-slate-900">Total transfer</dt>

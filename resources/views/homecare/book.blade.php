@@ -334,7 +334,7 @@
                         <span class="font-bold" :class="distanceKm > 25 ? 'text-rose-600 font-extrabold' : 'text-slate-800'" x-text="distanceKm + ' km'"></span>
                     </p>
                     <template x-if="distanceKm <= 25">
-                        <p class="flex justify-between">
+                        <p class="hidden">
                             <span class="text-slate-500">Tarif Transport:</span>
                             <span class="font-bold text-[#00529c]" x-text="formatRupiah(transportFee)"></span>
                         </p>
