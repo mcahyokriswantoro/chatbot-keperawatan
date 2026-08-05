@@ -33,10 +33,12 @@
                 <button
                     type="button"
                     @click="role = 'pasien'"
-                    :class="role === 'pasien'
-                        ? 'border-brand-500 bg-brand-50 text-brand-700 ring-2 ring-brand-200'
-                        : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-brand-50/50'"
-                    class="flex flex-col items-center gap-1.5 rounded-xl border px-3 py-3 text-center transition-all duration-200"
+                    :style="{
+                        backgroundColor: role === 'pasien' ? '#f0f9ff' : '#ffffff',
+                        borderColor: role === 'pasien' ? '#0284c7' : '#e2e8f0',
+                        color: role === 'pasien' ? '#0369a1' : '#475569'
+                    }"
+                    class="flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 text-center transition-all duration-200 cursor-pointer"
                 >
                     <span class="text-2xl" aria-hidden="true">🧑‍🦰</span>
                     <span class="text-xs font-semibold">Pasien</span>
@@ -46,10 +48,12 @@
                 <button
                     type="button"
                     @click="role = 'perawat'"
-                    :class="role === 'perawat'
-                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-2 ring-emerald-200'
-                        : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50/50'"
-                    class="flex flex-col items-center gap-1.5 rounded-xl border px-3 py-3 text-center transition-all duration-200"
+                    :style="{
+                        backgroundColor: role === 'perawat' ? '#ecfdf5' : '#ffffff',
+                        borderColor: role === 'perawat' ? '#059669' : '#e2e8f0',
+                        color: role === 'perawat' ? '#047857' : '#475569'
+                    }"
+                    class="flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 text-center transition-all duration-200 cursor-pointer"
                 >
                     <span class="text-2xl" aria-hidden="true">👩‍⚕️</span>
                     <span class="text-xs font-semibold">Perawat</span>
@@ -59,10 +63,12 @@
                 <button
                     type="button"
                     @click="role = 'dokter'"
-                    :class="role === 'dokter'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200'
-                        : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50/50'"
-                    class="flex flex-col items-center gap-1.5 rounded-xl border px-3 py-3 text-center transition-all duration-200"
+                    :style="{
+                        backgroundColor: role === 'dokter' ? '#eff6ff' : '#ffffff',
+                        borderColor: role === 'dokter' ? '#2563eb' : '#e2e8f0',
+                        color: role === 'dokter' ? '#1d4ed8' : '#475569'
+                    }"
+                    class="flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 text-center transition-all duration-200 cursor-pointer"
                 >
                     <span class="text-2xl" aria-hidden="true">🩺</span>
                     <span class="text-xs font-semibold">Dokter</span>
@@ -72,10 +78,12 @@
                 <button
                     type="button"
                     @click="role = 'apotek'"
-                    :class="role === 'apotek'
-                        ? 'border-amber-500 bg-amber-50 text-amber-700 ring-2 ring-amber-200'
-                        : 'border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:bg-amber-50/50'"
-                    class="flex flex-col items-center gap-1.5 rounded-xl border px-3 py-3 text-center transition-all duration-200"
+                    :style="{
+                        backgroundColor: role === 'apotek' ? '#fffbeb' : '#ffffff',
+                        borderColor: role === 'apotek' ? '#d97706' : '#e2e8f0',
+                        color: role === 'apotek' ? '#b45309' : '#475569'
+                    }"
+                    class="flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 text-center transition-all duration-200 cursor-pointer"
                 >
                     <span class="text-2xl" aria-hidden="true">💊</span>
                     <span class="text-xs font-semibold">Apotek</span>
@@ -85,10 +93,12 @@
                 <button
                     type="button"
                     @click="role = 'homecare'"
-                    :class="role === 'homecare'
-                        ? 'border-violet-500 bg-violet-50 text-violet-700 ring-2 ring-violet-200'
-                        : 'border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:bg-violet-50/50'"
-                    class="flex flex-col items-center gap-1.5 rounded-xl border px-3 py-3 text-center transition-all duration-200"
+                    :style="{
+                        backgroundColor: role === 'homecare' ? '#f5f3ff' : '#ffffff',
+                        borderColor: role === 'homecare' ? '#7c3aed' : '#e2e8f0',
+                        color: role === 'homecare' ? '#6d28d9' : '#475569'
+                    }"
+                    class="flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 text-center transition-all duration-200 cursor-pointer"
                 >
                     <span class="text-2xl" aria-hidden="true">🏠</span>
                     <span class="text-xs font-semibold">Homecare</span>
@@ -343,36 +353,29 @@
 
                 {{-- Info box --}}
                 <div
-                    :class="{
-                        'bg-brand-50 text-brand-800': role === 'pasien',
-                        'bg-emerald-50 text-emerald-800': role === 'perawat',
-                        'bg-blue-50 text-blue-800': role === 'dokter',
-                        'bg-amber-50 text-amber-800': role === 'apotek',
-                        'bg-violet-50 text-violet-800': role === 'homecare',
+                    :style="{
+                        backgroundColor: role === 'pasien' ? '#f0f9ff' : (role === 'perawat' ? '#ecfdf5' : (role === 'dokter' ? '#eff6ff' : (role === 'apotek' ? '#fffbeb' : '#f5f3ff'))),
+                        color: role === 'pasien' ? '#075985' : (role === 'perawat' ? '#065f46' : (role === 'dokter' ? '#1e40af' : (role === 'apotek' ? '#92400e' : '#5b21b6')))
                     }"
-                    class="rounded-xl px-3 py-2.5 text-[11px] leading-relaxed transition-colors duration-200"
+                    class="rounded-xl px-3.5 py-3 text-xs leading-relaxed transition-all duration-200 border border-slate-100"
                 >
                     <span x-show="role === 'pasien'">Semua kolom wajib diisi. Data Anda digunakan untuk skrining dan monitoring kesehatan. Akun pasien langsung aktif.</span>
-                    <span x-show="role !== 'pasien'">⚠️ <strong>Perhatian:</strong> Registrasi mitra (Perawat, Dokter, Apotek, Homecare) membutuhkan <strong>verifikasi dan persetujuan Admin</strong> sebelum akun dapat digunakan untuk masuk.</span>
+                    <span x-show="role !== 'pasien'" x-cloak>⚠️ <strong>Perhatian:</strong> Registrasi mitra (Perawat, Dokter, Apotek, Homecare) membutuhkan <strong>verifikasi dan persetujuan Admin</strong> sebelum akun dapat digunakan untuk masuk.</span>
                 </div>
 
                 {{-- Submit Button --}}
                 <button
                     type="submit"
-                    :class="{
-                        'bg-brand-600 hover:bg-brand-700': role === 'pasien',
-                        'bg-emerald-600 hover:bg-emerald-700': role === 'perawat',
-                        'bg-blue-600 hover:bg-blue-700': role === 'dokter',
-                        'bg-amber-600 hover:bg-amber-700': role === 'apotek',
-                        'bg-violet-600 hover:bg-violet-700': role === 'homecare',
+                    :style="{
+                        backgroundColor: role === 'pasien' ? '#0284c7' : (role === 'perawat' ? '#059669' : (role === 'dokter' ? '#2563eb' : (role === 'apotek' ? '#d97706' : '#7c3aed')))
                     }"
-                    class="w-full rounded-full py-3.5 text-sm font-semibold text-white shadow-soft transition active:scale-[0.98]"
+                    class="w-full rounded-full py-3.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:opacity-90 active:scale-[0.98] cursor-pointer"
                 >
                     <span x-show="role === 'pasien'">Daftar Sebagai Pasien</span>
-                    <span x-show="role === 'perawat'">Daftar Sebagai Perawat</span>
-                    <span x-show="role === 'dokter'">Daftar Sebagai Dokter</span>
-                    <span x-show="role === 'apotek'">Daftar Sebagai Apotek</span>
-                    <span x-show="role === 'homecare'">Daftar Sebagai Homecare</span>
+                    <span x-show="role === 'perawat'" x-cloak>Daftar Sebagai Perawat</span>
+                    <span x-show="role === 'dokter'" x-cloak>Daftar Sebagai Dokter</span>
+                    <span x-show="role === 'apotek'" x-cloak>Daftar Sebagai Apotek</span>
+                    <span x-show="role === 'homecare'" x-cloak>Daftar Sebagai Homecare</span>
                 </button>
             </form>
         </div>
