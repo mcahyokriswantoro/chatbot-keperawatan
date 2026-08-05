@@ -199,16 +199,30 @@ class ConsultationProvider extends Model
             ->orWhere('whatsapp', $user->phone)
             ->first();
 
-        $categoryKey = $user->provider_key === 'dokter' ? 'dokter-umum' : 'perawat-ners';
+        $isSpesialis = $user->provider_key === 'dokter' && (
+            Str::contains(strtolower($user->name), ['sp.', 'spesialis']) ||
+            Str::contains(strtolower($user->occupation ?? ''), ['sp.', 'spesialis'])
+        );
+
+        $categoryKey = $user->provider_key === 'dokter'
+            ? ($isSpesialis ? 'penyakit_dalam' : 'dokter_umum')
+            : 'perawat';
+
+        $price = $user->provider_key === 'dokter'
+            ? ($isSpesialis ? 150000 : 100000)
+            : 100000;
 
         if ($provider) {
             $provider->update([
+                'active' => true,
+                'category_key' => $categoryKey,
                 'name' => $user->name,
                 'short_name' => $user->name,
                 'whatsapp' => $user->phone ?? $provider->whatsapp,
                 'whatsapp_intl' => self::normalizeWhatsappIntl($user->phone ?? $provider->whatsapp),
                 'specialty' => $user->occupation ?? $provider->specialty,
                 'photo' => $user->profile_photo ?? $provider->photo,
+                'price' => $price,
             ]);
 
             return $provider;
@@ -222,12 +236,12 @@ class ConsultationProvider extends Model
             'active' => true,
             'name' => $user->name,
             'short_name' => $user->name,
-            'title' => $user->provider_key === 'dokter' ? 'Dokter Spesialis / Umum' : 'Perawat (Ners)',
+            'title' => $user->provider_key === 'dokter' ? ($isSpesialis ? 'Dokter Spesialis' : 'Dokter Umum') : 'Perawat (Ners)',
             'specialty' => $user->occupation ?? ($user->provider_key === 'dokter' ? 'Dokter' : 'Perawat'),
             'experience_years' => 5,
             'rating_percent' => 100,
-            'price' => 0,
-            'icon' => $user->provider_key === 'dokter' ? '🩺' : '👩‍⚕️',
+            'price' => $price,
+            'icon' => $user->provider_key === 'dokter' ? ($isSpesialis ? '🫀' : '👨‍⚕️') : '👩‍⚕️',
             'whatsapp' => $user->phone ?? '081234567890',
             'whatsapp_intl' => self::normalizeWhatsappIntl($user->phone ?? '081234567890'),
             'greeting' => "Halo! Saya {$user->name}. Ada yang bisa saya bantu terkait keluhan kesehatan Anda?",

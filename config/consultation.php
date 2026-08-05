@@ -28,9 +28,9 @@ return [
     'pricing' => [
         'default' => (int) env('CONSULTATION_PRICE', 100000),
         'perawat' => (int) env('CONSULTATION_PRICE_PERAWAT', 100000),
-        'dokter_umum' => (int) env('CONSULTATION_PRICE_DOKTER_UMUM', 50000),
-        'dokter_spesialis' => (int) env('CONSULTATION_PRICE_DOKTER_SPESIALIS', 75000),
-        'penyakit_dalam' => (int) env('CONSULTATION_PRICE_PENYAKIT_DALAM', 75000),
+        'dokter_umum' => (int) env('CONSULTATION_PRICE_DOKTER_UMUM', 100000),
+        'dokter_spesialis' => (int) env('CONSULTATION_PRICE_DOKTER_SPESIALIS', 150000),
+        'penyakit_dalam' => (int) env('CONSULTATION_PRICE_PENYAKIT_DALAM', 150000),
     ],
 
     'session_hours' => (int) env('CONSULTATION_SESSION_HOURS', 24),
@@ -59,7 +59,7 @@ return [
             'label' => 'Dokter Umum',
             'icon' => '👨‍⚕️',
             'description' => 'Konsultasi keluhan umum, interpretasi hasil skrining, dan rujukan lanjut.',
-            'active' => false,
+            'active' => true,
             'primary' => true,
         ],
         [
@@ -67,7 +67,7 @@ return [
             'label' => 'Dokter Spesialis Penyakit Dalam',
             'icon' => '🫀',
             'description' => 'Konsultasi gangguan metabolik, diabetes, hipertensi, dan lainnya.',
-            'active' => false,
+            'active' => true,
             'primary' => true,
         ],
     ],
