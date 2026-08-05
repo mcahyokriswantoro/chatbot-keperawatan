@@ -172,16 +172,22 @@
                     required
                     class="w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm bg-white focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
                 >
-                    <option value="">-- Pilih Provider --</option>
-                    @foreach ($providers as $prov)
-                        <option value="{{ $prov->key }}">{{ $prov->short_name }} ({{ $prov->categoryLabel() }})</option>
-                    @endforeach
-                    <optgroup label="Mitra Layanan">
-                        <option value="perawat">Mitra Perawat</option>
-                        <option value="dokter">Mitra Dokter</option>
-                        <option value="apotek">Mitra Apotek</option>
-                        <option value="homecare">Mitra Homecare</option>
+                    <option value="">-- Pilih Akses Mitra / Provider --</option>
+                    <optgroup label="Peran Utama Mitra">
+                        <option value="perawat">👩‍⚕️ Mitra Perawat</option>
+                        <option value="dokter">🩺 Mitra Dokter</option>
+                        <option value="apotek">💊 Mitra Apotek</option>
+                        <option value="homecare">🏠 Mitra Homecare</option>
                     </optgroup>
+                    @if ($providers->isNotEmpty())
+                        <optgroup label="Kategori Spesialisasi Tambahan">
+                            @foreach ($providers as $prov)
+                                @if (! in_array($prov->key, ['perawat', 'dokter', 'apotek', 'homecare'], true))
+                                    <option value="{{ $prov->key }}">{{ $prov->short_name }} ({{ $prov->categoryLabel() }})</option>
+                                @endif
+                            @endforeach
+                        </optgroup>
+                    @endif
                 </select>
                 @error('provider_key')
                     <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
