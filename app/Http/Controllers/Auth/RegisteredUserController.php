@@ -10,6 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
@@ -70,9 +72,18 @@ class RegisteredUserController extends Controller
             'homecare' => $this->buildHomecareData($validated),
         };
 
+        // Filter user data to only include columns that actually exist in the database table
+        $userData = array_filter($userData, static function ($key) {
+            return Schema::hasColumn('users', $key);
+        }, ARRAY_FILTER_USE_KEY);
+
         $user = User::create($userData);
 
-        event(new Registered($user));
+        try {
+            event(new Registered($user));
+        } catch (\Throwable $e) {
+            Log::error('Registered event error: '.$e->getMessage());
+        }
 
         // Pendaftaran selain pasien membutuhkan verifikasi admin terlebih dahulu
         if ($role !== 'pasien') {
