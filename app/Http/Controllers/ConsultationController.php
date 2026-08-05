@@ -65,19 +65,9 @@ class ConsultationController extends Controller
         abort_if($meta === null, 404);
 
         $providers = $this->whatsapp->providersForCategory($category, $this->access);
-
-        if ($providers !== []) {
-            return view('consultation.providers', [
-                'categoryKey' => $category,
-                'category' => $meta,
-                'providers' => $providers,
-                'sessionHours' => $this->access->sessionHours(),
-            ]);
-        }
-
         $subcategories = $this->subCategoriesFor($category);
 
-        if ($subcategories !== []) {
+        if ($subcategories !== [] && $providers === []) {
             return view('consultation.specialty-hub', [
                 'categoryKey' => $category,
                 'category' => $meta,
@@ -85,7 +75,12 @@ class ConsultationController extends Controller
             ]);
         }
 
-        abort(404);
+        return view('consultation.providers', [
+            'categoryKey' => $category,
+            'category' => $meta,
+            'providers' => $providers,
+            'sessionHours' => $this->access->sessionHours(),
+        ]);
     }
 
     /**

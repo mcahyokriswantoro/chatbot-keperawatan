@@ -12,41 +12,78 @@ class ConsultationWhatsAppService
         return ConsultationProvider::profileForKey($key);
     }
 
+    public static function normalizeCategoryKey(string $key): string
+    {
+        $normalized = str_replace('-', '_', strtolower(trim($key)));
+
+        return match ($normalized) {
+            'perawat', 'perawat_ners', 'ners' => 'perawat',
+            'dokter', 'dokter_umum', 'umum' => 'dokter_umum',
+            'penyakit_dalam', 'dokter_spesialis', 'spesialis' => 'penyakit_dalam',
+            default => $normalized,
+        };
+    }
+
+    public static function categoryAliases(string $key): array
+    {
+        $normalized = self::normalizeCategoryKey($key);
+
+        return match ($normalized) {
+            'perawat' => ['perawat', 'perawat-ners', 'perawat_ners', 'ners'],
+            'dokter_umum' => ['dokter', 'dokter_umum', 'dokter-umum', 'umum'],
+            'penyakit_dalam' => ['penyakit_dalam', 'penyakit-dalam', 'dokter_spesialis', 'dokter-spesialis', 'spesialis'],
+            default => [$normalized, str_replace('_', '-', $normalized), str_replace('-', '_', $normalized)],
+        };
+    }
+
     public function categoryMeta(string $categoryKey): ?array
     {
+        $canonicalKey = self::normalizeCategoryKey($categoryKey);
+        $aliases = self::categoryAliases($categoryKey);
+
         $category = collect(config('consultation.categories', []))
-            ->firstWhere('key', $categoryKey);
+            ->first(function (array $cat) use ($aliases) {
+                $catKey = (string) ($cat['key'] ?? '');
+
+                return in_array(self::normalizeCategoryKey($catKey), $aliases, true);
+            });
 
         if (! is_array($category)) {
+            if ($canonicalKey === 'dokter_umum') {
+                return [
+                    'key' => 'dokter_umum',
+                    'label' => 'Dokter Umum',
+                    'icon' => '👨‍⚕️',
+                    'description' => 'Konsultasi keluhan umum, interpretasi hasil skrining, dan rujukan lanjut.',
+                    'active' => true,
+                    'primary' => true,
+                ];
+            }
+            if ($canonicalKey === 'penyakit_dalam') {
+                return [
+                    'key' => 'penyakit_dalam',
+                    'label' => 'Dokter Spesialis Penyakit Dalam',
+                    'icon' => '🫀',
+                    'description' => 'Konsultasi gangguan metabolik, diabetes, hipertensi, dan lainnya.',
+                    'active' => true,
+                    'primary' => true,
+                ];
+            }
+
             return null;
         }
 
-        if ($category['active'] ?? false) {
-            return $category;
-        }
+        $category['active'] = true;
 
-        if (ConsultationProvider::tableReady()) {
-            $hasProviders = ConsultationProvider::query()
-                ->where('category_key', $categoryKey)
-                ->where('active', true)
-                ->exists();
-
-            if ($hasProviders) {
-                return $category;
-            }
-        }
-
-        if ($this->hasSubcategories($categoryKey)) {
-            return $category;
-        }
-
-        return null;
+        return $category;
     }
 
     public function hasSubcategories(string $categoryKey): bool
     {
+        $aliases = self::categoryAliases($categoryKey);
+
         return collect(config('consultation.categories', []))
-            ->contains(fn (array $cat) => ($cat['parent_key'] ?? null) === $categoryKey);
+            ->contains(fn (array $cat) => in_array(self::normalizeCategoryKey((string) ($cat['parent_key'] ?? '')), $aliases, true));
     }
 
     /**
@@ -58,17 +95,60 @@ class ConsultationWhatsAppService
             return [];
         }
 
+        $aliases = self::categoryAliases($categoryKey);
+        $canonicalKey = self::normalizeCategoryKey($categoryKey);
+
+        // Auto-sync approved Nakes users from users table
+        $nakesUsers = User::query()
+            ->whereIn('provider_key', ['dokter', 'perawat'])
+            ->where('is_approved', true)
+            ->get();
+
+        foreach ($nakesUsers as $nakes) {
+            ConsultationProvider::syncFromUser($nakes);
+        }
+
         $result = [];
 
         if (ConsultationProvider::tableReady()) {
             $models = ConsultationProvider::query()
-                ->where('category_key', $categoryKey)
                 ->where('active', true)
+                ->where(function ($query) use ($aliases, $canonicalKey) {
+                    $query->whereIn('category_key', $aliases);
+
+                    if ($canonicalKey === 'perawat') {
+                        $query->orWhere('category_key', 'perawat')
+                            ->orWhere('specialty', 'like', '%perawat%')
+                            ->orWhere('specialty', 'like', '%ners%');
+                    } elseif ($canonicalKey === 'dokter_umum') {
+                        $query->orWhere('category_key', 'dokter_umum')
+                            ->orWhere('category_key', 'dokter');
+                    } elseif ($canonicalKey === 'penyakit_dalam') {
+                        $query->orWhere('category_key', 'penyakit_dalam')
+                            ->orWhere('specialty', 'like', '%spesialis%')
+                            ->orWhere('specialty', 'like', '%Sp.%');
+                    }
+                })
                 ->orderBy('sort_order')
                 ->orderBy('short_name')
                 ->get();
 
             foreach ($models as $model) {
+                $isPerawat = \Illuminate\Support\Str::contains(strtolower($model->specialty ?? ''), ['perawat', 'ners']) || $model->category_key === 'perawat';
+                $isSp = \Illuminate\Support\Str::contains(strtolower($model->name), ['sp.', 'spesialis']) || \Illuminate\Support\Str::contains(strtolower($model->specialty ?? ''), ['sp.', 'spesialis']);
+
+                if ($canonicalKey === 'perawat' && ! $isPerawat) {
+                    continue;
+                }
+
+                if ($canonicalKey === 'dokter_umum' && ($isPerawat || $isSp)) {
+                    continue;
+                }
+
+                if ($canonicalKey === 'penyakit_dalam' && ! $isSp && $model->category_key !== 'penyakit_dalam') {
+                    continue;
+                }
+
                 $price = $access->priceFor($model->key);
 
                 $result[] = [
@@ -83,39 +163,6 @@ class ConsultationWhatsAppService
                     'price_label' => $access->formatRupiah($price),
                 ];
             }
-        }
-
-        if ($result !== []) {
-            return $result;
-        }
-
-        $providers = config('consultation.providers', []);
-
-        foreach ($providers as $key => $provider) {
-            if (! is_array($provider) || ! ($provider['active'] ?? false)) {
-                continue;
-            }
-
-            $providerCategory = (string) ($provider['category'] ?? $key);
-
-            if ($providerCategory !== $categoryKey) {
-                continue;
-            }
-
-            $price = $access->priceFor($key);
-            $photo = (string) ($provider['photo'] ?? 'images/avatars/male.svg');
-
-            $result[] = [
-                'key' => $key,
-                'name' => (string) ($provider['name'] ?? ''),
-                'short_name' => (string) ($provider['short_name'] ?? $provider['name'] ?? ''),
-                'specialty' => (string) ($provider['specialty'] ?? $provider['title'] ?? ''),
-                'experience_years' => isset($provider['experience_years']) ? (int) $provider['experience_years'] : null,
-                'rating_percent' => isset($provider['rating_percent']) ? (int) $provider['rating_percent'] : null,
-                'photo' => str_starts_with($photo, 'http') ? $photo : '/'.ltrim($photo, '/'),
-                'price' => $price,
-                'price_label' => $access->formatRupiah($price),
-            ];
         }
 
         return $result;
