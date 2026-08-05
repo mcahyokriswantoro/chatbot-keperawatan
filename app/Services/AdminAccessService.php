@@ -72,6 +72,10 @@ class AdminAccessService
             'email_verified_at' => $user->email_verified_at ?? now(),
         ]);
 
+        if (in_array($providerKey, ['dokter', 'perawat'], true)) {
+            \App\Models\ConsultationProvider::syncFromUser($user);
+        }
+
         return $user->fresh();
     }
 
@@ -81,6 +85,10 @@ class AdminAccessService
             'is_approved' => true,
             'email_verified_at' => $user->email_verified_at ?? now(),
         ]);
+
+        if (in_array($user->provider_key, ['dokter', 'perawat'], true)) {
+            \App\Models\ConsultationProvider::syncFromUser($user);
+        }
     }
 
     public function rejectProvider(User $user): void

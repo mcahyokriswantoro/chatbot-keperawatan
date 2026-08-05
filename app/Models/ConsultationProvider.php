@@ -184,4 +184,55 @@ class ConsultationProvider extends Model
 
         return '62'.$digits;
     }
+
+    public static function syncFromUser(User $user): ?self
+    {
+        if (! self::tableReady() || ! $user->provider_key || ! in_array($user->provider_key, ['dokter', 'perawat'], true)) {
+            return null;
+        }
+
+        $slugKey = Str::slug($user->provider_key.'-'.$user->name);
+        $provider = self::query()
+            ->where('key', $user->provider_key)
+            ->orWhere('key', $slugKey)
+            ->orWhere('name', $user->name)
+            ->orWhere('whatsapp', $user->phone)
+            ->first();
+
+        $categoryKey = $user->provider_key === 'dokter' ? 'dokter-umum' : 'perawat-ners';
+
+        if ($provider) {
+            $provider->update([
+                'name' => $user->name,
+                'short_name' => $user->name,
+                'whatsapp' => $user->phone ?? $provider->whatsapp,
+                'whatsapp_intl' => self::normalizeWhatsappIntl($user->phone ?? $provider->whatsapp),
+                'specialty' => $user->occupation ?? $provider->specialty,
+                'photo' => $user->profile_photo ?? $provider->photo,
+            ]);
+
+            return $provider;
+        }
+
+        $key = self::generateKey($user->name, $user->provider_key);
+
+        return self::create([
+            'key' => $key,
+            'category_key' => $categoryKey,
+            'active' => true,
+            'name' => $user->name,
+            'short_name' => $user->name,
+            'title' => $user->provider_key === 'dokter' ? 'Dokter Spesialis / Umum' : 'Perawat (Ners)',
+            'specialty' => $user->occupation ?? ($user->provider_key === 'dokter' ? 'Dokter' : 'Perawat'),
+            'experience_years' => 5,
+            'rating_percent' => 100,
+            'price' => 0,
+            'icon' => $user->provider_key === 'dokter' ? '🩺' : '👩‍⚕️',
+            'whatsapp' => $user->phone ?? '081234567890',
+            'whatsapp_intl' => self::normalizeWhatsappIntl($user->phone ?? '081234567890'),
+            'greeting' => "Halo! Saya {$user->name}. Ada yang bisa saya bantu terkait keluhan kesehatan Anda?",
+            'sort_order' => 1,
+            'photo' => $user->profile_photo,
+        ]);
+    }
 }

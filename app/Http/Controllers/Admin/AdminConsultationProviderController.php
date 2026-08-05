@@ -24,6 +24,16 @@ class AdminConsultationProviderController extends Controller
             ]);
         }
 
+        // Auto-sync approved Dokter & Perawat users into ConsultationProvider table
+        $nakesUsers = \App\Models\User::query()
+            ->whereIn('provider_key', ['dokter', 'perawat'])
+            ->where('is_approved', true)
+            ->get();
+
+        foreach ($nakesUsers as $nakes) {
+            ConsultationProvider::syncFromUser($nakes);
+        }
+
         $providers = ConsultationProvider::query()
             ->orderBy('category_key')
             ->orderBy('sort_order')
