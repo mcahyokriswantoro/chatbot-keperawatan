@@ -46,6 +46,14 @@ class MedicineController extends Controller
         $cart = session()->get('medicine_cart', []);
         $cartCount = array_sum($cart);
 
+        $activeMedicineOrders = auth()->check()
+            ? MedicineOrder::where('user_id', auth()->id())
+                ->whereIn('status', ['pending', 'paid', 'delivered', 'rejected'])
+                ->latest()
+                ->take(3)
+                ->get()
+            : collect();
+
         return view('medicines.index', [
             'medicines' => $medicines,
             'categories' => $categories,
@@ -53,6 +61,7 @@ class MedicineController extends Controller
             'currentPharmacy' => $pharmacy,
             'search' => $search,
             'cartCount' => $cartCount,
+            'activeMedicineOrders' => $activeMedicineOrders,
         ]);
     }
 

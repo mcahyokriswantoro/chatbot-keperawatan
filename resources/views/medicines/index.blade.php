@@ -32,6 +32,37 @@
         </div>
     @endif
 
+    {{-- Active Medicine Orders Tracker Banner --}}
+    @if (!empty($activeMedicineOrders) && $activeMedicineOrders->count() > 0)
+        <div class="space-y-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Pesanan Obat Aktif Saya</h2>
+            @foreach ($activeMedicineOrders as $mOrder)
+                <a href="{{ route('medicines.status', $mOrder) }}" class="flex items-center justify-between gap-3 rounded-2xl border border-[#00529c]/20 bg-gradient-to-r from-[#00529c]/5 via-white to-blue-50/40 p-3.5 shadow-sm transition hover:scale-[1.01] active:scale-[0.99]">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#00529c] text-white text-base shadow-sm">📦</span>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-900 truncate">{{ $mOrder->reference_code }}</p>
+                            <p class="text-[11px] text-slate-600 truncate">
+                                @if ($mOrder->isPaid())
+                                    <span class="font-semibold text-emerald-700">✅ Disetujui (Lunas - Siap Kirim)</span>
+                                @elseif ($mOrder->isDelivered())
+                                    <span class="font-semibold text-sky-700">🛵 Sedang Dalam Pengiriman</span>
+                                @elseif ($mOrder->isRejected())
+                                    <span class="font-semibold text-rose-600">❌ Pembayaran Ditolak</span>
+                                @else
+                                    <span class="font-semibold text-amber-700">⏳ Menunggu Verifikasi Pembayaran</span>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <span class="shrink-0 rounded-full bg-[#00529c] px-3 py-1 text-[10px] font-bold text-white shadow-xs">
+                        Lacak Status →
+                    </span>
+                </a>
+            @endforeach
+        </div>
+    @endif
+
     {{-- Search Bar --}}
     <form method="GET" action="{{ route('medicines.index') }}" class="relative">
         @if ($currentCategory)

@@ -17,8 +17,17 @@ class HomecareController extends Controller
     {
         $packages = HomecarePackage::where('active', true)->orderBy('price')->get();
 
+        $activeHomecareBookings = auth()->check()
+            ? HomecareBooking::where('user_id', auth()->id())
+                ->whereIn('status', ['pending', 'paid', 'completed', 'rejected'])
+                ->latest()
+                ->take(3)
+                ->get()
+            : collect();
+
         return view('homecare.index', [
             'packages' => $packages,
+            'activeHomecareBookings' => $activeHomecareBookings,
         ]);
     }
 

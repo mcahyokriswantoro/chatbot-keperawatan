@@ -29,6 +29,37 @@
         </div>
     </div>
 
+    {{-- Active Homecare Bookings Tracker Banner --}}
+    @if (!empty($activeHomecareBookings) && $activeHomecareBookings->count() > 0)
+        <div class="space-y-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Booking Homecare Aktif Saya</h2>
+            @foreach ($activeHomecareBookings as $hBooking)
+                <a href="{{ route('homecare.status', $hBooking) }}" class="flex items-center justify-between gap-3 rounded-2xl border border-[#00529c]/20 bg-gradient-to-r from-[#00529c]/5 via-white to-blue-50/40 p-3.5 shadow-sm transition hover:scale-[1.01] active:scale-[0.99]">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#00529c] text-white text-base shadow-sm">🏠</span>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-900 truncate">{{ $hBooking->reference_code }} — {{ $hBooking->package->name ?? 'Homecare' }}</p>
+                            <p class="text-[11px] text-slate-600 truncate">
+                                @if ($hBooking->isPaid())
+                                    <span class="font-semibold text-emerald-700">🗓️ Disetujui (Jadwal Terkonfirmasi)</span>
+                                @elseif ($hBooking->isCompleted())
+                                    <span class="font-semibold text-sky-700">✅ Kunjungan Selesai</span>
+                                @elseif ($hBooking->isRejected())
+                                    <span class="font-semibold text-rose-600">❌ Booking Ditolak</span>
+                                @else
+                                    <span class="font-semibold text-amber-700">⏳ Menunggu Verifikasi Pembayaran</span>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <span class="shrink-0 rounded-full bg-[#00529c] px-3 py-1 text-[10px] font-bold text-white shadow-xs">
+                        Lihat Status →
+                    </span>
+                </a>
+            @endforeach
+        </div>
+    @endif
+
     {{-- Package List --}}
     <div class="space-y-3">
         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Pilih Paket Layanan</h2>
