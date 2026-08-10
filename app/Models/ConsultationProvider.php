@@ -214,15 +214,14 @@ class ConsultationProvider extends Model
 
         if ($provider) {
             $provider->update([
-                'active' => true,
-                'category_key' => $categoryKey,
+                'category_key' => $provider->category_key ?: $categoryKey,
                 'name' => $user->name,
-                'short_name' => $user->name,
+                'short_name' => $provider->short_name ?: $user->name,
                 'whatsapp' => $user->phone ?? $provider->whatsapp,
                 'whatsapp_intl' => self::normalizeWhatsappIntl($user->phone ?? $provider->whatsapp),
                 'specialty' => $user->occupation ?? $provider->specialty,
                 'photo' => $user->profile_photo ?? $provider->photo,
-                'price' => $price,
+                'price' => $provider->price ?? $price,
             ]);
 
             return $provider;
