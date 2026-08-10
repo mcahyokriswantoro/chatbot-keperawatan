@@ -198,7 +198,7 @@
             @endif
             <div class="border-t border-slate-100 pt-2.5">
                 <div class="flex justify-between gap-3">
-                    <dt class="text-slate-500">Biaya Administrasi</dt>
+                    <dt class="text-slate-500">Biaya Layanan</dt>
                     <dd class="font-semibold text-slate-900">Rp {{ number_format(($order->shipping_fee ?? 0) + ($order->service_fee ?? 0), 0, ',', '.') }}</dd>
                 </div>
             </div>

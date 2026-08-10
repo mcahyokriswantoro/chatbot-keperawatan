@@ -352,7 +352,7 @@
                     </div>
                     <div>
                         <div class="flex justify-between text-slate-500">
-                            <span>Biaya Administrasi</span>
+                            <span>Biaya Layanan</span>
                             <span class="font-semibold text-slate-800" x-text="formatRupiah(shippingFee + serviceFee)">Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>
                         </div>
                     </div>
