@@ -195,6 +195,7 @@
                 <dt class="text-slate-500">Jarak Pengantaran</dt>
                 <dd class="font-semibold text-slate-800">{{ $order->distance_km }} km</dd>
             </div>
+            @endif
             <div class="border-t border-slate-100 pt-2.5">
                 <div class="flex justify-between gap-3">
                     <dt class="text-slate-500">Biaya Administrasi</dt>
