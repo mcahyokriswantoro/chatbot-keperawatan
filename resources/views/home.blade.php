@@ -118,33 +118,6 @@
         </a>
     </div>
 
-    {{-- Active Orders / Bookings Tracking Banner on Home --}}
-    @if (!empty($activeOrders))
-        <section class="space-y-2.5">
-            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                🔔 Status Layanan & Pesanan Aktif
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                @foreach ($activeOrders as $ao)
-                    <a href="{{ $ao['url'] }}" class="flex items-center justify-between gap-3 rounded-2xl border border-brand-100 bg-gradient-to-r from-brand-50/40 via-white to-blue-50/30 p-3.5 shadow-sm transition hover:scale-[1.01] active:scale-[0.99]">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white text-lg shadow-sm">
-                                {{ $ao['icon'] }}
-                            </span>
-                            <div class="min-w-0">
-                                <h3 class="text-xs font-bold text-slate-900 truncate">{{ $ao['title'] }}</h3>
-                                <p class="text-[11px] font-semibold text-slate-600 truncate mt-0.5">{{ $ao['status'] }}</p>
-                            </div>
-                        </div>
-                        <span class="shrink-0 rounded-full bg-brand-600 px-3 py-1.5 text-[9px] font-bold text-white shadow-xs">
-                            Lacak →
-                        </span>
-                    </a>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
     {{-- Fitur Unggulan --}}
     <section>
         <h2 class="mb-3 text-base font-bold text-slate-900">Fitur Unggulan</h2>
