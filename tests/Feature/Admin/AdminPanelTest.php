@@ -30,7 +30,7 @@ class AdminPanelTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.dashboard'))
             ->assertOk()
-            ->assertSee('Dashboard Admin');
+            ->assertSee('Dashboard Hasil Skrining');
 
         $this->actingAs($admin)->get(route('admin.users.index'))->assertOk();
         $this->actingAs($admin)->get(route('admin.screenings.index'))->assertOk();
@@ -46,7 +46,7 @@ class AdminPanelTest extends TestCase
 
         $this->post(route('login'), [
             'login_method' => 'email',
-            'email' => $admin->email,
+            'login' => $admin->email,
             'password' => 'password',
         ])->assertRedirect(route('admin.dashboard'));
     }
@@ -67,5 +67,22 @@ class AdminPanelTest extends TestCase
             ->get(route('admin.screenings.show', $session))
             ->assertOk()
             ->assertSee('Test summary');
+    }
+
+    public function test_admin_can_toggle_free_consultation_mode(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.consultations.toggle-free', 'perawat'))
+            ->assertRedirect();
+
+        $this->assertSame('1', \App\Models\Setting::getValue('consultation_free_perawat'));
+
+        $this->actingAs($admin)
+            ->post(route('admin.consultations.toggle-free', 'perawat'))
+            ->assertRedirect();
+
+        $this->assertSame('0', \App\Models\Setting::getValue('consultation_free_perawat'));
     }
 }

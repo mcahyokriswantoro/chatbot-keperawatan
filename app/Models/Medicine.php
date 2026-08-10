@@ -13,12 +13,18 @@ class Medicine extends Model
     protected $fillable = [
         'name',
         'category',
+        'pharmacy_name',
         'price',
         'stock',
         'description',
         'photo',
         'active',
     ];
+
+    public function pharmacyLabel(): string
+    {
+        return $this->pharmacy_name ?: 'Semua Apotek';
+    }
 
     protected $casts = [
         'price' => 'integer',

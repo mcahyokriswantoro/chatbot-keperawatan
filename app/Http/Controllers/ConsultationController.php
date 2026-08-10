@@ -22,9 +22,11 @@ class ConsultationController extends Controller
     public function index(): View
     {
         $categories = $this->categoriesForDisplay();
+        $isFree = \App\Models\Setting::getValue('consultation_is_free', '0') === '1';
 
         return view('consultation.index', [
             'categories' => $categories,
+            'isFree' => $isFree,
             'otherDoctors' => collect($categories)
                 ->filter(fn (array $cat) => ! ($cat['active'] ?? false)
                     && ($cat['primary'] ?? false)
@@ -75,10 +77,13 @@ class ConsultationController extends Controller
             ]);
         }
 
+        $isFree = \App\Models\Setting::getValue('consultation_is_free', '0') === '1';
+
         return view('consultation.providers', [
             'categoryKey' => $category,
             'category' => $meta,
             'providers' => $providers,
+            'isFree' => $isFree,
             'sessionHours' => $this->access->sessionHours(),
         ]);
     }

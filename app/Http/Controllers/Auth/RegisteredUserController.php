@@ -79,6 +79,14 @@ class RegisteredUserController extends Controller
 
         $user = User::create($userData);
 
+        if ($user->provider_key === 'apotek') {
+            $key = str_contains(strtolower($user->name), '2') ? 'umla_farma2_phone' : 'umla_farma1_phone';
+            \App\Models\Setting::setValue($key, $user->phone);
+        } elseif ($user->provider_key === 'homecare') {
+            $key = str_contains(strtolower($user->name), '2') ? 'medical_center2_phone' : 'medical_center1_phone';
+            \App\Models\Setting::setValue($key, $user->phone);
+        }
+
         try {
             event(new Registered($user));
         } catch (\Throwable $e) {

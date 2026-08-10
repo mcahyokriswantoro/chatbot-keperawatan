@@ -12,6 +12,43 @@
 
     @include('admin.partials.consultation-tabs')
 
+    @php
+        $categoriesList = config('consultation.categories', []);
+    @endphp
+
+    <div class="mb-4 space-y-2">
+        <p class="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Pengaturan Status Biaya Per Kategori / Peran:</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            @foreach ($categoriesList as $cat)
+                @php
+                    $isCatFree = \App\Models\Setting::getValue("consultation_free_{$cat['key']}", '0') === '1' || \App\Models\Setting::getValue('consultation_is_free', '0') === '1';
+                @endphp
+                <div class="flex flex-col justify-between gap-3 rounded-2xl border p-4 shadow-sm transition {{ $isCatFree ? 'border-emerald-200 bg-emerald-50/80' : 'border-amber-200 bg-amber-50/80' }}">
+                    <div class="flex items-start gap-3">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl {{ $isCatFree ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }} text-xl">
+                            {{ $cat['icon'] ?? ($isCatFree ? '🎁' : '💳') }}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs font-bold text-slate-900 truncate">{{ $cat['label'] }}</p>
+                            <p class="text-[11px] font-bold mt-0.5 {{ $isCatFree ? 'text-emerald-700' : 'text-amber-700' }}">
+                                {{ $isCatFree ? 'GRATIS 100%' : 'HARUS BAYAR (BERBAYAR)' }}
+                            </p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">
+                                {{ $isCatFree ? 'Pasien gratis tanpa biaya.' : 'Pasien wajib bayar / voucher.' }}
+                            </p>
+                        </div>
+                    </div>
+                    <form action="{{ route('admin.consultations.toggle-free', $cat['key']) }}" method="POST" class="mt-1">
+                        @csrf
+                        <button type="submit" class="w-full rounded-xl px-3 py-2 text-xs font-bold text-white shadow-sm transition {{ $isCatFree ? 'bg-amber-600 hover:bg-amber-500' : 'bg-emerald-600 hover:bg-emerald-500' }}">
+                            {{ $isCatFree ? 'Ubah ke Harus Bayar' : 'Ubah ke Gratis 100%' }}
+                        </button>
+                    </form>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
     <div class="mb-4 grid grid-cols-3 gap-2">
         <div class="rounded-xl bg-amber-50 px-3 py-2.5 text-center ring-1 ring-amber-100">
             <p class="text-xl font-bold text-amber-700">{{ $pendingCount }}</p>

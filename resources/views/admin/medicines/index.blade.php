@@ -67,6 +67,23 @@
             </form>
         </section>
 
+        {{-- Pharmacy Filter Bar --}}
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
+            <span class="text-[10px] font-bold text-slate-400 uppercase mr-1">Filter Mitra:</span>
+            @foreach (['all' => 'Semua Mitra', 'UMLA FARMA 1' => 'UMLA FARMA 1', 'UMLA FARMA 2' => 'UMLA FARMA 2'] as $pKey => $pLabel)
+                <a
+                    href="{{ route('admin.medicines.index', array_merge(request()->query(), ['pharmacy' => $pKey])) }}"
+                    @class([
+                        'shrink-0 rounded-full px-3 py-1 text-[10px] font-bold transition shadow-sm',
+                        'bg-emerald-600 text-white' => ($pharmacy ?? 'all') === $pKey,
+                        'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50' => ($pharmacy ?? 'all') !== $pKey,
+                    ])
+                >
+                    {{ $pLabel }}
+                </a>
+            @endforeach
+        </div>
+
         <div class="flex items-center justify-between">
             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Total: {{ $medicines->count() }} Obat</h2>
             <a
@@ -86,8 +103,9 @@
                         </div>
                         <div class="min-w-0">
                             <h3 class="truncate text-xs font-bold text-slate-800 leading-snug">{{ $med->name }}</h3>
-                            <div class="flex items-center gap-2 mt-0.5">
+                            <div class="flex flex-wrap items-center gap-1.5 mt-1">
                                 <span class="text-[9px] font-bold text-[#00529c] bg-[#00529c]/5 px-1 rounded">{{ $med->category }}</span>
+                                <span class="text-[9px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">🏥 {{ $med->pharmacyLabel() }}</span>
                                 <span class="text-[10px] text-slate-500 font-medium">Stok: {{ $med->stock }}</span>
                                 @if (!$med->active)
                                     <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-1 rounded uppercase">Nonaktif</span>

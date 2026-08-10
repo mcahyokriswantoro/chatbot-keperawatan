@@ -20,6 +20,7 @@ class MedicineController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
         $category = trim((string) $request->query('category', ''));
+        $pharmacy = trim((string) $request->query('pharmacy', ''));
 
         $query = Medicine::query()->where('active', true);
 
@@ -29,6 +30,14 @@ class MedicineController extends Controller
 
         if ($category !== '') {
             $query->where('category', $category);
+        }
+
+        if ($pharmacy !== '' && $pharmacy !== 'all') {
+            $query->where(function ($q) use ($pharmacy) {
+                $q->where('pharmacy_name', $pharmacy)
+                  ->orWhere('pharmacy_name', 'Semua Apotek')
+                  ->orWhereNull('pharmacy_name');
+            });
         }
 
         $medicines = $query->orderBy('name')->get();
@@ -41,6 +50,7 @@ class MedicineController extends Controller
             'medicines' => $medicines,
             'categories' => $categories,
             'currentCategory' => $category,
+            'currentPharmacy' => $pharmacy,
             'search' => $search,
             'cartCount' => $cartCount,
         ]);

@@ -61,9 +61,13 @@
 
     {{-- Info singkat --}}
     <div class="flex gap-2 overflow-x-auto pb-0.5">
-        <span class="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-semibold text-emerald-700">Chat berbayar</span>
-        <span class="shrink-0 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-[10px] font-semibold text-violet-700">Voucher diskon</span>
-        <span class="shrink-0 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-[10px] font-semibold text-sky-700">Bayar DANA</span>
+        @if ($isFree ?? false)
+            <span class="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-semibold text-emerald-700">🎁 Gratis Konsultasi</span>
+        @else
+            <span class="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-semibold text-amber-800">💳 Chat Berbayar</span>
+            <span class="shrink-0 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-[10px] font-semibold text-violet-700">Voucher diskon</span>
+            <span class="shrink-0 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-[10px] font-semibold text-sky-700">Bayar DANA</span>
+        @endif
         <span class="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold text-slate-600">Sesi {{ $sessionHours }} jam</span>
     </div>
 

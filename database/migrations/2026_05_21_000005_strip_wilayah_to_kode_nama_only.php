@@ -57,6 +57,10 @@ return new class extends Migration
 
     private function foreignKeyExists(string $table, string $name): bool
     {
+        if (DB::getDriverName() !== 'mysql') {
+            return false;
+        }
+
         $database = Schema::getConnection()->getDatabaseName();
 
         return DB::table('information_schema.TABLE_CONSTRAINTS')
@@ -69,6 +73,17 @@ return new class extends Migration
 
     private function dropIndexIfExists(string $table, string $name): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            try {
+                Schema::table($table, function (Blueprint $blueprint) use ($name) {
+                    $blueprint->dropIndex($name);
+                });
+            } catch (\Throwable $e) {
+                // Ignore if index does not exist in non-mysql database
+            }
+            return;
+        }
+
         $database = Schema::getConnection()->getDatabaseName();
 
         $exists = DB::table('information_schema.STATISTICS')

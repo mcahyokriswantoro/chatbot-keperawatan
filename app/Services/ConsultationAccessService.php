@@ -19,10 +19,29 @@ class ConsultationAccessService
         private OrderWhatsAppNotifier $orderNotifier,
     ) {}
 
+    public function isCategoryFree(string $categoryKey): bool
+    {
+        if (\App\Models\Setting::getValue('consultation_is_free', '0') === '1') {
+            return true;
+        }
+
+        return \App\Models\Setting::getValue("consultation_free_{$categoryKey}", '0') === '1';
+    }
+
     public function priceFor(string $providerKey): int
     {
+        $categoryKey = $providerKey;
+
         if (ConsultationProvider::tableReady()) {
             $model = ConsultationProvider::query()->where('key', $providerKey)->first();
+
+            if ($model?->category_key) {
+                $categoryKey = $model->category_key;
+            }
+
+            if ($this->isCategoryFree($categoryKey) || $this->isCategoryFree($providerKey)) {
+                return 0;
+            }
 
             if ($model?->price) {
                 return (int) $model->price;
@@ -30,6 +49,10 @@ class ConsultationAccessService
 
             if ($model?->category_key) {
                 return (int) config("consultation.pricing.{$model->category_key}", config('consultation.pricing.default', 25000));
+            }
+        } else {
+            if ($this->isCategoryFree($providerKey)) {
+                return 0;
             }
         }
 
@@ -334,6 +357,10 @@ class ConsultationAccessService
 
     public function formatRupiah(int $amount): string
     {
+        if ($amount === 0) {
+            return 'Gratis';
+        }
+
         return 'Rp '.number_format($amount, 0, ',', '.');
     }
 }

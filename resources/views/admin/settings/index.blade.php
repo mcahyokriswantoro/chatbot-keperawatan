@@ -24,14 +24,51 @@
         <form action="{{ route('admin.settings.update') }}" method="POST" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
             @csrf
 
-            <div class="p-6 border-b border-slate-100">
-                <h2 class="text-lg font-bold text-slate-800">Nomor WhatsApp Notifikasi</h2>
+            <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+                <h2 class="text-lg font-bold text-slate-800">Status & Biaya Konsultasi</h2>
                 <p class="mt-1 text-sm text-slate-500">
-                    Sistem akan mengirimkan pesan notifikasi pesanan dan booking baru ke nomor-nomor di bawah ini.
+                    Tentukan kapan layanan konsultasi chat dapat diakses secara **Gratis** atau **Harus Bayar**.
                 </p>
             </div>
 
             <div class="p-6 space-y-6">
+                <!-- Status Konsultasi Breakdown Per Kategori -->
+                @php
+                    $categoriesConfig = config('consultation.categories', []);
+                @endphp
+
+                <div class="space-y-4">
+                    <label class="block text-sm font-bold text-slate-900">Mode Biaya Konsultasi Per Kategori / Peran</label>
+                    <div class="space-y-3">
+                        @foreach ($categoriesConfig as $cat)
+                            @php
+                                $keyName = "consultation_free_{$cat['key']}";
+                                $currentVal = old($keyName, $settings[$keyName] ?? '0');
+                            @endphp
+                            <div class="rounded-2xl border border-slate-200 p-4 bg-slate-50/50">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-xl">{{ $cat['icon'] ?? '👨‍⚕️' }}</span>
+                                    <span class="text-sm font-bold text-slate-900">{{ $cat['label'] }}</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <label class="flex items-center gap-2.5 rounded-xl border p-3 cursor-pointer transition {{ $currentVal == '0' ? 'border-brand-500 bg-brand-50/30 ring-1 ring-brand-500/20' : 'border-slate-200 bg-white' }}">
+                                        <input type="radio" name="{{ $keyName }}" value="0" {{ $currentVal == '0' ? 'checked' : '' }} class="text-brand-600 focus:ring-brand-500">
+                                        <span class="text-xs font-bold text-slate-800">💳 Harus Bayar (Berbayar)</span>
+                                    </label>
+                                    <label class="flex items-center gap-2.5 rounded-xl border p-3 cursor-pointer transition {{ $currentVal == '1' ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500/20' : 'border-slate-200 bg-white' }}">
+                                        <input type="radio" name="{{ $keyName }}" value="1" {{ $currentVal == '1' ? 'checked' : '' }} class="text-emerald-600 focus:ring-emerald-500">
+                                        <span class="text-xs font-bold text-slate-800">🎁 Gratis 100%</span>
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <hr class="border-slate-100">
+
+                <h3 class="text-md font-semibold text-slate-800">Nomor WhatsApp Notifikasi</h3>
+
                 <!-- Admin -->
                 <div>
                     <label for="order_admin_phone" class="block text-sm font-medium leading-6 text-slate-900">Admin Utama (Penerima Semua Notif Baru)</label>
@@ -52,6 +89,7 @@
                         <label for="umla_farma1_phone" class="block text-sm font-medium leading-6 text-slate-900">UMLA FARMA 1 (Kampus 1)</label>
                         <div class="mt-2">
                             <input type="tel" name="umla_farma1_phone" id="umla_farma1_phone" value="{{ old('umla_farma1_phone', $settings['umla_farma1_phone']) }}" required class="block w-full rounded-xl border-0 py-2.5 px-3.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-sm sm:leading-6">
+                            <p class="mt-1 text-[10px] text-slate-400">🔄 Sinkronisasi otomatis dengan profil akun mitra Apotek 1. Admin & mitra dapat mengubahnya kapan saja.</p>
                             @error('umla_farma1_phone')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -61,6 +99,7 @@
                         <label for="umla_farma2_phone" class="block text-sm font-medium leading-6 text-slate-900">UMLA FARMA 2 (Kembangbahu)</label>
                         <div class="mt-2">
                             <input type="tel" name="umla_farma2_phone" id="umla_farma2_phone" value="{{ old('umla_farma2_phone', $settings['umla_farma2_phone']) }}" required class="block w-full rounded-xl border-0 py-2.5 px-3.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-sm sm:leading-6">
+                            <p class="mt-1 text-[10px] text-slate-400">🔄 Sinkronisasi otomatis dengan profil akun mitra Apotek 2. Admin & mitra dapat mengubahnya kapan saja.</p>
                             @error('umla_farma2_phone')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -77,6 +116,7 @@
                         <label for="medical_center1_phone" class="block text-sm font-medium leading-6 text-slate-900">Medical Center UMLA 1 (Plosowahyu)</label>
                         <div class="mt-2">
                             <input type="tel" name="medical_center1_phone" id="medical_center1_phone" value="{{ old('medical_center1_phone', $settings['medical_center1_phone']) }}" required class="block w-full rounded-xl border-0 py-2.5 px-3.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-sm sm:leading-6">
+                            <p class="mt-1 text-[10px] text-slate-400">🔄 Sinkronisasi otomatis dengan profil akun mitra Homecare 1. Admin & mitra dapat mengubahnya kapan saja.</p>
                             @error('medical_center1_phone')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -86,6 +126,7 @@
                         <label for="medical_center2_phone" class="block text-sm font-medium leading-6 text-slate-900">Medical Center UMLA 2 (Paciran)</label>
                         <div class="mt-2">
                             <input type="tel" name="medical_center2_phone" id="medical_center2_phone" value="{{ old('medical_center2_phone', $settings['medical_center2_phone']) }}" required class="block w-full rounded-xl border-0 py-2.5 px-3.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-sm sm:leading-6">
+                            <p class="mt-1 text-[10px] text-slate-400">🔄 Sinkronisasi otomatis dengan profil akun mitra Homecare 2. Admin & mitra dapat mengubahnya kapan saja.</p>
                             @error('medical_center2_phone')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror

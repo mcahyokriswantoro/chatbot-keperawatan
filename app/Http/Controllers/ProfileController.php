@@ -51,6 +51,15 @@ class ProfileController extends Controller
 
         $user->save();
 
+        // Sinkronisasi otomatis ke Setting jika user adalah Mitra (apotek/homecare)
+        if ($user->provider_key === 'apotek') {
+            $settingKey = str_contains(strtolower($user->name), '2') ? 'umla_farma2_phone' : 'umla_farma1_phone';
+            \App\Models\Setting::setValue($settingKey, $user->phone);
+        } elseif ($user->provider_key === 'homecare') {
+            $settingKey = str_contains(strtolower($user->name), '2') ? 'medical_center2_phone' : 'medical_center1_phone';
+            \App\Models\Setting::setValue($settingKey, $user->phone);
+        }
+
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 

@@ -51,21 +51,38 @@
         </div>
     </form>
 
+    {{-- Pharmacy Partner Filter --}}
+    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1">Apotek Mitra:</span>
+        @foreach (['' => 'Semua Mitra', 'UMLA FARMA 1' => 'UMLA FARMA 1', 'UMLA FARMA 2' => 'UMLA FARMA 2'] as $pKey => $pLabel)
+            <a
+                href="{{ route('medicines.index', array_filter(['pharmacy' => $pKey, 'category' => $currentCategory, 'q' => $search])) }}"
+                @class([
+                    'shrink-0 rounded-full px-3 py-1 text-[10px] font-bold transition shadow-sm',
+                    'bg-emerald-600 text-white' => ($currentPharmacy ?? '') === $pKey,
+                    'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50' => ($currentPharmacy ?? '') !== $pKey,
+                ])
+            >
+                {{ $pLabel }}
+            </a>
+        @endforeach
+    </div>
+
     {{-- Categories --}}
     <div class="flex gap-1.5 overflow-x-auto pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0">
         <a
-            href="{{ route('medicines.index', array_filter(['q' => $search])) }}"
+            href="{{ route('medicines.index', array_filter(['pharmacy' => $currentPharmacy, 'q' => $search])) }}"
             @class([
                 'shrink-0 rounded-full px-4 py-2 text-xs font-bold transition shadow-sm',
                 'bg-[#00529c] text-white' => !$currentCategory,
                 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50' => $currentCategory,
             ])
         >
-            Semua
+            Semua Kategori
         </a>
         @foreach ($categories as $cat)
             <a
-                href="{{ route('medicines.index', array_filter(['category' => $cat, 'q' => $search])) }}"
+                href="{{ route('medicines.index', array_filter(['category' => $cat, 'pharmacy' => $currentPharmacy, 'q' => $search])) }}"
                 @class([
                     'shrink-0 rounded-full px-4 py-2 text-xs font-bold transition shadow-sm',
                     'bg-[#00529c] text-white' => $currentCategory === $cat,
@@ -95,7 +112,7 @@
                 </div>
 
                 <div class="flex-1 flex flex-col min-w-0">
-                    <div class="mb-1">
+                    <div class="mb-1 flex flex-wrap gap-1">
                         <span @class([
                             'rounded-md px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider',
                             'bg-emerald-50 text-emerald-700' => $med->category === 'Obat Bebas',
@@ -104,6 +121,9 @@
                             'bg-slate-100 text-slate-700' => !in_array($med->category, ['Obat Bebas', 'Vitamin & Suplemen', 'Obat Keras']),
                         ])>
                             {{ $med->category }}
+                        </span>
+                        <span class="rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200/60 px-1.5 py-0.5 text-[8px] font-bold">
+                            📍 {{ $med->pharmacyLabel() }}
                         </span>
                     </div>
 

@@ -19,8 +19,19 @@ class AdminMedicineController extends Controller
     public function index(Request $request): View
     {
         $status = $request->query('status', 'all');
+        $pharmacy = $request->query('pharmacy', 'all');
 
-        $medicines = Medicine::orderBy('category')->orderBy('name')->get();
+        $medicinesQuery = Medicine::query();
+
+        if ($pharmacy !== 'all') {
+            $medicinesQuery->where(function ($q) use ($pharmacy) {
+                $q->where('pharmacy_name', $pharmacy)
+                  ->orWhere('pharmacy_name', 'Semua Apotek')
+                  ->orWhereNull('pharmacy_name');
+            });
+        }
+
+        $medicines = $medicinesQuery->orderBy('category')->orderBy('name')->get();
 
         $ordersQuery = MedicineOrder::with(['user', 'items.medicine'])->latest();
         if ($status !== 'all') {
@@ -39,6 +50,7 @@ class AdminMedicineController extends Controller
             'medicines' => $medicines,
             'orders' => $orders,
             'status' => $status,
+            'pharmacy' => $pharmacy,
             'pendingCount' => $pendingCount,
             'paidCount' => $paidCount,
             'deliveredCount' => $deliveredCount,
@@ -52,6 +64,7 @@ class AdminMedicineController extends Controller
         return view('admin.medicines.form', [
             'medicine' => new Medicine(),
             'isEdit' => false,
+            'pharmacies' => ['Semua Apotek', 'UMLA FARMA 1', 'UMLA FARMA 2'],
         ]);
     }
 
@@ -60,6 +73,7 @@ class AdminMedicineController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:100'],
+            'pharmacy_name' => ['nullable', 'string', 'max:150'],
             'price' => ['required', 'integer', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
@@ -72,6 +86,7 @@ class AdminMedicineController extends Controller
         }
 
         $validated['active'] = $request->has('active');
+        $validated['pharmacy_name'] = $validated['pharmacy_name'] ?? 'Semua Apotek';
 
         Medicine::create($validated);
 
@@ -83,6 +98,7 @@ class AdminMedicineController extends Controller
         return view('admin.medicines.form', [
             'medicine' => $medicine,
             'isEdit' => true,
+            'pharmacies' => ['Semua Apotek', 'UMLA FARMA 1', 'UMLA FARMA 2'],
         ]);
     }
 
@@ -91,6 +107,7 @@ class AdminMedicineController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:100'],
+            'pharmacy_name' => ['nullable', 'string', 'max:150'],
             'price' => ['required', 'integer', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
@@ -107,6 +124,7 @@ class AdminMedicineController extends Controller
         }
 
         $validated['active'] = $request->has('active');
+        $validated['pharmacy_name'] = $validated['pharmacy_name'] ?? 'Semua Apotek';
 
         $medicine->update($validated);
 

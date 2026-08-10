@@ -33,21 +33,38 @@
                 @enderror
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Kategori</label>
-                <select
-                    name="category"
-                    required
-                    class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                    <option value="" disabled {{ !old('category', $medicine->category) ? 'selected' : '' }}>Pilih Kategori</option>
-                    @foreach (['Obat Bebas', 'Vitamin & Suplemen', 'Obat Keras'] as $opt)
-                        <option value="{{ $opt }}" {{ old('category', $medicine->category) === $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                    @endforeach
-                </select>
-                @error('category')
-                    <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
-                @enderror
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Kategori Obat</label>
+                    <select
+                        name="category"
+                        required
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    >
+                        <option value="" disabled {{ !old('category', $medicine->category) ? 'selected' : '' }}>Pilih Kategori</option>
+                        @foreach (['Obat Bebas', 'Vitamin & Suplemen', 'Obat Keras'] as $opt)
+                            <option value="{{ $opt }}" {{ old('category', $medicine->category) === $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                        @endforeach
+                    </select>
+                    @error('category')
+                        <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Apotek Mitra (Lokasi Stok)</label>
+                    <select
+                        name="pharmacy_name"
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    >
+                        <option value="Semua Apotek" {{ old('pharmacy_name', $medicine->pharmacy_name ?? 'Semua Apotek') === 'Semua Apotek' ? 'selected' : '' }}>Semua Apotek (Tersedia di semua mitra)</option>
+                        <option value="UMLA FARMA 1" {{ old('pharmacy_name', $medicine->pharmacy_name) === 'UMLA FARMA 1' ? 'selected' : '' }}>UMLA FARMA 1 (Kampus 1 Plosowahyu)</option>
+                        <option value="UMLA FARMA 2" {{ old('pharmacy_name', $medicine->pharmacy_name) === 'UMLA FARMA 2' ? 'selected' : '' }}>UMLA FARMA 2 (Kembangbahu)</option>
+                    </select>
+                    @error('pharmacy_name')
+                        <p class="text-[10px] text-rose-600 font-semibold mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">

@@ -76,6 +76,14 @@ class AdminAccessService
             \App\Models\ConsultationProvider::syncFromUser($user);
         }
 
+        if ($user->provider_key === 'apotek') {
+            $key = str_contains(strtolower($user->name), '2') ? 'umla_farma2_phone' : 'umla_farma1_phone';
+            \App\Models\Setting::setValue($key, $user->phone);
+        } elseif ($user->provider_key === 'homecare') {
+            $key = str_contains(strtolower($user->name), '2') ? 'medical_center2_phone' : 'medical_center1_phone';
+            \App\Models\Setting::setValue($key, $user->phone);
+        }
+
         return $user->fresh();
     }
 
@@ -88,6 +96,14 @@ class AdminAccessService
 
         if (in_array($user->provider_key, ['dokter', 'perawat'], true)) {
             \App\Models\ConsultationProvider::syncFromUser($user);
+        }
+
+        if ($user->provider_key === 'apotek') {
+            $key = str_contains(strtolower($user->name), '2') ? 'umla_farma2_phone' : 'umla_farma1_phone';
+            \App\Models\Setting::setValue($key, $user->phone);
+        } elseif ($user->provider_key === 'homecare') {
+            $key = str_contains(strtolower($user->name), '2') ? 'medical_center2_phone' : 'medical_center1_phone';
+            \App\Models\Setting::setValue($key, $user->phone);
         }
     }
 

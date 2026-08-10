@@ -28,7 +28,11 @@
         <p class="text-[10px] font-semibold uppercase tracking-wider text-emerald-100">Nersia Health</p>
         <h1 class="mt-1 text-xl font-bold leading-tight">Chat dengan Tenaga Kesehatan</h1>
         <p class="mt-2 text-xs leading-relaxed text-white/90">
-            Konsultasi chat berbayar per sesi. Gunakan voucher 100% untuk gratis, atau bayar sebelum chat.
+            @if ($isFree)
+                Layanan konsultasi chat gratis disetujui Admin. Silakan pilih perawat atau dokter untuk memulai.
+            @else
+                Konsultasi chat berbayar per sesi. Gunakan voucher 100% untuk gratis, atau bayar sebelum chat.
+            @endif
         </p>
     </header>
 
@@ -54,7 +58,11 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <h3 class="font-bold text-slate-900" x-text="cat.label"></h3>
-                            <span class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">Gratis · Chat aktif</span>
+                            @if ($isFree)
+                                <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">Gratis · Chat aktif</span>
+                            @else
+                                <span class="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-semibold text-brand-700">Chat Berbayar</span>
+                            @endif
                         </div>
                         <p class="mt-0.5 text-xs leading-relaxed text-slate-500" x-text="cat.description"></p>
                     </div>

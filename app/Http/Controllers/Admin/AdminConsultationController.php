@@ -68,4 +68,33 @@ class AdminConsultationController extends Controller
 
         return back()->with('status', 'Pembayaran '.$order->reference_code.' ditolak.');
     }
+
+    public function toggleFreeMode(?string $category = null): RedirectResponse
+    {
+        if ($category) {
+            $key = "consultation_free_{$category}";
+            $current = \App\Models\Setting::getValue($key, '0');
+            $new = $current === '1' ? '0' : '1';
+            \App\Models\Setting::setValue($key, $new);
+
+            // Also sync global if all categories become free/paid
+            $categories = collect(config('consultation.categories', []));
+            $labelName = $categories->firstWhere('key', $category)['label'] ?? ucfirst($category);
+            $statusLabel = $new === '1' ? 'Gratis 100%' : 'Berbayar (Harus Bayar)';
+
+            return back()->with('status', "Status biaya konsultasi [{$labelName}] berhasil diubah menjadi: {$statusLabel}.");
+        }
+
+        $current = \App\Models\Setting::getValue('consultation_is_free', '0');
+        $new = $current === '1' ? '0' : '1';
+        \App\Models\Setting::setValue('consultation_is_free', $new);
+
+        foreach (['perawat', 'dokter_umum', 'penyakit_dalam'] as $cKey) {
+            \App\Models\Setting::setValue("consultation_free_{$cKey}", $new);
+        }
+
+        $label = $new === '1' ? 'Gratis 100%' : 'Berbayar (Harus Bayar)';
+
+        return back()->with('status', "Status biaya seluruh konsultasi berhasil diubah menjadi: {$label}.");
+    }
 }

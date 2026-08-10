@@ -159,6 +159,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/konsultasi/voucher/{voucher}/toggle', [AdminConsultationVoucherController::class, 'toggle'])->name('consultations.vouchers.toggle');
     Route::delete('/konsultasi/voucher/{voucher}', [AdminConsultationVoucherController::class, 'destroy'])->name('consultations.vouchers.destroy');
     Route::get('/konsultasi', [AdminConsultationController::class, 'index'])->name('consultations.index');
+    Route::post('/konsultasi/toggle-free/{category?}', [AdminConsultationController::class, 'toggleFreeMode'])->name('consultations.toggle-free');
     Route::post('/konsultasi/{order}/setujui', [AdminConsultationController::class, 'approve'])->name('consultations.approve');
     Route::post('/konsultasi/{order}/tolak', [AdminConsultationController::class, 'reject'])->name('consultations.reject');
 
