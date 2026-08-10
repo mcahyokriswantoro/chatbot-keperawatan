@@ -76,6 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/homecare/{package}/pesan', [HomecareController::class, 'storeBooking'])->name('homecare.store-booking');
     Route::get('/homecare/booking/{booking}/pembayaran', [HomecareController::class, 'payment'])->name('homecare.payment');
     Route::post('/homecare/booking/{booking}/pembayaran/konfirmasi', [HomecareController::class, 'confirmPayment'])->name('homecare.payment.confirm');
+    Route::get('/homecare/booking/{booking}/status', [HomecareController::class, 'status'])->name('homecare.status');
     // Cancellation routes
     Route::delete('/konsultasi/{provider}/batal', [ConsultationController::class, 'cancelOrder'])->name('consultation.order.cancel');
     Route::post('/obat/keranjang/clear', [MedicineController::class, 'clearCart'])->name('medicines.cart.clear');
