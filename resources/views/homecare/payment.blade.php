@@ -109,7 +109,7 @@
                 <div class="relative mx-auto max-w-[260px] overflow-hidden rounded-2xl border-4 border-white bg-white p-2 shadow-md ring-1 ring-slate-200/80">
                     <img
                         src="{{ asset('images/qris-nersia.jpg') }}?v={{ (@filemtime(public_path('images/qris-nersia.jpg'))) ?: time() }}"
-                        onerror="let s=['/images/qris-nersia.jpg','{{ asset('qris-nersia.jpg') }}','/qris-nersia.jpg','/images/qris.jpg']; let i=parseInt(this.dataset.errCount||0); if(i<s.length){ this.dataset.errCount=i+1; this.src=s[i]; } else { this.onerror=null; }"
+                        onerror="(function(img){ var o=window.location.origin, p=window.location.protocol; var c=[o+'/images/qris-nersia.jpg', o+'/images/qris.jpg', o+'/qris-nersia.jpg', '{{ asset('images/qris-nersia.jpg') }}'.replace(/^http:/,p), '{{ asset('images/qris.jpg') }}'.replace(/^http:/,p), '{{ asset('qris-nersia.jpg') }}'.replace(/^http:/,p)]; var i=parseInt(img.dataset.errCount||0); while(i<c.length && c[i]===img.src){ i++; } if(i<c.length){ img.dataset.errCount=i+1; img.src=c[i]; } else { img.onerror=null; } })(this)"
                         alt="QRIS Nersia Health"
                         class="w-full h-auto rounded-lg object-contain cursor-pointer transition hover:opacity-95"
                         @click="showQrModal = true"
@@ -419,7 +419,7 @@
             </div>
             <img
                 src="{{ asset('images/qris-nersia.jpg') }}?v={{ (@filemtime(public_path('images/qris-nersia.jpg'))) ?: time() }}"
-                onerror="let s=['/images/qris-nersia.jpg','{{ asset('qris-nersia.jpg') }}','/qris-nersia.jpg','/images/qris.jpg']; let i=parseInt(this.dataset.errCount||0); if(i<s.length){ this.dataset.errCount=i+1; this.src=s[i]; } else { this.onerror=null; }"
+                onerror="(function(img){ var o=window.location.origin, p=window.location.protocol; var c=[o+'/images/qris-nersia.jpg', o+'/images/qris.jpg', o+'/qris-nersia.jpg', '{{ asset('images/qris-nersia.jpg') }}'.replace(/^http:/,p), '{{ asset('images/qris.jpg') }}'.replace(/^http:/,p), '{{ asset('qris-nersia.jpg') }}'.replace(/^http:/,p)]; var i=parseInt(img.dataset.errCount||0); while(i<c.length && c[i]===img.src){ i++; } if(i<c.length){ img.dataset.errCount=i+1; img.src=c[i]; } else { img.onerror=null; } })(this)"
                 alt="QRIS Nersia Health Enlarged"
                 class="mx-auto w-full h-auto max-h-[70vh] object-contain rounded-2xl border"
             >
