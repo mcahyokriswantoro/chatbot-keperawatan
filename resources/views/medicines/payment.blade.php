@@ -108,7 +108,8 @@
                 {{-- QRIS Image Display --}}
                 <div class="relative mx-auto max-w-[260px] overflow-hidden rounded-2xl border-4 border-white bg-white p-2 shadow-md ring-1 ring-slate-200/80">
                     <img
-                        src="{{ asset('images/qris-nersia.jpg') }}"
+                        src="{{ asset('images/qris-nersia.jpg') }}?v={{ @filemtime(public_path('images/qris-nersia.jpg')) ?? time() }}"
+                        onerror="this.onerror=null;this.src='{{ asset('qris-nersia.jpg') }}';"
                         alt="QRIS Nersia Health"
                         class="w-full h-auto rounded-lg object-contain cursor-pointer transition hover:opacity-95"
                         @click="showQrModal = true"
@@ -422,7 +423,12 @@
                 <h3 class="text-lg font-black text-slate-900">NERSIA HEALTH</h3>
                 <p class="font-mono text-xs font-semibold text-slate-600">NMID : ID1026568958890</p>
             </div>
-            <img src="{{ asset('images/qris-nersia.jpg') }}" alt="QRIS Nersia Health Enlarged" class="mx-auto w-full h-auto max-h-[70vh] object-contain rounded-2xl border">
+            <img
+                src="{{ asset('images/qris-nersia.jpg') }}?v={{ @filemtime(public_path('images/qris-nersia.jpg')) ?? time() }}"
+                onerror="this.onerror=null;this.src='{{ asset('qris-nersia.jpg') }}';"
+                alt="QRIS Nersia Health Enlarged"
+                class="mx-auto w-full h-auto max-h-[70vh] object-contain rounded-2xl border"
+            >
             <p class="text-xs font-bold text-brand-700">Total Pembayaran: {{ $priceLabel }}</p>
             <button
                 type="button"
