@@ -34,6 +34,52 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/favicon.ico', '/favicon.png', 301);
 
+Route::get('/qris-image', function () {
+    $paths = [
+        public_path('images/qris-nersia.jpg'),
+        base_path('public/images/qris-nersia.jpg'),
+        public_path('images/qris.jpg'),
+        base_path('public/images/qris.jpg'),
+        public_path('qris-nersia.jpg'),
+        base_path('public/qris-nersia.jpg'),
+    ];
+
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            return response()->file($path, [
+                'Content-Type' => 'image/jpeg',
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+    }
+
+    abort(404);
+})->name('qris.image');
+
+Route::get('/qris-nersia.jpg', function () {
+    return redirect()->route('qris.image');
+});
+
+Route::get('/images/qris-nersia.jpg', function () {
+    $paths = [
+        public_path('images/qris-nersia.jpg'),
+        base_path('public/images/qris-nersia.jpg'),
+        public_path('images/qris.jpg'),
+        base_path('public/images/qris.jpg'),
+    ];
+
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            return response()->file($path, [
+                'Content-Type' => 'image/jpeg',
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+    }
+
+    return redirect()->route('qris.image');
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/edukasi', [HealthEducationController::class, 'index'])->name('education.index');

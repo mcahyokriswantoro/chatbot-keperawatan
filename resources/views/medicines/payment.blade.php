@@ -3,6 +3,13 @@
 @section('title', 'Pembayaran Pemesanan Obat')
 
 @section('content')
+@php
+    $qrisLocalFile = public_path('images/qris-nersia.jpg');
+    if (!file_exists($qrisLocalFile)) {
+        $qrisLocalFile = base_path('public/images/qris-nersia.jpg');
+    }
+    $qrisDataUri = file_exists($qrisLocalFile) ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($qrisLocalFile)) : '';
+@endphp
 <div
     x-data="{
         paymentMethod: 'qris',
@@ -108,8 +115,8 @@
                 {{-- QRIS Image Display --}}
                 <div class="relative mx-auto max-w-[260px] overflow-hidden rounded-2xl border-4 border-white bg-white p-2 shadow-md ring-1 ring-slate-200/80">
                     <img
-                        src="{{ asset('images/qris-nersia.jpg') }}?v={{ (@filemtime(public_path('images/qris-nersia.jpg'))) ?: time() }}"
-                        onerror="(function(img){ var o=window.location.origin, p=window.location.protocol; var c=[o+'/images/qris-nersia.jpg', o+'/images/qris.jpg', o+'/qris-nersia.jpg', '{{ asset('images/qris-nersia.jpg') }}'.replace(/^http:/,p), '{{ asset('images/qris.jpg') }}'.replace(/^http:/,p), '{{ asset('qris-nersia.jpg') }}'.replace(/^http:/,p)]; var i=parseInt(img.dataset.errCount||0); while(i<c.length && c[i]===img.src){ i++; } if(i<c.length){ img.dataset.errCount=i+1; img.src=c[i]; } else { img.onerror=null; } })(this)"
+                        src="{{ route('qris.image') }}"
+                        onerror="(function(img){ var b64='{{ $qrisDataUri }}'; var o=window.location.origin, p=window.location.protocol; var c=[b64, '{{ route('qris.image') }}', '{{ asset('images/qris-nersia.jpg') }}'.replace(/^http:/,p), o+'/qris-image', o+'/images/qris-nersia.jpg', o+'/qris-nersia.jpg']; var i=parseInt(img.dataset.errCount||0); while(i<c.length && (!c[i] || c[i]===img.src)){ i++; } if(i<c.length){ img.dataset.errCount=i+1; img.src=c[i]; } else { img.onerror=null; } })(this)"
                         alt="QRIS Nersia Health"
                         class="w-full h-auto rounded-lg object-contain cursor-pointer transition hover:opacity-95"
                         @click="showQrModal = true"
@@ -424,8 +431,8 @@
                 <p class="font-mono text-xs font-semibold text-slate-600">NMID : ID1026568958890</p>
             </div>
             <img
-                src="{{ asset('images/qris-nersia.jpg') }}?v={{ (@filemtime(public_path('images/qris-nersia.jpg'))) ?: time() }}"
-                onerror="(function(img){ var o=window.location.origin, p=window.location.protocol; var c=[o+'/images/qris-nersia.jpg', o+'/images/qris.jpg', o+'/qris-nersia.jpg', '{{ asset('images/qris-nersia.jpg') }}'.replace(/^http:/,p), '{{ asset('images/qris.jpg') }}'.replace(/^http:/,p), '{{ asset('qris-nersia.jpg') }}'.replace(/^http:/,p)]; var i=parseInt(img.dataset.errCount||0); while(i<c.length && c[i]===img.src){ i++; } if(i<c.length){ img.dataset.errCount=i+1; img.src=c[i]; } else { img.onerror=null; } })(this)"
+                src="{{ route('qris.image') }}"
+                onerror="(function(img){ var b64='{{ $qrisDataUri }}'; var o=window.location.origin, p=window.location.protocol; var c=[b64, '{{ route('qris.image') }}', '{{ asset('images/qris-nersia.jpg') }}'.replace(/^http:/,p), o+'/qris-image', o+'/images/qris-nersia.jpg', o+'/qris-nersia.jpg']; var i=parseInt(img.dataset.errCount||0); while(i<c.length && (!c[i] || c[i]===img.src)){ i++; } if(i<c.length){ img.dataset.errCount=i+1; img.src=c[i]; } else { img.onerror=null; } })(this)"
                 alt="QRIS Nersia Health Enlarged"
                 class="mx-auto w-full h-auto max-h-[70vh] object-contain rounded-2xl border"
             >
