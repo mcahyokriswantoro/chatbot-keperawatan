@@ -221,8 +221,8 @@
             </div>
 
             <section class="rounded-2xl border border-[#00529c]/20 bg-[#00529c]/5 p-4">
-                <h3 class="text-sm font-bold text-slate-900">Bayar via Transfer Bank (Giro BRI)</h3>
-                <p class="mb-3 mt-1 text-xs text-slate-600">Transfer + upload bukti transfer, lalu tunggu verifikasi admin.</p>
+                <h3 class="text-sm font-bold text-slate-900">Bayar via QRIS / Transfer Bank</h3>
+                <p class="mb-3 mt-1 text-xs text-slate-600">Scan QRIS / transfer + upload bukti pembayaran, lalu tunggu verifikasi admin.</p>
                 <a
                     href="{{ route('consultation.payment', $providerKey) }}"
                     class="flex w-full items-center justify-center gap-2 rounded-full bg-[#00529c] py-3.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#004787] active:scale-[0.98]"

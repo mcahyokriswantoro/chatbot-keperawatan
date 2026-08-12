@@ -57,7 +57,7 @@
             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">💬</span>
             <div class="min-w-0 flex-1">
                 <p class="text-sm font-bold text-amber-900">{{ $consultationPendingCount }} pembayaran konsultasi menunggu</p>
-                <p class="text-[11px] text-amber-800">Verifikasi transfer Giro BRI — ketuk untuk setujui/tolak</p>
+                <p class="text-[11px] text-amber-800">Verifikasi QRIS / Transfer Bank — ketuk untuk setujui/tolak</p>
             </div>
             <svg class="h-4 w-4 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
         </a>
@@ -68,7 +68,7 @@
             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-lg">💊</span>
             <div class="min-w-0 flex-1">
                 <p class="text-sm font-bold text-blue-900">{{ $medicinePendingCount }} pembayaran obat menunggu</p>
-                <p class="text-[11px] text-blue-800">Verifikasi transfer Giro BRI — ketuk untuk setujui/tolak</p>
+                <p class="text-[11px] text-blue-800">Verifikasi QRIS / Transfer Bank — ketuk untuk setujui/tolak</p>
             </div>
             <svg class="h-4 w-4 shrink-0 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
         </a>
@@ -79,7 +79,7 @@
             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-lg">🏠</span>
             <div class="min-w-0 flex-1">
                 <p class="text-sm font-bold text-indigo-900">{{ $homecarePendingCount }} booking homecare menunggu</p>
-                <p class="text-[11px] text-indigo-800">Verifikasi transfer Giro BRI — ketuk untuk setujui/tolak</p>
+                <p class="text-[11px] text-indigo-800">Verifikasi QRIS / Transfer Bank — ketuk untuk setujui/tolak</p>
             </div>
             <svg class="h-4 w-4 shrink-0 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
         </a>

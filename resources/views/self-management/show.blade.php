@@ -14,14 +14,14 @@
     </div>
 
     @if (! $hasScreening)
-        <section class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-            <h2 class="text-sm font-bold text-amber-900">Skrining diperlukan</h2>
-            <p class="mt-2 text-sm leading-relaxed text-amber-950">
-                Informasi edukasi {{ $label }} ditampilkan di halaman ini. Untuk rekomendasi personal, pemantauan, dan pengingat obat, lakukan skrining terlebih dahulu.
+        <section class="mb-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <h2 class="text-sm font-bold text-amber-900">Skrining Rekomendasi Personal</h2>
+            <p class="mt-1.5 text-xs leading-relaxed text-amber-950">
+                Di bawah ini adalah panduan edukasi umum {{ $label }}. Lakukan skrining terlebih dahulu untuk rekomendasi personal yang disesuaikan dengan tingkat risiko Anda.
             </p>
             <a
                 href="{{ route('detection.chat', $disease) }}"
-                class="mt-4 block rounded-2xl bg-brand-600 py-3 text-center text-sm font-semibold text-white shadow-soft"
+                class="mt-3 block rounded-2xl bg-brand-600 py-3 text-center text-xs font-semibold text-white shadow-soft transition hover:bg-brand-700 active:scale-[0.99]"
             >
                 Mulai Skrining {{ $label }} →
             </a>
@@ -48,10 +48,14 @@
         <div class="mb-5">
             <x-screening.tts-button :text="$latestScreening->speechText()" :gender="$userGender" class="w-full" />
         </div>
+    @endif
 
-        <h2 class="mb-3 text-sm font-bold text-slate-900">Rekomendasi Personal</h2>
-        <x-self-management.guide :guide="$guide" :highlight="$recommendedRisk" />
+    <h2 class="mb-3 text-sm font-bold text-slate-900">
+        {{ $hasScreening ? 'Rekomendasi Personal' : 'Panduan Edukasi Self-Management' }}
+    </h2>
+    <x-self-management.guide :guide="$guide" :highlight="$recommendedRisk" />
 
+    @if ($hasScreening)
         <section class="mb-5 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
             <h2 class="text-sm font-bold text-slate-900">Pengingat &amp; Aktivitas</h2>
             <p class="mt-1 text-xs leading-relaxed text-slate-500">
@@ -73,3 +77,4 @@
         </a>
     @endif
 @endsection
+

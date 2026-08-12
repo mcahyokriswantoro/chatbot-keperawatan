@@ -390,8 +390,8 @@
 
         {{-- Payment Action Card --}}
         <section class="rounded-2xl border border-[#00529c]/20 bg-[#00529c]/5 p-4 space-y-3">
-            <h3 class="text-sm font-bold text-slate-900">Bayar via Transfer Bank (Giro BRI)</h3>
-            <p class="text-xs text-slate-600">Transfer + upload bukti transfer, lalu tunggu verifikasi admin.</p>
+            <h3 class="text-sm font-bold text-slate-900">Bayar via QRIS / Transfer Bank</h3>
+            <p class="text-xs text-slate-600">Scan QRIS / transfer + upload bukti pembayaran, lalu tunggu verifikasi admin.</p>
             <button
                 type="submit"
                 :disabled="distanceKm !== null && distanceKm > 25"

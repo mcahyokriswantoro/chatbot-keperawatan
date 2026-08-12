@@ -136,7 +136,7 @@
             </div>
             <div class="flex justify-between gap-3">
                 <dt class="text-slate-500">Metode Bayar</dt>
-                <dd class="font-semibold text-slate-800">Transfer Giro BRI</dd>
+                <dd class="font-semibold text-slate-800">QRIS / Transfer Bank</dd>
             </div>
             <div class="flex justify-between gap-3">
                 <dt class="text-slate-500">Pengirim</dt>

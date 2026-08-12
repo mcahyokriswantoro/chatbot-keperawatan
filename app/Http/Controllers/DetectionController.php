@@ -9,6 +9,7 @@ use App\Models\Wilayah;
 use App\Support\GenderMapper;
 use App\Services\DhfScoringService;
 use App\Services\DiabetesMelitusScoringService;
+use App\Services\HipertensiScoringService;
 use App\Services\InitialScreeningService;
 use App\Services\RheumatoidArthritisScoringService;
 use App\Services\JantungKoronerScoringService;

@@ -65,8 +65,8 @@
             </div>
         @endif
         <div class="flex justify-between gap-3">
-            <dt class="text-slate-500">Tujuan transfer</dt>
-            <dd class="font-medium text-slate-900">Giro BRI 004101003652303</dd>
+            <dt class="text-slate-500">Tujuan pembayaran</dt>
+            <dd class="font-medium text-slate-900">QRIS (NERSIA HEALTH) / Giro BRI</dd>
         </div>
         <div class="flex justify-between gap-3">
             <dt class="text-slate-500">Waktu</dt>

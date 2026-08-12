@@ -8,8 +8,10 @@
 
 <div
     x-data="{
+        paymentMethod: 'qris',
         copied: '',
         openBank: 'bri',
+        showQrModal: false,
         copy(text, key) {
             navigator.clipboard.writeText(text).then(() => {
                 this.copied = key;
@@ -19,7 +21,7 @@
     }"
     class="space-y-4 pb-6"
 >
-    {{-- Header BRI --}}
+    {{-- Header --}}
     <header class="relative -mx-4 overflow-hidden bg-gradient-to-br from-[#00529c] via-[#004787] to-[#003366] px-5 pb-5 pt-2 text-white shadow-lg sm:mx-0 sm:rounded-3xl">
         <div class="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
         <div class="relative flex items-center gap-2">
@@ -33,14 +35,14 @@
             <div class="flex min-w-0 flex-1 items-center gap-2">
                 <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-lg font-black text-[#00529c]">B</span>
                 <div class="min-w-0">
-                    <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-100">Pembayaran Giro BRI</p>
-                    <h1 class="truncate text-base font-bold">Konfirmasi transfer</h1>
+                    <p class="text-[10px] font-semibold uppercase tracking-wider text-blue-100">Pembayaran Konsultasi</p>
+                    <h1 class="truncate text-base font-bold">Konfirmasi pembayaran</h1>
                 </div>
             </div>
         </div>
 
         <div class="relative mt-4">
-            <p class="text-xs text-white/80">Total yang harus ditransfer</p>
+            <p class="text-xs text-white/80">Total yang harus dibayar</p>
             <p class="text-3xl font-bold tracking-tight">{{ $priceLabel }}</p>
             @if ($hasDiscount)
                 <div class="mt-2 inline-flex flex-wrap items-center gap-2">
@@ -73,7 +75,7 @@
     <div class="grid grid-cols-3 gap-2">
         <div class="rounded-xl border border-[#00529c]/30 bg-[#00529c]/5 px-2 py-2.5 text-center">
             <p class="text-[10px] font-bold text-[#00529c]">1</p>
-            <p class="mt-0.5 text-[9px] font-semibold leading-tight text-slate-700">Transfer</p>
+            <p class="mt-0.5 text-[9px] font-semibold leading-tight text-slate-700">Bayar / Scan</p>
         </div>
         <div class="rounded-xl border border-[#00529c]/30 bg-[#00529c]/10 px-2 py-2.5 text-center ring-2 ring-[#00529c]/20">
             <p class="text-[10px] font-bold text-[#00529c]">2</p>
@@ -85,8 +87,102 @@
         </div>
     </div>
 
-    {{-- Nomor Rekening BRI tujuan --}}
-    <section class="overflow-hidden rounded-2xl border border-[#00529c]/25 bg-gradient-to-b from-[#00529c]/5 to-white shadow-sm">
+    {{-- Pilihan Metode Pembayaran --}}
+    <section class="rounded-2xl border border-slate-200 bg-white p-3 shadow-xs">
+        <p class="mb-2 text-xs font-bold text-slate-900">Pilih Metode Pembayaran</p>
+        <div class="grid grid-cols-2 gap-2">
+            <button
+                type="button"
+                @click="paymentMethod = 'qris'"
+                :class="paymentMethod === 'qris'
+                    ? 'border-brand-600 bg-brand-50/80 text-brand-900 ring-2 ring-brand-500/30'
+                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'"
+                class="flex flex-col items-center justify-center rounded-xl border p-3 text-center transition-all duration-150"
+            >
+                <div class="flex items-center gap-1.5 font-bold text-xs">
+                    <svg class="h-4 w-4 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z"/></svg>
+                    <span>QRIS (Scan QR)</span>
+                </div>
+                <span class="mt-1 text-[10px] text-slate-500">Semua M-Banking &amp; E-Wallet</span>
+            </button>
+
+            <button
+                type="button"
+                @click="paymentMethod = 'transfer'"
+                :class="paymentMethod === 'transfer'
+                    ? 'border-[#00529c] bg-[#00529c]/10 text-[#00529c] ring-2 ring-[#00529c]/30'
+                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'"
+                class="flex flex-col items-center justify-center rounded-xl border p-3 text-center transition-all duration-150"
+            >
+                <div class="flex items-center gap-1.5 font-bold text-xs">
+                    <svg class="h-4 w-4 text-[#00529c]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+                    <span>Transfer Bank</span>
+                </div>
+                <span class="mt-1 text-[10px] text-slate-500">Giro BRI</span>
+            </button>
+        </div>
+    </section>
+
+    {{-- METODE 1: QRIS PAYMENT --}}
+    <section x-show="paymentMethod === 'qris'" x-transition class="overflow-hidden rounded-2xl border border-rose-200 bg-gradient-to-b from-rose-50/60 to-white shadow-sm">
+        <div class="border-b border-rose-100 bg-white/80 px-4 py-3 flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-bold text-slate-900">Pembayaran QRIS</h2>
+                <p class="mt-0.5 text-xs text-slate-500">Scan QR Code di bawah pakai m-Banking atau E-Wallet</p>
+            </div>
+            <span class="rounded-full bg-rose-600 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider shadow-xs">QRIS GPN</span>
+        </div>
+
+        <div class="p-4 space-y-4">
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs text-center space-y-3">
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Merchant Resmi</p>
+                    <h3 class="text-lg font-black tracking-wide text-slate-900">NERSIA HEALTH</h3>
+                    <p class="mt-0.5 font-mono text-xs font-semibold text-slate-600">NMID : ID1026568958890</p>
+                </div>
+
+                <div class="relative mx-auto max-w-[260px] overflow-hidden rounded-2xl border-4 border-white bg-white p-2 shadow-md ring-1 ring-slate-200/80">
+                    <img
+                        src="{{ asset('images/qris-nersia.jpg') }}"
+                        alt="QRIS Nersia Health"
+                        class="w-full h-auto rounded-lg object-contain cursor-pointer transition hover:opacity-95"
+                        @click="showQrModal = true"
+                    >
+                    <button
+                        type="button"
+                        @click="showQrModal = true"
+                        class="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl bg-slate-100 py-1.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-200 transition"
+                    >
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"/></svg>
+                        <span>Perbesar Kode QR</span>
+                    </button>
+                </div>
+
+                <div class="rounded-xl bg-slate-50 p-2.5 text-center">
+                    <p class="text-[10px] font-semibold text-slate-500">Total Pembayaran</p>
+                    <p class="text-xl font-bold text-brand-700 mt-0.5">{{ $priceLabel }}</p>
+                </div>
+
+                <div>
+                    <p class="text-[10px] font-semibold text-slate-400 mb-1.5">Mendukung Semua Aplikasi Penyelenggara QRIS</p>
+                    <div class="flex flex-wrap items-center justify-center gap-1.5">
+                        <span class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">BRImo</span>
+                        <span class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-800">BCA Mobile</span>
+                        <span class="rounded-md bg-yellow-50 px-2 py-0.5 text-[10px] font-bold text-yellow-800">Livin' Mandiri</span>
+                        <span class="rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">GoPay</span>
+                        <span class="rounded-md bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-purple-700">OVO</span>
+                        <span class="rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-bold text-sky-700">DANA</span>
+                        <span class="rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold text-orange-700">ShopeePay</span>
+                        <span class="rounded-md bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700">LinkAja</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- METODE 2: Rekening BRI --}}
+    <section x-show="paymentMethod === 'transfer'" x-transition class="overflow-hidden rounded-2xl border border-[#00529c]/25 bg-gradient-to-b from-[#00529c]/5 to-white shadow-sm">
+
         <div class="border-b border-[#00529c]/10 px-4 py-3">
             <h2 class="text-sm font-bold text-slate-900">Transfer ke Giro BRI</h2>
             <p class="mt-0.5 text-xs text-slate-500">Kirim transfer antar bank ke rekening Giro BRI di bawah</p>
@@ -291,8 +387,8 @@
         </section>
 
         <label class="flex items-start gap-3 rounded-2xl border border-amber-100 bg-amber-50/80 p-4 text-xs leading-relaxed text-slate-700">
-            <input type="checkbox" name="payment_confirmed" value="1" required class="mt-0.5 rounded border-slate-300 text-[#00529c] focus:ring-[#00529c]/20">
-            <span>Saya sudah transfer <strong>{{ $priceLabel }}</strong> ke Giro BRI <strong>004101003652303</strong>, melampirkan bukti transfer, dan siap menunggu verifikasi admin.</span>
+            <input type="checkbox" name="payment_confirmed" value="1" required class="mt-0.5 rounded border-slate-300 text-brand-600 focus:ring-brand-600/20">
+            <span>Saya sudah melakukan pembayaran sebesar <strong>{{ $priceLabel }}</strong> (via QRIS / Transfer Bank), melampirkan bukti bayar, dan siap menunggu verifikasi admin.</span>
         </label>
         @error('payment_confirmed')
             <p class="text-xs text-rose-600">{{ $message }}</p>
@@ -300,7 +396,7 @@
 
         <button
             type="submit"
-            class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#00529c] py-4 text-sm font-bold text-white shadow-lg shadow-[#00529c]/25 transition hover:bg-[#004787] active:scale-[0.98]"
+            class="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 py-4 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-700 active:scale-[0.98]"
         >
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Kirim konfirmasi pembayaran
@@ -308,8 +404,42 @@
     </form>
 
     <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-center text-[11px] leading-relaxed text-slate-500">
-        Setelah konfirmasi, admin akan verifikasi transfer dalam beberapa menit.
+        Setelah konfirmasi, admin akan verifikasi pembayaran dalam beberapa menit.
         Anda akan diarahkan ke halaman <strong>menunggu verifikasi</strong>, lalu bisa chat WhatsApp live.
+    </div>
+
+    {{-- MODAL ZOOM KODE QRIS --}}
+    <div
+        x-show="showQrModal"
+        x-cloak
+        x-transition
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-xs"
+        @click.self="showQrModal = false"
+    >
+        <div class="relative w-full max-w-sm overflow-hidden rounded-3xl bg-white p-5 shadow-2xl text-center space-y-4">
+            <button
+                type="button"
+                @click="showQrModal = false"
+                class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition"
+            >
+                ✕
+            </button>
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">QR Code Standar Pembayaran</p>
+                <h3 class="text-lg font-black text-slate-900">NERSIA HEALTH</h3>
+                <p class="font-mono text-xs font-semibold text-slate-600">NMID : ID1026568958890</p>
+            </div>
+            <img src="{{ asset('images/qris-nersia.jpg') }}" alt="QRIS Nersia Health Enlarged" class="mx-auto w-full h-auto max-h-[70vh] object-contain rounded-2xl border">
+            <p class="text-xs font-bold text-brand-700">Total Pembayaran: {{ $priceLabel }}</p>
+            <button
+                type="button"
+                @click="showQrModal = false"
+                class="w-full rounded-2xl bg-slate-900 py-3 text-xs font-bold text-white"
+            >
+                Tutup
+            </button>
+        </div>
     </div>
 </div>
 @endsection
+
