@@ -25,7 +25,62 @@ class ConsultationAccessService
             return true;
         }
 
-        return \App\Models\Setting::getValue("consultation_free_{$categoryKey}", '0') === '1';
+        if (\App\Models\Setting::getValue("consultation_free_{$categoryKey}", '0') === '1') {
+            return true;
+        }
+
+        if (ConsultationProvider::tableReady()) {
+            $provider = ConsultationProvider::query()->where('key', $categoryKey)->first();
+            if ($provider?->category_key) {
+                if (\App\Models\Setting::getValue("consultation_free_{$provider->category_key}", '0') === '1') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function isGlobalFree(): bool
+    {
+        if (\App\Models\Setting::getValue('consultation_is_free', '0') === '1') {
+            return true;
+        }
+
+        $categories = config('consultation.categories', []);
+        $primaryCategories = collect($categories)
+            ->filter(fn (array $cat) => ($cat['primary'] ?? false) && empty($cat['parent_key']))
+            ->values();
+
+        if ($primaryCategories->isEmpty()) {
+            return false;
+        }
+
+        foreach ($primaryCategories as $cat) {
+            $key = (string) ($cat['key'] ?? '');
+            if ($key !== '' && ! $this->isCategoryFree($key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function hasAnyFreeCategory(): bool
+    {
+        if (\App\Models\Setting::getValue('consultation_is_free', '0') === '1') {
+            return true;
+        }
+
+        $categories = config('consultation.categories', []);
+        foreach ($categories as $cat) {
+            $key = (string) ($cat['key'] ?? '');
+            if ($key !== '' && $this->isCategoryFree($key)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function priceFor(string $providerKey): int
@@ -43,7 +98,7 @@ class ConsultationAccessService
                 return 0;
             }
 
-            if ($model?->price) {
+            if ($model?->price !== null && $model->price > 0) {
                 return (int) $model->price;
             }
 

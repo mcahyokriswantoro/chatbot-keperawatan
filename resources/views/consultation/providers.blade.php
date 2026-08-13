@@ -40,7 +40,11 @@
             <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-2xl backdrop-blur-sm">{{ $categoryIcon }}</span>
         </div>
         <p class="relative mt-3 text-xs leading-relaxed text-white/90">
-            {{ $category['description'] ?? 'Pilih tenaga kesehatan, lalu lanjut voucher atau pembayaran DANA sebelum memulai chat.' }}
+            @if ($isFree ?? false)
+                Layanan konsultasi chat gratis disetujui Admin. Silakan pilih tenaga kesehatan untuk memulai.
+            @else
+                {{ $category['description'] ?? 'Pilih tenaga kesehatan, lalu lanjut voucher atau pembayaran DANA sebelum memulai chat.' }}
+            @endif
         </p>
         <div class="relative mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold backdrop-blur-sm">
             <span class="h-1.5 w-1.5 rounded-full bg-emerald-300"></span>
@@ -57,18 +61,6 @@
             placeholder="Cari nama atau spesialisasi..."
             class="w-full rounded-2xl border border-brand-100 bg-white py-3 pl-10 pr-4 text-sm shadow-sm placeholder:text-slate-400 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-100"
         />
-    </div>
-
-    {{-- Info singkat --}}
-    <div class="flex gap-2 overflow-x-auto pb-0.5">
-        @if ($isFree ?? false)
-            <span class="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-semibold text-emerald-700">🎁 Gratis Konsultasi</span>
-        @else
-            <span class="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-semibold text-amber-800">💳 Chat Berbayar</span>
-            <span class="shrink-0 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-[10px] font-semibold text-violet-700">Voucher diskon</span>
-            <span class="shrink-0 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-[10px] font-semibold text-sky-700">Bayar DANA</span>
-        @endif
-        <span class="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-semibold text-slate-600">Sesi {{ $sessionHours }} jam</span>
     </div>
 
     {{-- Daftar kartu --}}

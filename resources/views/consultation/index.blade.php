@@ -30,6 +30,8 @@
         <p class="mt-2 text-xs leading-relaxed text-white/90">
             @if ($isFree)
                 Layanan konsultasi chat gratis disetujui Admin. Silakan pilih perawat atau dokter untuk memulai.
+            @elseif ($hasAnyFree ?? false)
+                Layanan konsultasi chat gratis & berbayar disetujui Admin. Silakan pilih tenaga kesehatan untuk memulai.
             @else
                 Konsultasi chat berbayar per sesi. Gunakan voucher 100% untuk gratis, atau bayar sebelum chat.
             @endif
@@ -58,11 +60,12 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <h3 class="font-bold text-slate-900" x-text="cat.label"></h3>
-                            @if ($isFree)
+                            <template x-if="cat.is_free">
                                 <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">Gratis · Chat aktif</span>
-                            @else
+                            </template>
+                            <template x-if="!cat.is_free">
                                 <span class="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-semibold text-brand-700">Chat Berbayar</span>
-                            @endif
+                            </template>
                         </div>
                         <p class="mt-0.5 text-xs leading-relaxed text-slate-500" x-text="cat.description"></p>
                     </div>
@@ -95,7 +98,11 @@
     </div>
 
     <p class="text-center text-[11px] leading-relaxed text-slate-400">
-        Konsultasi chat berbayar per sesi. Voucher 100% = gratis. Bukan pengganti pemeriksaan medis. Darurat: <a href="{{ route('emergency') }}" class="font-semibold text-brand-600">hotline</a>.
+        @if ($isFree)
+            Konsultasi chat gratis disetujui Admin. Bukan pengganti pemeriksaan medis. Darurat: <a href="{{ route('emergency') }}" class="font-semibold text-brand-600">hotline</a>.
+        @else
+            Konsultasi chat per sesi. Voucher 100% = gratis. Bukan pengganti pemeriksaan medis. Darurat: <a href="{{ route('emergency') }}" class="font-semibold text-brand-600">hotline</a>.
+        @endif
     </p>
 </div>
 @endsection

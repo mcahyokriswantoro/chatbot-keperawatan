@@ -22,11 +22,12 @@ class ConsultationController extends Controller
     public function index(): View
     {
         $categories = $this->categoriesForDisplay();
-        $isFree = \App\Models\Setting::getValue('consultation_is_free', '0') === '1';
+        $isFree = $this->access->isGlobalFree();
 
         return view('consultation.index', [
             'categories' => $categories,
             'isFree' => $isFree,
+            'hasAnyFree' => $this->access->hasAnyFreeCategory(),
             'otherDoctors' => collect($categories)
                 ->filter(fn (array $cat) => ! ($cat['active'] ?? false)
                     && ($cat['primary'] ?? false)
@@ -54,6 +55,7 @@ class ConsultationController extends Controller
                         ->exists();
 
                 $cat['active'] = $configActive || $hasProviders;
+                $cat['is_free'] = $this->access->isCategoryFree($key);
 
                 return $cat;
             })
@@ -77,7 +79,7 @@ class ConsultationController extends Controller
             ]);
         }
 
-        $isFree = \App\Models\Setting::getValue('consultation_is_free', '0') === '1';
+        $isFree = $this->access->isCategoryFree($category);
 
         return view('consultation.providers', [
             'categoryKey' => $category,
@@ -106,6 +108,7 @@ class ConsultationController extends Controller
                         ->exists();
 
                 $cat['active'] = $configActive || $hasProviders;
+                $cat['is_free'] = $this->access->isCategoryFree($key);
 
                 return $cat;
             })
