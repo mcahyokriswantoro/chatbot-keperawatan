@@ -100,6 +100,11 @@ class User extends Authenticatable
         return $this->hasMany(ScreeningSession::class);
     }
 
+    public function screeningIdentities(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ScreeningIdentity::class);
+    }
+
     public function healthMonitorings(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(HealthMonitoring::class);

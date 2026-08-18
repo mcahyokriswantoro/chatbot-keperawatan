@@ -170,6 +170,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/export', [AdminUserController::class, 'export'])->name('users.export');
+    Route::get('/users/rekap', [AdminUserController::class, 'rekap'])->name('users.rekap');
     Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
     Route::get('/access', [AdminAccessController::class, 'index'])->name('access.index');
     Route::post('/access', [AdminAccessController::class, 'store'])->name('access.store');
