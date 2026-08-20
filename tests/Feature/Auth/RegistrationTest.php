@@ -27,6 +27,7 @@ class RegistrationTest extends TestCase
             'weight' => 70,
             'height' => 170,
             'address' => 'Jl. Contoh No. 1, Jakarta',
+            'education' => 'SMA / SMK / Sederajat',
             'occupation' => 'Karyawan',
             'password' => 'password',
             'password_confirmation' => 'password',

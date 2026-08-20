@@ -37,6 +37,7 @@
             <div class="flex justify-between gap-4 border-b border-slate-50 pb-2"><dt class="text-slate-500">Telepon</dt><dd class="font-medium text-right">{{ $user->phone ?? '—' }}</dd></div>
             <div class="flex justify-between gap-4 border-b border-slate-50 pb-2"><dt class="text-slate-500">Tanggal lahir</dt><dd class="font-medium text-right">{{ $user->date_of_birth?->format('d/m/Y') ?? '—' }}</dd></div>
             <div class="flex justify-between gap-4 border-b border-slate-50 pb-2"><dt class="text-slate-500">Berat / tinggi</dt><dd class="font-medium text-right">{{ $user->weight ? $user->weight.' kg' : '—' }} / {{ $user->height ? $user->height.' cm' : '—' }}</dd></div>
+            <div class="flex justify-between gap-4 border-b border-slate-50 pb-2"><dt class="text-slate-500">Pendidikan</dt><dd class="font-medium text-right">{{ $user->education ?? '—' }}</dd></div>
             <div class="flex justify-between gap-4 border-b border-slate-50 pb-2"><dt class="text-slate-500">Pekerjaan</dt><dd class="font-medium text-right">{{ $user->occupation ?? '—' }}</dd></div>
             <div><dt class="text-slate-500 text-xs mb-1">Alamat</dt><dd class="text-sm leading-relaxed">{{ $user->address ?? '—' }}</dd></div>
         </dl>

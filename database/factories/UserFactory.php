@@ -28,6 +28,7 @@ class UserFactory extends Factory
             'weight' => fake()->randomFloat(1, 45, 95),
             'height' => fake()->randomFloat(1, 150, 185),
             'address' => fake()->address(),
+            'education' => fake()->randomElement(['SD / Sederajat', 'SMP / Sederajat', 'SMA / SMK / Sederajat', 'Sarjana (S1/D4)']),
             'occupation' => fake()->jobTitle(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

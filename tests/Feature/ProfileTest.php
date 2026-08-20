@@ -36,6 +36,7 @@ class ProfileTest extends TestCase
                 'weight' => 65,
                 'height' => 170,
                 'address' => 'Jl. Merdeka No 1',
+                'education' => 'Sarjana (S1/D4)',
                 'occupation' => 'Karyawan',
             ]);
 

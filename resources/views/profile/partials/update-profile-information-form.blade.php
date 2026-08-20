@@ -255,6 +255,30 @@
             @enderror
         </div>
 
+        @if($isPasien || $user->education)
+        <div>
+            <label for="education" class="text-xs font-medium text-slate-600">Pendidikan Terakhir</label>
+            <select
+                id="education"
+                name="education"
+                class="mt-1 w-full rounded-xl border border-brand-200 bg-white px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"
+            >
+                <option value="" disabled {{ old('education', $user->education) ? '' : 'selected' }}>Pilih pendidikan terakhir</option>
+                <option value="Tidak / Belum Sekolah" @selected(old('education', $user->education) === 'Tidak / Belum Sekolah')>Tidak / Belum Sekolah</option>
+                <option value="SD / Sederajat" @selected(old('education', $user->education) === 'SD / Sederajat')>SD / Sederajat</option>
+                <option value="SMP / Sederajat" @selected(old('education', $user->education) === 'SMP / Sederajat')>SMP / Sederajat</option>
+                <option value="SMA / SMK / Sederajat" @selected(old('education', $user->education) === 'SMA / SMK / Sederajat')>SMA / SMK / Sederajat</option>
+                <option value="Diploma (D1-D3)" @selected(old('education', $user->education) === 'Diploma (D1-D3)')>Diploma (D1-D3)</option>
+                <option value="Sarjana (S1/D4)" @selected(old('education', $user->education) === 'Sarjana (S1/D4)')>Sarjana (S1/D4)</option>
+                <option value="Magister (S2)" @selected(old('education', $user->education) === 'Magister (S2)')>Magister (S2)</option>
+                <option value="Doktor (S3)" @selected(old('education', $user->education) === 'Doktor (S3)')>Doktor (S3)</option>
+            </select>
+            @error('education')
+                <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
+            @enderror
+        </div>
+        @endif
+
         @if($user->occupation || ! $isPasien)
         <div>
             <label for="occupation" class="text-xs font-medium text-slate-600">

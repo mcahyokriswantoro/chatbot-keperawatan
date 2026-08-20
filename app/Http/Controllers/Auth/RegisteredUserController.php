@@ -117,6 +117,7 @@ class RegisteredUserController extends Controller
             'weight' => ['required', 'numeric', 'min:1', 'max:500'],
             'height' => ['required', 'numeric', 'min:30', 'max:300'],
             'address' => ['required', 'string', 'max:1000'],
+            'education' => ['required', 'string', 'max:100'],
             'occupation' => ['required', 'string', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
@@ -125,6 +126,7 @@ class RegisteredUserController extends Controller
             'phone.unique' => 'Nomor HP sudah terdaftar.',
             'date_of_birth.required' => 'Tanggal lahir wajib diisi.',
             'date_of_birth.before' => 'Tanggal lahir harus sebelum hari ini.',
+            'education.required' => 'Pendidikan terakhir wajib dipilih.',
         ]);
     }
 
@@ -198,6 +200,7 @@ class RegisteredUserController extends Controller
             'weight' => $validated['weight'],
             'height' => $validated['height'],
             'address' => $validated['address'],
+            'education' => $validated['education'],
             'occupation' => $validated['occupation'],
             'password' => Hash::make($validated['password']),
             'is_approved' => true,

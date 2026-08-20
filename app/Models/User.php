@@ -28,6 +28,7 @@ class User extends Authenticatable
         'height',
         'address',
         'occupation',
+        'education',
         'profile_photo',
         'password',
         'is_admin',

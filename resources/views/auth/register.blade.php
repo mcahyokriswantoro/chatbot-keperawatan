@@ -263,12 +263,33 @@
                     </div>
                 </div>
 
+                {{-- ========== PASIEN ONLY: Pendidikan Terakhir ========== --}}
+                <div x-show="role === 'pasien'" x-transition>
+                    <label for="education" class="text-xs font-medium text-slate-600">Pendidikan Terakhir <span class="text-rose-500">*</span></label>
+                    <select id="education" name="education"
+                        :required="role === 'pasien'"
+                        :disabled="role !== 'pasien'"
+                        class="mt-1 w-full rounded-xl border border-brand-200 bg-white px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
+                        <option value="" disabled {{ old('education') ? '' : 'selected' }}>Pilih pendidikan terakhir</option>
+                        <option value="Tidak / Belum Sekolah" @selected(old('education') === 'Tidak / Belum Sekolah')>Tidak / Belum Sekolah</option>
+                        <option value="SD / Sederajat" @selected(old('education') === 'SD / Sederajat')>SD / Sederajat</option>
+                        <option value="SMP / Sederajat" @selected(old('education') === 'SMP / Sederajat')>SMP / Sederajat</option>
+                        <option value="SMA / SMK / Sederajat" @selected(old('education') === 'SMA / SMK / Sederajat')>SMA / SMK / Sederajat</option>
+                        <option value="Diploma (D1-D3)" @selected(old('education') === 'Diploma (D1-D3)')>Diploma (D1-D3)</option>
+                        <option value="Sarjana (S1/D4)" @selected(old('education') === 'Sarjana (S1/D4)')>Sarjana (S1/D4)</option>
+                        <option value="Magister (S2)" @selected(old('education') === 'Magister (S2)')>Magister (S2)</option>
+                        <option value="Doktor (S3)" @selected(old('education') === 'Doktor (S3)')>Doktor (S3)</option>
+                    </select>
+                    @error('education')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
+                </div>
+
                 {{-- ========== PASIEN ONLY: Pekerjaan ========== --}}
                 <div x-show="role === 'pasien'" x-transition>
                     <label for="occupation" class="text-xs font-medium text-slate-600">Pekerjaan <span class="text-rose-500">*</span></label>
                     <input type="text" id="occupation" name="occupation" value="{{ old('occupation') }}"
                         :required="role === 'pasien'"
                         :disabled="role !== 'pasien'"
+                        placeholder="Mis: Karyawan Swasta, PNS, Ibu Rumah Tangga"
                         class="mt-1 w-full rounded-xl border border-brand-200 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                     @error('occupation')<p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>

@@ -69,7 +69,7 @@
                     </div>
                 </div>
 
-                @if ($genderLabel || $user->age || $user->occupation)
+                @if ($genderLabel || $user->age || $user->education || $user->occupation)
                     <div class="mt-3 flex flex-wrap gap-2">
                         @if ($genderLabel)
                             <span class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-semibold text-brand-700 ring-1 ring-brand-100">
@@ -79,6 +79,11 @@
                         @if ($user->age)
                             <span class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-1 text-[10px] font-semibold text-violet-700 ring-1 ring-violet-100">
                                 {{ $user->age }} tahun
+                            </span>
+                        @endif
+                        @if ($user->education)
+                            <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-semibold text-amber-700 ring-1 ring-amber-100">
+                                🎓 {{ $user->education }}
                             </span>
                         @endif
                         @if ($user->occupation)

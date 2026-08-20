@@ -52,6 +52,7 @@ class ProfileUpdateRequest extends FormRequest
             'weight' => $isPasien ? ['required', 'numeric', 'min:1', 'max:500'] : ['nullable', 'numeric', 'min:1', 'max:500'],
             'height' => $isPasien ? ['required', 'numeric', 'min:30', 'max:300'] : ['nullable', 'numeric', 'min:30', 'max:300'],
             'address' => ['required', 'string', 'max:1000'],
+            'education' => ['nullable', 'string', 'max:100'],
             'occupation' => $isPasien ? ['required', 'string', 'max:255'] : ['nullable', 'string', 'max:255'],
             'profile_photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
             'remove_profile_photo' => ['nullable', 'boolean'],

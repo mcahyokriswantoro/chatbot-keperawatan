@@ -362,6 +362,7 @@ class PatientExcelExportService
    <Column ss:Width="65"/>
    <Column ss:Width="65"/>
    <Column ss:Width="60"/>
+   <Column ss:Width="100"/>
    <Column ss:Width="120"/>
    <Column ss:Width="180"/>
    <Column ss:Width="80"/>
@@ -370,7 +371,7 @@ class PatientExcelExportService
    <Column ss:Width="90"/>
 
    <Row ss:Height="26">
-    <Cell ss:MergeAcross="15" ss:StyleID="Title"><Data ss:Type="String">PROFIL PENGGUNA DAN PASIEN TERDAFTAR</Data></Cell>
+    <Cell ss:MergeAcross="16" ss:StyleID="Title"><Data ss:Type="String">PROFIL PENGGUNA DAN PASIEN TERDAFTAR</Data></Cell>
    </Row>
    <Row><Cell/></Row>
 
@@ -385,6 +386,7 @@ class PatientExcelExportService
     <Cell ss:StyleID="HeaderSuccess"><Data ss:Type="String">TB (cm)</Data></Cell>
     <Cell ss:StyleID="HeaderSuccess"><Data ss:Type="String">BB (kg)</Data></Cell>
     <Cell ss:StyleID="HeaderSuccess"><Data ss:Type="String">BMI</Data></Cell>
+    <Cell ss:StyleID="HeaderSuccess"><Data ss:Type="String">Pendidikan</Data></Cell>
     <Cell ss:StyleID="HeaderSuccess"><Data ss:Type="String">Pekerjaan</Data></Cell>
     <Cell ss:StyleID="HeaderSuccess"><Data ss:Type="String">Alamat Domisili</Data></Cell>
     <Cell ss:StyleID="HeaderSuccess"><Data ss:Type="String">Jml Identitas</Data></Cell>
@@ -412,6 +414,7 @@ class PatientExcelExportService
     <Cell ss:StyleID="CellRight"><Data ss:Type="<?= is_numeric($user->height) ? 'Number' : 'String' ?>"><?= $user->height ? (float)$user->height : '—' ?></Data></Cell>
     <Cell ss:StyleID="CellRight"><Data ss:Type="<?= is_numeric($user->weight) ? 'Number' : 'String' ?>"><?= $user->weight ? (float)$user->weight : '—' ?></Data></Cell>
     <Cell ss:StyleID="CellRight"><Data ss:Type="<?= is_numeric($bmi) ? 'Number' : 'String' ?>"><?= $bmi !== null ? $bmi : '—' ?></Data></Cell>
+    <Cell ss:StyleID="CellNormal"><Data ss:Type="String"><?= htmlspecialchars($user->education ?? '—') ?></Data></Cell>
     <Cell ss:StyleID="CellNormal"><Data ss:Type="String"><?= htmlspecialchars($user->occupation ?? '—') ?></Data></Cell>
     <Cell ss:StyleID="CellNormal"><Data ss:Type="String"><?= htmlspecialchars($user->address ?? '—') ?></Data></Cell>
     <Cell ss:StyleID="CellCenter"><Data ss:Type="Number"><?= $user->screening_identities_count ?? $user->screeningIdentities()->count() ?></Data></Cell>
