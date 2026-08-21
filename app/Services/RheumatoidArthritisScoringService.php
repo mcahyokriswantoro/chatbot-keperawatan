@@ -43,7 +43,11 @@ class RheumatoidArthritisScoringService
             return 'Sedang';
         }
 
-        return 'Rendah';
+        if ($total >= 1) {
+            return 'Rendah';
+        }
+
+        return 'Tidak Ada Risiko';
     }
 
     public function risikoLabel(string $hasilKategori): string
@@ -51,7 +55,9 @@ class RheumatoidArthritisScoringService
         return match ($hasilKategori) {
             'Tinggi' => 'Risiko Tinggi',
             'Sedang' => 'Risiko Sedang',
-            default => 'Risiko Rendah',
+            'Rendah' => 'Risiko Rendah',
+            'Tidak Ada Risiko' => 'Tidak Ada Risiko',
+            default => 'Tidak Ada Risiko',
         };
     }
 
@@ -60,7 +66,8 @@ class RheumatoidArthritisScoringService
         return match ($this->hasilKategori($total)) {
             'Tinggi' => 'high',
             'Sedang' => 'medium',
-            default => 'low',
+            'Rendah' => 'low',
+            default => 'none',
         };
     }
 

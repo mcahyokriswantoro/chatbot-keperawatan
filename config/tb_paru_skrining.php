@@ -10,6 +10,8 @@ return [
         ['value' => 'tidak', 'label' => 'Tidak'],
     ],
 
+    'scoring_legend' => 'Tidak Ada Risiko 0 · Risiko Rendah 1–5 · Risiko Sedang 6–10 · Risiko Tinggi ≥11',
+
     'items' => [
         ['id' => 'q01', 'no' => 1, 'text' => 'Apakah Anda mengalami batuk yang sudah berlangsung lebih dari dua minggu dan belum membaik', 'score_ya' => 3],
         ['id' => 'q02', 'no' => 2, 'text' => 'Apakah Anda sedang atau baru saja mengalami demam', 'score_ya' => 2],

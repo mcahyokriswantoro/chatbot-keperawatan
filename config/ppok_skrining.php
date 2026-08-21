@@ -12,7 +12,7 @@ return [
         ['value' => 'tidak', 'label' => 'Tidak'],
     ],
 
-    'scoring_legend' => 'Risiko Rendah 0–4 · Risiko Sedang 5–8 · Risiko Tinggi ≥9',
+    'scoring_legend' => 'Tidak Ada Risiko 0 · Risiko Rendah 1–4 · Risiko Sedang 5–8 · Risiko Tinggi ≥9',
 
     'items' => [
         ['id' => 'q01', 'no' => 1, 'text' => 'Dalam 3 bulan terakhir atau lebih, apakah Anda sering batuk hampir setiap hari', 'score_ya' => 1],

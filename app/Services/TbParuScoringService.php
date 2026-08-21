@@ -35,7 +35,8 @@ class TbParuScoringService
         return match (true) {
             $total >= 11 => 'Tinggi',
             $total >= 6 => 'Sedang',
-            default => 'Rendah',
+            $total >= 1 => 'Rendah',
+            default => 'Tidak Ada Risiko',
         };
     }
 
@@ -44,7 +45,8 @@ class TbParuScoringService
         return match (true) {
             $total >= 11 => 'high',
             $total >= 6 => 'medium',
-            default => 'low',
+            $total >= 1 => 'low',
+            default => 'none',
         };
     }
 
@@ -155,7 +157,9 @@ class TbParuScoringService
         return match ($hasilKategori) {
             'Tinggi' => 'Risiko Tinggi',
             'Sedang' => 'Risiko Sedang',
-            default => 'Risiko Rendah',
+            'Rendah' => 'Risiko Rendah',
+            'Tidak Ada Risiko' => 'Tidak Ada Risiko',
+            default => 'Tidak Ada Risiko',
         };
     }
 }

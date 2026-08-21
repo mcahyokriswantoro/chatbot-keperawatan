@@ -74,7 +74,11 @@ class DhfScoringService
             return 'Sedang';
         }
 
-        return 'Rendah';
+        if ($total >= 1) {
+            return 'Rendah';
+        }
+
+        return 'Tidak Ada Risiko';
     }
 
     public function risikoLabel(string $hasilKategori): string
@@ -82,7 +86,9 @@ class DhfScoringService
         return match ($hasilKategori) {
             'Tinggi' => 'Risiko Tinggi',
             'Sedang' => 'Risiko Sedang',
-            default => 'Risiko Rendah',
+            'Rendah' => 'Risiko Rendah',
+            'Tidak Ada Risiko' => 'Tidak Ada Risiko',
+            default => 'Tidak Ada Risiko',
         };
     }
 
@@ -97,7 +103,8 @@ class DhfScoringService
         return match ($hasil) {
             'Tinggi' => 'high',
             'Sedang' => 'medium',
-            default => 'low',
+            'Rendah' => 'low',
+            default => 'none',
         };
     }
 

@@ -16,7 +16,7 @@ return [
         'q09', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18',
     ],
 
-    'scoring_legend' => 'Risiko Rendah 0–4 · Risiko Sedang 5–8 · Risiko Tinggi ≥9 atau ada warning signs',
+    'scoring_legend' => 'Tidak Ada Risiko 0 · Risiko Rendah 1–4 · Risiko Sedang 5–8 · Risiko Tinggi ≥9 atau ada warning signs',
 
     'items' => [
         ['id' => 'q01', 'no' => 1, 'text' => 'Dalam 2–7 hari terakhir, apakah Anda mengalami demam tinggi mendadak dengan suhu tubuh 38°C atau lebih', 'score_ya' => 1],

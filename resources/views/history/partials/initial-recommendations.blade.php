@@ -47,6 +47,6 @@
     </div>
 @else
     <p class="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
-        Tidak ada skrining lanjut spesifik dari jawaban ya. Tetap waspada gejala baru.
+        Tidak ada skrining lanjut spesifik dari jawaban ya. Tetap waspada gejala baru dan konsultasikan ke tenaga kesehatan bila perlu.
     </p>
 @endif

@@ -371,8 +371,9 @@ document.addEventListener('alpine:init', () => {
         standardRisikoKategori(total) {
             if (total >= 9) return 'Tinggi';
             if (total >= 5) return 'Sedang';
+            if (total >= 1) return 'Rendah';
 
-            return 'Rendah';
+            return 'Tidak Ada Risiko';
         },
 
         hasilKategoriFromScore(total) {
@@ -381,8 +382,9 @@ document.addEventListener('alpine:init', () => {
 
                 if (hasWarning || total >= 9) return 'Tinggi';
                 if (total >= 5) return 'Sedang';
+                if (total >= 1) return 'Rendah';
 
-                return 'Rendah';
+                return 'Tidak Ada Risiko';
             }
 
             if (this.config.disease === 'ppok') {
@@ -392,21 +394,24 @@ document.addEventListener('alpine:init', () => {
             if (this.config.disease === 'rheumatoid_arthritis') {
                 if (total >= 10) return 'Tinggi';
                 if (total >= 5) return 'Sedang';
+                if (total >= 1) return 'Rendah';
 
-                return 'Rendah';
+                return 'Tidak Ada Risiko';
             }
 
-            if (['penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi'].includes(this.config.disease)) {
+            if (['penyakit_ginjal', 'stroke', 'jantung_koroner', 'diabetes_melitus', 'hipertensi', 'tb_paru'].includes(this.config.disease)) {
                 if (total >= 11) return 'Tinggi';
                 if (total >= 6) return 'Sedang';
+                if (total >= 1) return 'Rendah';
 
-                return 'Rendah';
+                return 'Tidak Ada Risiko';
             }
 
             if (total >= 11) return 'Tinggi';
             if (total >= 6) return 'Sedang';
+            if (total >= 1) return 'Rendah';
 
-            return 'Rendah';
+            return 'Tidak Ada Risiko';
         },
 
         risikoLabelFromKategori(hasilKategori) {
@@ -414,6 +419,7 @@ document.addEventListener('alpine:init', () => {
                 Tinggi: 'Risiko Tinggi',
                 Sedang: 'Risiko Sedang',
                 Rendah: 'Risiko Rendah',
+                'Tidak Ada Risiko': 'Tidak Ada Risiko',
             }[hasilKategori] ?? hasilKategori;
         },
 
@@ -482,7 +488,7 @@ document.addEventListener('alpine:init', () => {
                         `📌 Berdasarkan jawaban ya Anda, silakan lanjutkan skrining lanjut pada ${this.recommendedDiseases.length} penyakit yang direkomendasikan di bawah.`
                     );
                 } else {
-                    await this.botSay('📌 Tidak ada skrining lanjut spesifik dari jawaban ya. Risiko umum relatif rendah, tetapi tetap waspada gejala baru.');
+                    await this.botSay('📌 Anda tidak berisiko pada penyakit Diabetes, hipertensi, Stroke, Penyakit jantung koroner, TB paru, PPOK, DHF, Penyakit Ginjal dan Rheumatoid Arthritis, Tetap waspada dan pertahankan pola hidup sehat.');
                 }
             }
 

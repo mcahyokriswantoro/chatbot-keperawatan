@@ -144,7 +144,7 @@ class InitialScreeningService
         $lines[] = '📌 Rekomendasi Skrining Lanjut:';
 
         if ($recommended === []) {
-            $lines[] = 'Tidak ada skrining lanjut spesifik berdasarkan jawaban ya. Anda tetap dapat memilih skrining lanjut sesuai kebutuhan.';
+            $lines[] = 'Anda tidak berisiko pada penyakit Diabetes, hipertensi, Stroke, Penyakit jantung koroner, TB paru, PPOK, DHF, Penyakit Ginjal dan Rheumatoid Arthritis, Tetap waspada dan pertahankan pola hidup sehat.';
         } else {
             foreach ($recommended as $item) {
                 $lines[] = '• '.$item['label'];

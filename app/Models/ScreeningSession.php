@@ -89,6 +89,7 @@ class ScreeningSession extends Model
             'high' => 'Tinggi',
             'medium' => 'Sedang',
             'low' => 'Rendah',
+            'none' => 'Tidak Ada Risiko',
             'emergency' => 'Darurat',
             default => $this->risk_level,
         };
@@ -157,14 +158,18 @@ class ScreeningSession extends Model
         }
 
         if ($score['hasil_kategori']) {
-            return 'Risiko '.$score['hasil_kategori'];
+            return $score['hasil_kategori'] === 'Tidak Ada Risiko'
+                ? 'Tidak Ada Risiko'
+                : 'Risiko '.$score['hasil_kategori'];
         }
 
         if ($this->showsEmergencyUi()) {
             return 'Darurat';
         }
 
-        return 'Risiko '.$this->displayRiskLabel();
+        return $this->displayRiskLevel() === 'none'
+            ? 'Tidak Ada Risiko'
+            : 'Risiko '.$this->displayRiskLabel();
     }
 
     public function scoreSummary(): ?string
@@ -191,7 +196,7 @@ class ScreeningSession extends Model
         }
 
         return match ($this->displayRiskLevel()) {
-            'low' => 'Rendah',
+            'none', 'low' => 'Rendah',
             'medium' => 'Sedang',
             'high', 'emergency' => 'Tinggi',
             default => null,
@@ -265,7 +270,7 @@ class ScreeningSession extends Model
             $recommended = $this->recommendedFollowUpDiseases();
 
             if ($recommended === []) {
-                return 'Skrining awal selesai. Tetap waspada gejala baru dan konsultasikan ke tenaga kesehatan bila perlu.';
+                return 'Anda tidak berisiko pada penyakit Diabetes, hipertensi, Stroke, Penyakit jantung koroner, TB paru, PPOK, DHF, Penyakit Ginjal dan Rheumatoid Arthritis, Tetap waspada dan pertahankan pola hidup sehat.';
             }
 
             return 'Lanjutkan skrining lanjut pada penyakit yang direkomendasikan berdasarkan jawaban ya Anda.';
@@ -277,6 +282,7 @@ class ScreeningSession extends Model
         }
 
         return match ($this->displayRiskLevel()) {
+            'none' => 'Kondisi Anda saat ini tidak menunjukkan risiko penyakit. Pertahankan pola hidup sehat dan lakukan pemeriksaan berkala.',
             'low' => 'Pertahankan gaya hidup sehat dan lakukan skrining berkala.',
             'medium' => 'Perbaiki pola hidup dan pantau gejala secara rutin.',
             'high' => 'Konsultasi ke tenaga kesehatan dan ikuti panduan perawatan mandiri.',
@@ -448,6 +454,13 @@ class ScreeningSession extends Model
         }
 
         return match ($this->displayRiskLevel()) {
+            'none' => [
+                'border' => 'border-teal-200',
+                'bg' => 'bg-teal-50',
+                'text' => 'text-teal-800',
+                'ring' => 'ring-teal-100',
+                'accent' => 'bg-teal-500',
+            ],
             'low' => [
                 'border' => 'border-emerald-200',
                 'bg' => 'bg-emerald-50',

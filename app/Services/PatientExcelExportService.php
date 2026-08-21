@@ -159,6 +159,17 @@ class PatientExcelExportService
    <Font ss:FontName="Segoe UI" ss:Bold="1" ss:Color="#065F46"/>
    <Interior ss:Color="#D1FAE5" ss:Pattern="Solid"/>
   </Style>
+  <Style ss:ID="RiskNone">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+   </Borders>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Font ss:FontName="Segoe UI" ss:Bold="1" ss:Color="#115E59"/>
+   <Interior ss:Color="#CCFBF1" ss:Pattern="Solid"/>
+  </Style>
  </Styles>
 
 <?php
@@ -295,6 +306,8 @@ class PatientExcelExportService
                     $riskStyle = 'RiskMedium';
                 } elseif ($riskLevel === 'low') {
                     $riskStyle = 'RiskLow';
+                } elseif ($riskLevel === 'none') {
+                    $riskStyle = 'RiskNone';
                 }
 
                 $scoreData = $session->scoreData();

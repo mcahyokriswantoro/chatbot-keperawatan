@@ -385,6 +385,7 @@ class AdminStatsService
     public function riskLabel(string $level): string
     {
         return match ($level) {
+            'none' => 'Tidak Ada Risiko',
             'low' => 'Rendah',
             'medium' => 'Sedang',
             'high' => 'Tinggi',
@@ -833,6 +834,7 @@ class AdminStatsService
             ->groupBy('risk_level');
 
         $colors = [
+            'none' => '#0d9488',
             'low' => '#059669',
             'medium' => '#d97706',
             'high' => '#ea580c',
@@ -840,7 +842,7 @@ class AdminStatsService
         ];
 
         $items = [];
-        foreach (['low', 'medium', 'high', 'emergency'] as $level) {
+        foreach (['none', 'low', 'medium', 'high', 'emergency'] as $level) {
             $count = (int) ($byRisk[$level] ?? 0);
             if ($count === 0) {
                 continue;
@@ -889,7 +891,7 @@ class AdminStatsService
             ->get()
             ->groupBy('disease');
 
-        $riskOrder = ['low', 'medium', 'high', 'emergency'];
+        $riskOrder = ['none', 'low', 'medium', 'high', 'emergency'];
 
         $items = [];
         foreach ($byDisease as $disease => $count) {

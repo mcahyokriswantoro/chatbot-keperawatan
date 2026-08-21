@@ -19,7 +19,7 @@
             <label class="mb-1 block text-[11px] font-medium text-slate-500">Tingkat risiko</label>
             <select name="risk" class="w-full rounded-xl border border-brand-200 bg-white px-3 py-2.5 text-sm">
                 <option value="">Semua risiko</option>
-                @foreach (['low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi', 'emergency' => 'Darurat'] as $val => $label)
+                @foreach (['none' => 'Tidak Ada Risiko', 'low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi', 'emergency' => 'Darurat'] as $val => $label)
                     <option value="{{ $val }}" @selected($filters['risk'] === $val)>{{ $label }}</option>
                 @endforeach
             </select>
